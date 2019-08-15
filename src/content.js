@@ -45,12 +45,12 @@ class Main extends React.Component {
                             </a>
                             <ul class="nav nav-pills nav-pills-circle ml-5" id="tabs_2" role="tablist">
                               <li class="nav-item">
-                                <a class="nav-link rounded-circle active" id="home-tab" data-toggle="tab" href="#tabs_2_1" role="tab" aria-controls="home" aria-selected="true">
+                                <a class="nav-link rounded-circle" id="home-tab" data-toggle="tab" href="#tabs_2_1" role="tab" aria-controls="home" aria-selected="true">
                                   <span class="nav-link-icon d-block"></span>
                                 </a>
                               </li>
                               <li class="nav-item">
-                                <a class="nav-link" id="profile-tab" data-toggle="tab" href="#tabs_2_2" role="tab" aria-controls="profile" aria-selected="false">
+                                <a class="nav-link active" id="profile-tab" data-toggle="tab" href="#tabs_2_2" role="tab" aria-controls="profile" aria-selected="false">
                                   <span class="nav-link-icon d-block"></span>
                                 </a>
                               </li>
