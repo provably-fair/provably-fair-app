@@ -2,12 +2,40 @@
 /* src/content.js */
 import React from 'react';
 import ReactDOM from 'react-dom';
+import axios from 'axios';
 import Frame, { FrameContextConsumer }from 'react-frame-component';
 import "./content.css";
 import './assets/css/argon.css';
 import './assets/vendor/font-awesome/css/font-awesome.css';
 
 class Main extends React.Component {
+
+
+
+    componentDidMount(){
+      console.stdlog = console.log.bind(console);
+      console.logs = [];
+      console.log = function(){
+          console.logs.push(Array.from(arguments));
+          console.stdlog.apply(console, arguments);
+        }
+    }
+
+    getCoinData = async () => {
+      const coin =  await axios.get('https://api.crypto-games.net/v1/settings/btc');
+      console.log(coin.data);
+    }
+
+    getCoinStats = async () => {
+      const coin =  await axios.get('https://api.crypto-games.net/v1/coinstats/btc');
+      console.log(coin.data);
+    }
+
+    getBalance = async () => {
+      const balance = axios.get('https://api.crypto-games.net/v1/balance/btc/Uj4HHIjBYOXrtnSSiqwLRcApS8iqv7Fd9rUtrrHXY8ku5PCpvz');
+      console.log(balance.data);
+    }
+
     render() {
         return (
             <Frame head={[<link type="text/css" rel="stylesheet" href={chrome.runtime.getURL("/static/css/content.css")} ></link>]}>
@@ -17,7 +45,9 @@ class Main extends React.Component {
                    ({document, window}) => {
                       // Render Children
                         return (
-                           <div className={'my-extension text-center'}>
+                           <div className={'my-extension text-center'} onClick={()=>{
+                             this.getBalance();
+                           }}>
                            <div className="nav-wrapper">
                              <ul className="nav nav-pills nav-fill flex-md-row" id="tabs-icons-text" role="tablist">
                                  <li className="nav-item">
