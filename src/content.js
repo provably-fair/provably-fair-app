@@ -80,6 +80,8 @@ class Main extends React.Component {
 
     }
 
+
+
     getCoinStats = async () => {
       const coin =  await axios.get('https://api.crypto-games.net/v1/coinstats/btc');
       console.log(coin.data);
@@ -88,6 +90,16 @@ class Main extends React.Component {
     getBalance = async () => {
       const balance = axios.get('https://api.crypto-games.net/v1/balance/btc/49odKs01H8tOrOCY21Vsnqkuwo6KGuZ5RZ6mBigrzqacI1MFIs');
       console.log(balance.data);
+    }
+
+    getBetData = async () => {
+      let i=0
+      while(i<9){
+        const coin =  await axios.get(`https://api.crypto-games.net/v1/bet/327333161${i}`);
+      console.log(coin.data);
+      i++;
+      }
+
     }
 
     render() {
@@ -158,12 +170,15 @@ class Main extends React.Component {
                             <div className="nav-wrapper">
                               <ul className="nav nav-pills nav-fill flex-md-row" id="tabs-icons-text" role="tablist">
                                   <li className="nav-item show" onClick={()=>{
-                                    this.setState({gettingStarted:!gettingStarted, settings:!settings});
+                                    this.setState({gettingStarted:false, settings:true, verification:false});
                                     this.getCoinData();
                                   }}>
                                       <a className="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-1-tab" data-toggle="tab" href="#tabs-icons-text-1" role="tab" aria-controls="tabs-icons-text-1" aria-selected="true"><i className="fa fa-cloud-upload-96 mr-2"></i>Settings</a>
                                   </li>
-                                  <li className="nav-item">
+                                  <li className="nav-item" onClick={()=>{
+                                    this.setState({gettingStarted:false,settings:false, verification:true});
+                                    this.getBetData();
+                                  }}>
                                       <a className="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-2-tab" data-toggle="tab" href="#tabs-icons-text-2" role="tab" aria-controls="tabs-icons-text-2" aria-selected="false"><i className="fa fa-bell-55 mr-2"></i>Verification</a>
                                   </li>
                                   <li className="nav-item">
