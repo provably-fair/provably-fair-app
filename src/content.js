@@ -22,6 +22,7 @@ class Main extends React.Component {
     }
 
     getCoinData = async () => {
+
       const coin =  await axios.get('https://api.crypto-games.net/v1/settings/btc');
       console.log(coin.data);
     }
@@ -45,9 +46,7 @@ class Main extends React.Component {
                    ({document, window}) => {
                       // Render Children
                         return (
-                           <div className={'my-extension text-center'} onClick={()=>{
-                             this.getBalance();
-                           }}>
+                           <div className={'my-extension text-center'}>
                            <div className="nav-wrapper">
                              <ul className="nav nav-pills nav-fill flex-md-row" id="tabs-icons-text" role="tablist">
                                  <li className="nav-item">
@@ -70,10 +69,13 @@ class Main extends React.Component {
                                 </g>
                             </svg>
                             <p><span style={{fontStyle:'bold'}}>Operator</span> is a CGF verified operator.</p>
-                            <a className="nav-link rounded-circle active" id="home-tab" data-toggle="tab" href="#tabs_2_1" role="tab" aria-controls="home" aria-selected="true">
-                              <span className="nav-link-icon d-block"><i className="fa fa-atom"></i></span>
-                            </a>
-                            <ul class="nav nav-pills nav-pills-circle ml-5" id="tabs_2" role="tablist">
+
+                            <button class="btn btn-info mb-3" type="button"onClick={()=>{
+                              this.getCoinData();
+                            }}>
+                            Get Started Now
+                            </button>
+                            <ul class="nav nav-pills nav-pills-circle ml-5 pl-3" id="tabs_2" role="tablist">
                               <li class="nav-item">
                                 <a class="nav-link rounded-circle" id="home-tab" data-toggle="tab" href="#tabs_2_1" role="tab" aria-controls="home" aria-selected="true">
                                   <span class="nav-link-icon d-block"></span>
