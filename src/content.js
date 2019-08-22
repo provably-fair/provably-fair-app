@@ -23,7 +23,9 @@ class Main extends React.Component {
         serverSeed:'',
         nonce:0,
         betData:[],
-        cryptoGames:false
+        cryptoGames:false,
+        diceResult:0,
+        diceVerify:0
       }
       this.getBetData();
     }
@@ -71,8 +73,9 @@ class Main extends React.Component {
       lucky %= Math.pow(10, 4);
       lucky /= Math.pow(10, 2); return lucky;
     };
-
-    console.log(roll(serverSeed, `${clientSeed}`));
+      let diceVerify = roll(serverSeed, `${clientSeed}-${nonce}`);
+      this.setState({diceVerify:diceVerify});
+      console.log(diceVerify);
       this.setState({nonce:0})
     }
 
@@ -110,7 +113,7 @@ class Main extends React.Component {
     }
 
     render() {
-      const { gettingStarted, settings, verification, operators, clientSeed, serverSeed, nonce, betData, cryptoGames } = this.state;
+      const { gettingStarted, settings, verification, operators, clientSeed, serverSeed, nonce, betData, cryptoGames, diceResult, diceVerify } = this.state;
         return (
             <Frame head={[<link type="text/css" rel="stylesheet" href={chrome.runtime.getURL("/static/css/content.css")} ></link>]}>
                <FrameContextConsumer>
@@ -283,6 +286,18 @@ class Main extends React.Component {
 }
                                 </tbody>
                               </table>
+                              <div className="form-group">
+                                <label className="form-control-label">Enter Your Dice Result!</label>
+                                <input className="form-control form-control-sm" type="text" onChange={(e)=>{this.setState({diceResult:e.target.value})}}/>
+                                <button type="button" class="btn btn-secondary m-2" onClick={()=>{
+                                  this.handleVerifyBet(serverSeed, clientSeed, nonce);
+                                  console.log(serverSeed, clientSeed, nonce);
+                                }}> Verify</button>
+
+                              </div>
+                              <div class="alert alert-info" role="alert">
+                                <strong>Your verified result : {diceVerify}</strong>
+                            </div>
                               <ul className="nav nav-pills nav-pills-circle ml-5 pl-3" id="tabs_2" role="tablist">
                                 <li className="nav-item">
                                   <a className="nav-link rounded-circle " id="home-tab" data-toggle="tab" href="#tabs_2_1" role="tab" aria-controls="home" aria-selected="true">
