@@ -20,7 +20,7 @@ class Main extends React.Component {
         operators:false,
         clientSeed:'',
         serverSeed:'',
-        nounce:0
+        nonce:0
       }
     }
 
@@ -48,15 +48,15 @@ class Main extends React.Component {
       this.setState({clientSeed:hash})
     }
 
-    handleVerifyBet = (serverSeed,clientSeed) => {
+    handleVerifyBet = (serverSeed,clientSeed, nonce) => {
       // the seed pair itself
        // const clientSeed = clientSeed;
       // dont forget to exclude the dash and the nonce!
       // const serverSeed = serverSeed;
       // bet made with seed pair (excluding current bet)
-      const nonce = 0;
       // crypto lib for hmac function
       const crypto = require('crypto'); const roll = function(key, text) {
+        console.log(key,text);
       // create HMAC using server seed as key and client seed as message
       const hash = crypto .createHmac('sha512', key) .update(text) .digest('hex');
       let index = 0;
@@ -73,7 +73,7 @@ class Main extends React.Component {
       lucky /= Math.pow(10, 2); return lucky;
     };
 
-    console.log(roll(serverSeed, `${clientSeed}`-`${nonce}`));
+    console.log(roll(serverSeed, `${clientSeed}-${nonce}`));
 
     }
 
@@ -95,7 +95,7 @@ class Main extends React.Component {
     }
 
     render() {
-      const { gettingStarted, settings, verification, operators, clientSeed, serverSeed } = this.state;
+      const { gettingStarted, settings, verification, operators, clientSeed, serverSeed, nonce } = this.state;
         return (
             <Frame head={[<link type="text/css" rel="stylesheet" href={chrome.runtime.getURL("/static/css/content.css")} ></link>]}>
                <FrameContextConsumer>
@@ -179,8 +179,8 @@ class Main extends React.Component {
                               <label className="form-control-label">Server Seed Hash</label>
                               <input className="form-control form-control-sm" type="text" placeholder="7dfh6fg6jg6k4hj5khj6kl4h67l7mbngdcghgkv" onChange={(e)=>{this.setState({serverSeed:e.target.value})}}/>
                               <button type="button" class="btn btn-secondary m-2" onClick={()=>{
-                                this.handleVerifyBet(clientSeed,serverSeed);
-                                console.log(clientSeed,serverSeed);
+                                this.handleVerifyBet(serverSeed, clientSeed, nonce);
+                                console.log(serverSeed, clientSeed, nonce);
                               }}> Submit</button>
                             </div>
                             <div className="form-group">
@@ -190,7 +190,7 @@ class Main extends React.Component {
                             </div>
                             <div className="form-group">
                               <label className="form-control-label">Nonce</label>
-                              <input className="form-control form-control-sm" type="text" placeholder="1"/>
+                              <input className="form-control form-control-sm" type="text" placeholder="0"  onChange={(e)=>{this.setState({nonce:e.target.value})}}/>
                             </div>
                             <ul className="nav nav-pills nav-pills-circle ml-5 pl-3" id="tabs_2" role="tablist">
                               <li className="nav-item">
