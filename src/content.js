@@ -5,6 +5,7 @@ import ReactDOM from 'react-dom';
 import Frame, { FrameContextConsumer }from 'react-frame-component';
 import axios from 'axios';
 import createHmac from 'create-hmac';
+import uuidv4 from 'uuid/v4';
 import "./content.css";
 import './assets/css/argon.css';
 import './assets/vendor/font-awesome/css/font-awesome.css';
@@ -39,7 +40,7 @@ class Main extends React.Component {
     }
 
     getClientSeed = () => {
-      let key = this.getRandomInt(99);
+      let key = uuidv4();
       let hash = createHmac('sha256', key)
       .update('provably')
       .digest('hex');
@@ -49,14 +50,10 @@ class Main extends React.Component {
     }
 
     handleVerifyBet = (serverSeed,clientSeed, nonce) => {
-      // the seed pair itself
-       // const clientSeed = clientSeed;
-      // dont forget to exclude the dash and the nonce!
-      // const serverSeed = serverSeed;
       // bet made with seed pair (excluding current bet)
       // crypto lib for hmac function
-      const crypto = require('crypto'); const roll = function(key, text) {
-        console.log(key,text);
+      const crypto = require('crypto');
+      const roll = function(key, text) {
       // create HMAC using server seed as key and client seed as message
       const hash = crypto .createHmac('sha512', key) .update(text) .digest('hex');
       let index = 0;
