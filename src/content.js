@@ -21,8 +21,10 @@ class Main extends React.Component {
         operators:false,
         clientSeed:'',
         serverSeed:'',
-        nonce:0
+        nonce:0,
+        betData:[]
       }
+      this.getBetData();
     }
 
 
@@ -93,17 +95,20 @@ class Main extends React.Component {
     }
 
     getBetData = async () => {
+      let { betData } = this.state;
       let i=0
       while(i<9){
-        const coin =  await axios.get(`https://api.crypto-games.net/v1/bet/327333161${i}`);
-      console.log(coin.data);
-      i++;
+        const bet =  await axios.get(`https://api.crypto-games.net/v1/bet/327333161${i}`);
+          if(bet.data.User=="Shahista"){
+              betData.push(bet.data)
+            }
+            i++;
       }
-
+      this.setState({betData:betData})
     }
 
     render() {
-      const { gettingStarted, settings, verification, operators, clientSeed, serverSeed, nonce } = this.state;
+      const { gettingStarted, settings, verification, operators, clientSeed, serverSeed, nonce, betData } = this.state;
         return (
             <Frame head={[<link type="text/css" rel="stylesheet" href={chrome.runtime.getURL("/static/css/content.css")} ></link>]}>
                <FrameContextConsumer>
@@ -124,7 +129,9 @@ class Main extends React.Component {
                                  }}>
                                      <a className="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-1-tab" data-toggle="tab" href="#tabs-icons-text-1" role="tab" aria-controls="tabs-icons-text-1" aria-selected="true"><i className="fa fa-cloud-upload-96 mr-2"></i>Settings</a>
                                  </li>
-                                 <li className="nav-item">
+                                 <li className="nav-item" onClick={()=>{
+                                   this.setState({gettingStarted:false,settings:false, verification:true});
+                                 }}>
                                      <a className="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-2-tab" data-toggle="tab" href="#tabs-icons-text-2" role="tab" aria-controls="tabs-icons-text-2" aria-selected="false"><i className="fa fa-bell-55 mr-2"></i>Verification</a>
                                  </li>
                                  <li className="nav-item">
@@ -220,6 +227,41 @@ class Main extends React.Component {
                                 </a>
                               </li>
                             </ul>
+                            </div>
+
+                            <div class="table-responsive" style={{display:verification?'block':'none', fontSize: '11px'}}>
+                              <table class="table align-items-center table-flush table-hover">
+                                <thead class="thead-light">
+                                  <tr>
+
+                                    <th>Id</th>
+                                    <th>Game</th>
+                                    <th>Roll</th>
+                                    <th>Time</th>
+                                  </tr>
+                                </thead>
+
+                                <tbody>
+                                  {betData.map((item)=>{
+                                    return <tr>
+                                      <td class="table-user">
+                                      {item.BetId}
+                                      </td>
+                                      <td>
+                                        <span class="text-muted">Dice</span>
+                                      </td>
+                                      <td>
+                                      {item.Roll}
+                                      </td>
+                                      <td>
+                                        {item.DateCreated}
+                                      </td>
+                                    </tr>
+
+                                  })
+}
+                                </tbody>
+                              </table>
                             </div>
 
                            </div>
