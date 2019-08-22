@@ -80,7 +80,7 @@ class Main extends React.Component {
                              <ul className="nav nav-pills nav-fill flex-md-row" id="tabs-icons-text" role="tablist">
                                  <li className="nav-item"
                                  onClick={()=>{
-                                   this.setState({gettingStarted:!gettingStarted, settings:!settings});
+                                   this.setState({gettingStarted:false, settings:true});
                                    this.getCoinData();
                                  }}>
                                      <a className="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-1-tab" data-toggle="tab" href="#tabs-icons-text-1" role="tab" aria-controls="tabs-icons-text-1" aria-selected="true"><i className="fa fa-cloud-upload-96 mr-2"></i>Settings</a>
@@ -103,7 +103,7 @@ class Main extends React.Component {
                             </svg>
                             <p><span style={{fontStyle:'bold'}}>Operator</span> is a CGF verified operator.</p>
                             <button className="btn btn-info mb-3" type="button" onClick={()=>{
-                              this.setState({gettingStarted:!gettingStarted, settings:!settings});
+                              this.setState({gettingStarted:!gettingStarted, settings:true});
                               this.getBalance();
                             }}>
                             Get Started Now
