@@ -10,6 +10,15 @@ import './assets/vendor/font-awesome/css/font-awesome.css';
 
 class Main extends React.Component {
 
+    constructor(){
+      super();
+      this.state = {
+        gettingStarted:true,
+        settings:false,
+        verification:false,
+        operators:false
+      }
+    }
 
 
     componentDidMount(){
@@ -33,11 +42,12 @@ class Main extends React.Component {
     }
 
     getBalance = async () => {
-      const balance = axios.get('https://api.crypto-games.net/v1/balance/btc/Uj4HHIjBYOXrtnSSiqwLRcApS8iqv7Fd9rUtrrHXY8ku5PCpvz');
+      const balance = axios.get('https://api.crypto-games.net/v1/balance/btc/49odKs01H8tOrOCY21Vsnqkuwo6KGuZ5RZ6mBigrzqacI1MFIs');
       console.log(balance.data);
     }
 
     render() {
+      const { gettingStarted, settings, verification, operators } = this.state;
         return (
             <Frame head={[<link type="text/css" rel="stylesheet" href={chrome.runtime.getURL("/static/css/content.css")} ></link>]}>
                <FrameContextConsumer>
@@ -47,9 +57,15 @@ class Main extends React.Component {
                       // Render Children
                         return (
                            <div className={'my-extension text-center'}>
+
+                           <div style={{display:gettingStarted?'block':'none'}}>
                            <div className="nav-wrapper">
                              <ul className="nav nav-pills nav-fill flex-md-row" id="tabs-icons-text" role="tablist">
-                                 <li className="nav-item">
+                                 <li className="nav-item"
+                                 onClick={()=>{
+                                   this.setState({gettingStarted:!gettingStarted, settings:!settings});
+                                   this.getCoinData();
+                                 }}>
                                      <a className="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-1-tab" data-toggle="tab" href="#tabs-icons-text-1" role="tab" aria-controls="tabs-icons-text-1" aria-selected="true"><i className="fa fa-cloud-upload-96 mr-2"></i>Settings</a>
                                  </li>
                                  <li className="nav-item">
@@ -69,29 +85,78 @@ class Main extends React.Component {
                                 </g>
                             </svg>
                             <p><span style={{fontStyle:'bold'}}>Operator</span> is a CGF verified operator.</p>
-
-                            <button class="btn btn-info mb-3" type="button"onClick={()=>{
-                              this.getCoinData();
+                            <button className="btn btn-info mb-3" type="button" onClick={()=>{
+                              this.setState({gettingStarted:!gettingStarted, settings:!settings});
+                              this.getBalance();
                             }}>
                             Get Started Now
                             </button>
-                            <ul class="nav nav-pills nav-pills-circle ml-5 pl-3" id="tabs_2" role="tablist">
-                              <li class="nav-item">
-                                <a class="nav-link rounded-circle" id="home-tab" data-toggle="tab" href="#tabs_2_1" role="tab" aria-controls="home" aria-selected="true">
-                                  <span class="nav-link-icon d-block"></span>
+                            <ul className="nav nav-pills nav-pills-circle ml-5 pl-3" id="tabs_2" role="tablist">
+                              <li className="nav-item">
+                                <a className="nav-link rounded-circle" id="home-tab" data-toggle="tab" href="#tabs_2_1" role="tab" aria-controls="home" aria-selected="true">
+                                  <span className="nav-link-icon d-block"></span>
                                 </a>
                               </li>
-                              <li class="nav-item">
-                                <a class="nav-link active" id="profile-tab" data-toggle="tab" href="#tabs_2_2" role="tab" aria-controls="profile" aria-selected="false">
-                                  <span class="nav-link-icon d-block"></span>
+                              <li className="nav-item">
+                                <a className="nav-link active" id="profile-tab" data-toggle="tab" href="#tabs_2_2" role="tab" aria-controls="profile" aria-selected="false">
+                                  <span className="nav-link-icon d-block"></span>
                                 </a>
                               </li>
-                              <li class="nav-item">
-                                <a class="nav-link" id="contact-tab" data-toggle="tab" href="#tabs_2_3" role="tab" aria-controls="contact" aria-selected="false">
-                                  <span class="nav-link-icon d-block"></span>
+                              <li className="nav-item">
+                                <a className="nav-link" id="contact-tab" data-toggle="tab" href="#tabs_2_3" role="tab" aria-controls="contact" aria-selected="false">
+                                  <span className="nav-link-icon d-block"></span>
                                 </a>
                               </li>
                             </ul>
+                            </div>
+
+                            <div style={{display:settings?'block':'none'}}>
+                            <div className="nav-wrapper">
+                              <ul className="nav nav-pills nav-fill flex-md-row" id="tabs-icons-text" role="tablist">
+                                  <li className="nav-item show" onClick={()=>{
+                                    this.setState({gettingStarted:!gettingStarted, settings:!settings});
+                                    this.getCoinData();
+                                  }}>
+                                      <a className="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-1-tab" data-toggle="tab" href="#tabs-icons-text-1" role="tab" aria-controls="tabs-icons-text-1" aria-selected="true"><i className="fa fa-cloud-upload-96 mr-2"></i>Settings</a>
+                                  </li>
+                                  <li className="nav-item">
+                                      <a className="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-2-tab" data-toggle="tab" href="#tabs-icons-text-2" role="tab" aria-controls="tabs-icons-text-2" aria-selected="false"><i className="fa fa-bell-55 mr-2"></i>Verification</a>
+                                  </li>
+                                  <li className="nav-item">
+                                      <a className="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-3-tab" data-toggle="tab" href="#tabs-icons-text-3" role="tab" aria-controls="tabs-icons-text-3" aria-selected="false"><i className="fa fa-calendar-grid-58 mr-2"></i>Operators</a>
+                                  </li>
+                              </ul>
+                            </div>
+                            <div className="form-group">
+                              <label className="form-control-label">Server Seed Hash</label>
+                              <input className="form-control form-control-sm" type="text" placeholder="7dfh6fg6jg6k4hj5khj6kl4h67l7mbngdcghgkv"/>
+                            </div>
+                            <div className="form-group">
+                              <label className="form-control-label">Client Seed</label>
+                              <input className="form-control form-control-sm" type="text" placeholder="CURRENT CLIENT SEED"/>
+                            </div>
+                            <div className="form-group">
+                              <label className="form-control-label">Nonce</label>
+                              <input className="form-control form-control-sm" type="text" placeholder="1"/>
+                            </div>
+                            <ul className="nav nav-pills nav-pills-circle ml-5 pl-3" id="tabs_2" role="tablist">
+                              <li className="nav-item">
+                                <a className="nav-link rounded-circle active" id="home-tab" data-toggle="tab" href="#tabs_2_1" role="tab" aria-controls="home" aria-selected="true">
+                                  <span className="nav-link-icon d-block"></span>
+                                </a>
+                              </li>
+                              <li className="nav-item">
+                                <a className="nav-link" id="profile-tab" data-toggle="tab" href="#tabs_2_2" role="tab" aria-controls="profile" aria-selected="false">
+                                  <span className="nav-link-icon d-block"></span>
+                                </a>
+                              </li>
+                              <li className="nav-item">
+                                <a className="nav-link" id="contact-tab" data-toggle="tab" href="#tabs_2_3" role="tab" aria-controls="contact" aria-selected="false">
+                                  <span className="nav-link-icon d-block"></span>
+                                </a>
+                              </li>
+                            </ul>
+                            </div>
 
                            </div>
                         )
