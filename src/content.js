@@ -37,10 +37,11 @@ class Main extends React.Component {
     }
 
     getClientSeed = () => {
-      const key = this.getRandomInt(3);
-      const hash = createHmac('sha256', key)
-      .update('provably-fair')
+      let key = this.getRandomInt(99);
+      let hash = createHmac('sha256', key)
+      .update('provably')
       .digest('hex');
+      hash = hash.substring(0, 32);
       console.log('Client seed', hash);
       this.setState({clientSeed:hash})
     }
