@@ -18,7 +18,9 @@ class Main extends React.Component {
         settings:false,
         verification:false,
         operators:false,
-        clientSeed:''
+        clientSeed:'',
+        serverSeed:'',
+        nounce:0
       }
     }
 
@@ -46,6 +48,35 @@ class Main extends React.Component {
       this.setState({clientSeed:hash})
     }
 
+    handleVerifyBet = (serverSeed,clientSeed) => {
+      // the seed pair itself
+       // const clientSeed = clientSeed;
+      // dont forget to exclude the dash and the nonce!
+      // const serverSeed = serverSeed;
+      // bet made with seed pair (excluding current bet)
+      const nonce = 0;
+      // crypto lib for hmac function
+      const crypto = require('crypto'); const roll = function(key, text) {
+      // create HMAC using server seed as key and client seed as message
+      const hash = crypto .createHmac('sha512', key) .update(text) .digest('hex');
+      let index = 0;
+      let lucky = parseInt(hash.substring(index * 5, index * 5 + 5), 16);
+      // keep grabbing characters from the hash while greater than
+      while (lucky >= Math.pow(10, 6)) {
+        index++; lucky = parseInt(hash.substring(index * 5, index * 5 + 5), 16);
+      // if we reach the end of the hash, just default to highest number
+       if (index * 5 + 5 > 128) {
+         lucky = 9999; break;
+       }
+      }
+      lucky %= Math.pow(10, 4);
+      lucky /= Math.pow(10, 2); return lucky;
+    };
+
+    console.log(roll(serverSeed, `${clientSeed}`-`${nonce}`));
+
+    }
+
     getCoinData = async () => {
 
       const coin =  await axios.get('https://api.crypto-games.net/v1/settings/btc');
@@ -64,7 +95,7 @@ class Main extends React.Component {
     }
 
     render() {
-      const { gettingStarted, settings, verification, operators, clientSeed } = this.state;
+      const { gettingStarted, settings, verification, operators, clientSeed, serverSeed } = this.state;
         return (
             <Frame head={[<link type="text/css" rel="stylesheet" href={chrome.runtime.getURL("/static/css/content.css")} ></link>]}>
                <FrameContextConsumer>
@@ -146,8 +177,11 @@ class Main extends React.Component {
                             </div>
                             <div className="form-group">
                               <label className="form-control-label">Server Seed Hash</label>
-                              <input className="form-control form-control-sm" type="text" placeholder="7dfh6fg6jg6k4hj5khj6kl4h67l7mbngdcghgkv"/>
-                              <button type="button" class="btn btn-secondary m-2"> Submit</button>
+                              <input className="form-control form-control-sm" type="text" placeholder="7dfh6fg6jg6k4hj5khj6kl4h67l7mbngdcghgkv" onChange={(e)=>{this.setState({serverSeed:e.target.value})}}/>
+                              <button type="button" class="btn btn-secondary m-2" onClick={()=>{
+                                this.handleVerifyBet(clientSeed,serverSeed);
+                                console.log(clientSeed,serverSeed);
+                              }}> Submit</button>
                             </div>
                             <div className="form-group">
                               <label className="form-control-label">Client Seed</label>
