@@ -22,7 +22,8 @@ class Main extends React.Component {
         clientSeed:'',
         serverSeed:'',
         nonce:0,
-        betData:[]
+        betData:[],
+        cryptoGames:false
       }
       this.getBetData();
     }
@@ -71,7 +72,7 @@ class Main extends React.Component {
       lucky /= Math.pow(10, 2); return lucky;
     };
 
-    console.log(roll(serverSeed, `${clientSeed}-${nonce}`));
+    console.log(roll(serverSeed, `${clientSeed}`));
       this.setState({nonce:0})
     }
 
@@ -104,11 +105,12 @@ class Main extends React.Component {
             }
             i++;
       }
+      console.log('betData', betData);
       this.setState({betData:betData})
     }
 
     render() {
-      const { gettingStarted, settings, verification, operators, clientSeed, serverSeed, nonce, betData } = this.state;
+      const { gettingStarted, settings, verification, operators, clientSeed, serverSeed, nonce, betData, cryptoGames } = this.state;
         return (
             <Frame head={[<link type="text/css" rel="stylesheet" href={chrome.runtime.getURL("/static/css/content.css")} ></link>]}>
                <FrameContextConsumer>
@@ -203,8 +205,8 @@ class Main extends React.Component {
                             </div>
                             <div className="form-group">
                               <label className="form-control-label">Client Seed</label>
-                              <input className="form-control form-control-sm" type="text" value={clientSeed} placeholder="CURRENT CLIENT SEED"/>
-                              <button type="button" class="btn btn-secondary m-2" onClick={this.getClientSeed}> Generate</button>
+                              <input className="form-control form-control-sm" type="text" value={clientSeed} placeholder="CURRENT CLIENT SEED" onChange={(e)=>{this.setState({clientSeed:e.target.value})}}/>
+                              <button type="button" class="btn btn-secondary m-2"   onClick={this.getClientSeed}> Generate</button>
                             </div>
                             <div className="form-group">
                               <label className="form-control-label">Nonce</label>
@@ -249,7 +251,7 @@ class Main extends React.Component {
                                   </li>
                               </ul>
                             </div>
-                              <table class="table align-items-center table-flush table-hover">
+                              <table class="table align-items-center table-flush table-hover" style={{display:cryptoGames?'block':'none'}}>
                                 <thead class="thead-light">
                                   <tr>
 
