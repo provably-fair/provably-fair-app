@@ -2,8 +2,9 @@
 /* src/content.js */
 import React from 'react';
 import ReactDOM from 'react-dom';
-import axios from 'axios';
 import Frame, { FrameContextConsumer }from 'react-frame-component';
+import axios from 'axios';
+import createHmac from 'create-hmac';
 import "./content.css";
 import './assets/css/argon.css';
 import './assets/vendor/font-awesome/css/font-awesome.css';
@@ -16,7 +17,8 @@ class Main extends React.Component {
         gettingStarted:true,
         settings:false,
         verification:false,
-        operators:false
+        operators:false,
+        clientSeed:''
       }
     }
 
@@ -30,10 +32,24 @@ class Main extends React.Component {
         }
     }
 
+    getRandomInt = (max) => {
+      return Math.floor(Math.random() * Math.floor(max));
+    }
+
+    getClientSeed = () => {
+      const key = this.getRandomInt(3);
+      const hash = createHmac('sha256', key)
+      .update('provably-fair')
+      .digest('hex');
+      console.log('Client seed', hash);
+      this.setState({clientSeed:hash})
+    }
+
     getCoinData = async () => {
 
       const coin =  await axios.get('https://api.crypto-games.net/v1/settings/btc');
       console.log(coin.data);
+
     }
 
     getCoinStats = async () => {
@@ -47,7 +63,7 @@ class Main extends React.Component {
     }
 
     render() {
-      const { gettingStarted, settings, verification, operators } = this.state;
+      const { gettingStarted, settings, verification, operators, clientSeed } = this.state;
         return (
             <Frame head={[<link type="text/css" rel="stylesheet" href={chrome.runtime.getURL("/static/css/content.css")} ></link>]}>
                <FrameContextConsumer>
@@ -130,10 +146,12 @@ class Main extends React.Component {
                             <div className="form-group">
                               <label className="form-control-label">Server Seed Hash</label>
                               <input className="form-control form-control-sm" type="text" placeholder="7dfh6fg6jg6k4hj5khj6kl4h67l7mbngdcghgkv"/>
+                              <button type="button" class="btn btn-secondary m-2"> Submit</button>
                             </div>
                             <div className="form-group">
                               <label className="form-control-label">Client Seed</label>
-                              <input className="form-control form-control-sm" type="text" placeholder="CURRENT CLIENT SEED"/>
+                              <input className="form-control form-control-sm" type="text" value={clientSeed} placeholder="CURRENT CLIENT SEED"/>
+                              <button type="button" class="btn btn-secondary m-2" onClick={this.getClientSeed}> Generate</button>
                             </div>
                             <div className="form-group">
                               <label className="form-control-label">Nonce</label>
