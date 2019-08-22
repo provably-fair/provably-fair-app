@@ -45,8 +45,7 @@ class Main extends React.Component {
       .update('provably')
       .digest('hex');
       hash = hash.substring(0, 32);
-      console.log('Client seed', hash);
-      this.setState({clientSeed:hash})
+      this.setState({clientSeed:hash, nonce:0});
     }
 
     handleVerifyBet = (serverSeed,clientSeed, nonce) => {
@@ -71,7 +70,7 @@ class Main extends React.Component {
     };
 
     console.log(roll(serverSeed, `${clientSeed}-${nonce}`));
-
+      this.setState({nonce:0})
     }
 
     getCoinData = async () => {
@@ -187,7 +186,7 @@ class Main extends React.Component {
                             </div>
                             <div className="form-group">
                               <label className="form-control-label">Nonce</label>
-                              <input className="form-control form-control-sm" type="text" placeholder="0"  onChange={(e)=>{this.setState({nonce:e.target.value})}}/>
+                              <input className="form-control form-control-sm" type="text" placeholder="0" value={nonce}  onChange={(e)=>{this.setState({nonce:e.target.value})}}/>
                             </div>
                             <ul className="nav nav-pills nav-pills-circle ml-5 pl-3" id="tabs_2" role="tablist">
                               <li className="nav-item">
