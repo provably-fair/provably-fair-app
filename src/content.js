@@ -18,6 +18,7 @@ class Main extends React.Component {
       super();
       this.state = {
         gettingStarted:true,
+        enterAPI:false,
         settings:false,
         verification:false,
         operators:false,
@@ -30,7 +31,8 @@ class Main extends React.Component {
         verify:false,
         diceResult:0,
         diceVerify:0,
-        user:'Shahista'
+        user:'Stefan007',
+        apiKey:''
       }
       this.getBetData();
     }
@@ -126,15 +128,15 @@ class Main extends React.Component {
       console.log(balance.data);
     }
 
-    getUser = async () => {
-      const user = await axios.get('https://api.crypto-games.net/v1/user/btc/49odKs01H8tOrOCY21Vsnqkuwo6KGuZ5RZ6mBigrzqacI1MFIs');
+    getUser = async (apiKey) => {
+      const user = await axios.get(`https://api.crypto-games.net/v1/user/btc/${apiKey}`);
       console.log(user.data.Nickname);
       this.setState({user:user.data.Nickname});
     }
 
     getBetData = async () => {
       let { betData, user } = this.state;
-      let i=3273331610;
+      let i=3917365680;
       while(true){
         const bet =  await axios.get(`https://api.crypto-games.net/v1/bet/${i}`);
           if(bet.data.User==user){
@@ -148,7 +150,7 @@ class Main extends React.Component {
     }
 
     render() {
-      const { gettingStarted, settings, verification, operators, clientSeed, serverSeed, nonce, betData, cryptoGames,primeDice, diceResult, diceVerify, verify } = this.state;
+      const { gettingStarted, settings, verification, operators, clientSeed, serverSeed, nonce, betData, cryptoGames,primeDice, diceResult, diceVerify, verify, apiKey, enterAPI } = this.state;
         return (
             <Frame head={[<link type="text/css" rel="stylesheet" href={chrome.runtime.getURL("/static/css/content.css")} ></link>]}>
                <FrameContextConsumer>
@@ -191,7 +193,7 @@ class Main extends React.Component {
                             </svg>
                             <p><span style={{fontStyle:'bold'}}>Operator</span> is a CGF verified operator.</p>
                             <button className="btn btn-info mb-3" type="button" onClick={()=>{
-                              this.setState({gettingStarted:!gettingStarted, settings:true});
+                              this.setState({gettingStarted:!gettingStarted, enterAPI:true});
                               this.getUser();
                             }}>
                             Get Started Now
@@ -214,6 +216,57 @@ class Main extends React.Component {
                               </li>
                             </ul>
                             </div>
+
+                            <div style={{display:enterAPI?'block':'none'}}>
+                            <div className="nav-wrapper">
+                              <ul className="nav nav-pills nav-fill flex-md-row" id="tabs-icons-text" role="tablist">
+                                  <li className="nav-item show" onClick={()=>{
+                                    this.setState({gettingStarted:false, settings:true, verification:false});
+                                  }}>
+                                      <a className="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-1-tab" data-toggle="tab" href="#tabs-icons-text-1" role="tab" aria-controls="tabs-icons-text-1" aria-selected="true"><i className="fa fa-cloud-upload-96 mr-2"></i>Settings</a>
+                                  </li>
+                                  <li className="nav-item" onClick={()=>{
+                                    this.setState({gettingStarted:false,settings:false, verification:true});
+                                  }}>
+                                      <a className="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-2-tab" data-toggle="tab" href="#tabs-icons-text-2" role="tab" aria-controls="tabs-icons-text-2" aria-selected="false"><i className="fa fa-bell-55 mr-2"></i>Verification</a>
+                                  </li>
+                                  <li className="nav-item" onClick={()=>{
+                                    this.setState({gettingStarted:false,settings:false, verification:false, operators:true});
+                                  }}>
+                                      <a className="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-3-tab" data-toggle="tab" href="#tabs-icons-text-3" role="tab" aria-controls="tabs-icons-text-3" aria-selected="false"><i className="fa fa-calendar-grid-58 mr-2"></i>Operators</a>
+                                  </li>
+                              </ul>
+                            </div>
+                            <div className="form-group">
+                              <label className="form-control-label">Enter Your API Key</label>
+                              <input className="form-control form-control-sm" type="text" value={apiKey} placeholder="API Key" onChange={(e)=>{this.setState({apiKey:e.target.value})}}/>
+                              <button type="button" class="btn btn-secondary m-2" onClick={()=>{
+                                this.setState({gettingStarted:false, verification:false, cryptoGames:false,enterAPI:true})
+                                this.getUser(apiKey)
+                              }}> Submit</button>
+                            </div>
+
+
+                            <ul className="nav nav-pills nav-pills-circle ml-5 pl-3" id="tabs_2" role="tablist">
+                              <li className="nav-item">
+                                <a className="nav-link rounded-circle active" id="home-tab" data-toggle="tab" href="#tabs_2_1" role="tab" aria-controls="home" aria-selected="true">
+                                  <span className="nav-link-icon d-block"></span>
+                                </a>
+                              </li>
+                              <li className="nav-item">
+                                <a className="nav-link" id="profile-tab" data-toggle="tab" href="#tabs_2_2" role="tab" aria-controls="profile" aria-selected="false">
+                                  <span className="nav-link-icon d-block"></span>
+                                </a>
+                              </li>
+                              <li className="nav-item">
+                                <a className="nav-link" id="contact-tab" data-toggle="tab" href="#tabs_2_3" role="tab" aria-controls="contact" aria-selected="false">
+                                  <span className="nav-link-icon d-block"></span>
+                                </a>
+                              </li>
+                            </ul>
+                            </div>
+
+
 
                             <div style={{display:settings?'block':'none'}}>
                             <div className="nav-wrapper">
@@ -343,9 +396,7 @@ class Main extends React.Component {
                                   }}> Verify</button>
 
                                 </div>
-                                <div class="alert alert-info" role="alert">
-                                  <strong>Your verified result : {diceVerify}</strong>
-                              </div>
+
                             </div>
                             {
                             <div style={{display:verify?'block':'none'}}>
