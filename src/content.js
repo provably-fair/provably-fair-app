@@ -308,12 +308,11 @@ class Main extends React.Component {
                                       <td>
                                         {item.DateCreated}
                                       </td>
-                                      <td  style={{cursor:'pointer'}} onClick={()=>{
-                                        this.handleCryptoGamesBet(item.ServerSeed, item.ClientSeed)
-                                      }}>
-                                        Verify
-                                      </td>
-
+                                      <div className="form-group  mt-5" style={{marginLeft: '-366px'}}>
+                                        <button type="button" class="btn btn-info" onClick={()=>{
+                                          this.handleCryptoGamesBet(item.ServerSeed, item.ClientSeed)
+                                        }}> Verify</button>
+                                      </div>
                                     </tr>
 
                                   })
