@@ -96,7 +96,8 @@ class Main extends React.Component {
       console.log('lucky', lucky);
 
       let dec = converter.hexToDec(lucky);
-      console.log("dec",dec);
+      let str = dec.toString().slice(1);
+      console.log("str",str);
 
       return dec/1000;
     };
