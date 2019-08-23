@@ -92,17 +92,17 @@ class Main extends React.Component {
       const hash = crypto .createHmac('sha512', key) .update(text) .digest('hex');
       let index = 0;
       let lucky = hash.substring(index, index + 5);
-
+      console.log('hash',hash);
       console.log('lucky', lucky);
 
-      let dec = converter.hexToDec(lucky);
-      console.log("dec",dec);
+      // let dec = converter.hexToDec(lucky);
+      // console.log("dec",dec);
 
-      return dec/1000;
+      // return dec/1000;
     };
-      let diceVerify = roll(serverSeed, `${clientSeed}`);
-      this.setState({diceVerify:diceVerify});
-      console.log("diceVerify",diceVerify);
+      // let diceVerify = roll(serverSeed, clientSeed);
+      // this.setState({diceVerify:diceVerify});
+      // console.log("diceVerify",diceVerify);
     }
 
     getCoinData = async () => {
