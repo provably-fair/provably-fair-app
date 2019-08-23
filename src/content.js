@@ -199,11 +199,10 @@ class Main extends React.Component {
                               </ul>
                             </div>
                             <div className="form-group">
-                              <label className="form-control-label">Server Seed Hash</label>
+                              <label className="form-control-label">Server Seed</label>
                               <input className="form-control form-control-sm" type="text" placeholder="7dfh6fg6jg6k4hj5khj6kl4h67l7mbngdcghgkv" onChange={(e)=>{this.setState({serverSeed:e.target.value})}}/>
                               <button type="button" class="btn btn-secondary m-2" onClick={()=>{
-                                this.handleVerifyBet(serverSeed, clientSeed, nonce);
-                                console.log(serverSeed, clientSeed, nonce);
+                                this.setState({settings:false, verification:true})
                               }}> Submit</button>
                             </div>
                             <div className="form-group">
@@ -287,8 +286,6 @@ class Main extends React.Component {
                                 </tbody>
                               </table>
                               <div className="form-group">
-                                <label className="form-control-label">Enter Your Dice Result!</label>
-                                <input className="form-control form-control-sm" type="text" onChange={(e)=>{this.setState({diceResult:e.target.value})}}/>
                                 <button type="button" class="btn btn-secondary m-2" onClick={()=>{
                                   this.handleVerifyBet(serverSeed, clientSeed, nonce);
                                   console.log(serverSeed, clientSeed, nonce);
