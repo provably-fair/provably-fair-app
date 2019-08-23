@@ -7,7 +7,6 @@ import axios from 'axios';
 import createHmac from 'create-hmac';
 import uuidv4 from 'uuid/v4';
 import converter from 'hex2dec';
-import sha512 from 'js-sha512';
 import cryptoGamesIcon from './assets/img/cryptogames.png';
 import "./content.css";
 import './assets/css/argon.css';
@@ -85,26 +84,21 @@ class Main extends React.Component {
 
 
     handleCryptoGamesBet = (serverSeed,clientSeed) => {
-      // bet made with seed pair (excluding current bet)
       // crypto lib for hmac function
       const crypto = require('crypto');
-
       const roll = function(key, text) {
       // create HMAC using server seed as key and client seed as message
-      // const hash = crypto .createHmac('sha512', key) .update(text) .digest('hex');
-      // let index = 0;
-      // let lucky = hash.substring(index, index + 5);
-      // console.log('hash',hash);
-      // console.log('lucky', lucky);
+      const hash = crypto .createHash('sha512') .update(`${key}${text}`) .digest('hex');
+      console.log('hash',hash);
 
-      // let dec = converter.hexToDec(lucky);
-      // console.log("dec",dec);
+      let index = 0;
+      let lucky = hash.substring(index, index + 5);
+      console.log('lucky', lucky);
 
-      // return dec/1000;
+      let dec = converter.hexToDec(lucky);
+      console.log("dec",dec);
 
-
-      let hash = sha512.hmac(key, text);
-      console.log('hash', hash);
+      return dec/1000;
     };
       let diceVerify = roll(serverSeed, clientSeed);
       // this.setState({diceVerify:diceVerify});
