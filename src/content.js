@@ -91,7 +91,7 @@ class Main extends React.Component {
       // create HMAC using server seed as key and client seed as message
       const hash = crypto .createHmac('sha512', key) .update(text) .digest('hex');
       let index = 0;
-      let lucky = hash.substring(index, index + 4);
+      let lucky = hash.substring(index, index + 5);
 
       console.log('lucky', lucky);
 
