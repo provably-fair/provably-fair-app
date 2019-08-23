@@ -23,7 +23,8 @@ class Main extends React.Component {
         serverSeed:'',
         nonce:0,
         betData:[],
-        cryptoGames:false,
+        cryptoGames:true,
+        primeDice:false,
         diceResult:0,
         diceVerify:0
       }
@@ -109,11 +110,11 @@ class Main extends React.Component {
             i++;
       }
       console.log('betData', betData);
-      this.setState({betData:betData})
+      this.setState({betData:betData});
     }
 
     render() {
-      const { gettingStarted, settings, verification, operators, clientSeed, serverSeed, nonce, betData, cryptoGames, diceResult, diceVerify } = this.state;
+      const { gettingStarted, settings, verification, operators, clientSeed, serverSeed, nonce, betData, cryptoGames,primeDice, diceResult, diceVerify } = this.state;
         return (
             <Frame head={[<link type="text/css" rel="stylesheet" href={chrome.runtime.getURL("/static/css/content.css")} ></link>]}>
                <FrameContextConsumer>
@@ -189,7 +190,6 @@ class Main extends React.Component {
                                   </li>
                                   <li className="nav-item" onClick={()=>{
                                     this.setState({gettingStarted:false,settings:false, verification:true});
-                                    this.getBetData();
                                   }}>
                                       <a className="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-2-tab" data-toggle="tab" href="#tabs-icons-text-2" role="tab" aria-controls="tabs-icons-text-2" aria-selected="false"><i className="fa fa-bell-55 mr-2"></i>Verification</a>
                                   </li>
@@ -244,7 +244,6 @@ class Main extends React.Component {
                                   </li>
                                   <li className="nav-item show" onClick={()=>{
                                     this.setState({gettingStarted:false,settings:false, verification:true});
-                                    this.getBetData();
                                   }}>
                                       <a className="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-2-tab" data-toggle="tab" href="#tabs-icons-text-2" role="tab" aria-controls="tabs-icons-text-2" aria-selected="false"><i className="fa fa-bell-55 mr-2"></i>Verification</a>
                                   </li>
@@ -253,10 +252,10 @@ class Main extends React.Component {
                                   </li>
                               </ul>
                             </div>
-                              <table class="table align-items-center table-flush table-hover" style={{display:cryptoGames?'block':'none'}}>
+                            <div className="crypto-games" style={{display:cryptoGames?'block':'none'}}>
+                              <table class="table align-items-center table-flush table-hover">
                                 <thead class="thead-light">
                                   <tr>
-
                                     <th>Id</th>
                                     <th>Game</th>
                                     <th>Roll</th>
@@ -285,15 +284,18 @@ class Main extends React.Component {
 }
                                 </tbody>
                               </table>
-                              <div className="form-group">
-                                <button type="button" class="btn btn-secondary m-2" onClick={()=>{
-                                  this.handleVerifyBet(serverSeed, clientSeed, nonce);
-                                  console.log(serverSeed, clientSeed, nonce);
-                                }}> Verify</button>
+                            </div>
+                              <div className="primeDice" style={{display:primeDice?'block':'none'}}>
+                                <div className="form-group">
+                                  <button type="button" class="btn btn-secondary m-2" onClick={()=>{
+                                    this.handleVerifyBet(serverSeed, clientSeed, nonce);
+                                    console.log(serverSeed, clientSeed, nonce);
+                                  }}> Verify</button>
 
+                                </div>
+                                <div class="alert alert-info" role="alert">
+                                  <strong>Your verified result : {diceVerify}</strong>
                               </div>
-                              <div class="alert alert-info" role="alert">
-                                <strong>Your verified result : {diceVerify}</strong>
                             </div>
                               <ul className="nav nav-pills nav-pills-circle ml-5 pl-3" id="tabs_2" role="tablist">
                                 <li className="nav-item">
