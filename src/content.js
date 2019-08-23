@@ -6,6 +6,7 @@ import Frame, { FrameContextConsumer }from 'react-frame-component';
 import axios from 'axios';
 import createHmac from 'create-hmac';
 import uuidv4 from 'uuid/v4';
+import cryptoGamesIcon from './assets/img/cryptogames.png';
 import "./content.css";
 import './assets/css/argon.css';
 import './assets/vendor/font-awesome/css/font-awesome.css';
@@ -343,7 +344,9 @@ class Main extends React.Component {
                               </ul>
                             </div>
                               <div className="operators-icons">
-                                <img src="assets/img/cryptogames.png" />
+                                <div className="p-3 m-3">
+                                  <img src={cryptoGamesIcon} />
+                                </div>
                               </div>
 
                               <ul className="nav nav-pills nav-pills-circle ml-5 pl-3" id="tabs_2" role="tablist">
