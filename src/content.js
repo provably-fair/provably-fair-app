@@ -105,8 +105,8 @@ class Main extends React.Component {
       return dec/1000;
     };
       let diceVerify = roll(serverSeed, clientSeed);
-      // this.setState({diceVerify:diceVerify});
-      // console.log("diceVerify",diceVerify);
+      this.setState({diceVerify:diceVerify});
+      console.log("diceVerify",diceVerify);
     }
 
     getCoinData = async () => {
