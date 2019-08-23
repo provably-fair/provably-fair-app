@@ -31,6 +31,7 @@
     "hex2dec": "^1.1.2",
     "html-webpack-plugin": "2.29.0",
     "jest": "20.0.4",
+    "js-sha512": "^0.8.0",
     "mnemonic": "^1.0.1",
     "object-assign": "4.1.1",
     "postcss-flexbugs-fixes": "3.2.0",
