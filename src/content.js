@@ -32,7 +32,8 @@ class Main extends React.Component {
         diceResult:0,
         diceVerify:0,
         user:'',
-        apiKey:''
+        apiKey:'',
+        betId:null
       }
     }
 
@@ -135,25 +136,22 @@ class Main extends React.Component {
       this.setState({user:user.data.Nickname});
     }
 
-    getBetData = async () => {
+    getBetData = async (betId) => {
       let { betData, user } = this.state;
       betData = [];
-      let i=3917366279;
-      while(i<4017365680){
+      let i=betId?betId:3917366279;
         const bet =  await axios.get(`https://api.crypto-games.net/v1/bet/${i}`);
           if(bet.data.User==user){
               betData.push(bet.data)
               this.setState({betData:betData});
             }
-            i++;
 
             console.log('betData', betData);
-      }
 
     }
 
     render() {
-      const { gettingStarted, settings, verification, operators, clientSeed, serverSeed, nonce, betData, cryptoGames,primeDice, diceResult, diceVerify, verify, apiKey, enterAPI } = this.state;
+      const { gettingStarted, settings, verification, operators, clientSeed, serverSeed, nonce, betData, cryptoGames,primeDice, diceResult, diceVerify, verify, apiKey, enterAPI, betId } = this.state;
         return (
             <Frame head={[<link type="text/css" rel="stylesheet" href={chrome.runtime.getURL("/static/css/content.css")} ></link>]}>
                <FrameContextConsumer>
@@ -390,7 +388,13 @@ class Main extends React.Component {
                                 </tbody>
                               </table>
 
-
+                              <div className="form-group">
+                                <label className="form-control-label">Enter Your BetId to search</label>
+                                <input className="form-control form-control-sm" type="text" value={betId} placeholder="Bet Id" onChange={(e)=>{this.setState({betId:e.target.value})}}/>
+                                <button type="button" class="btn btn-secondary m-2" onClick={()=>{
+                                  this.getBetData(betId)
+                                }}> Submit</button>
+                              </div>
 
                             </div>
 
