@@ -31,10 +31,9 @@ class Main extends React.Component {
         verify:false,
         diceResult:0,
         diceVerify:0,
-        user:'Stefan007',
+        user:'',
         apiKey:''
       }
-      this.getBetData();
     }
 
 
@@ -130,23 +129,24 @@ class Main extends React.Component {
 
     getUser = async (apiKey) => {
       const user = await axios.get(`https://api.crypto-games.net/v1/user/btc/${apiKey}`);
-      console.log(user.data.Nickname);
       this.setState({user:user.data.Nickname});
     }
 
     getBetData = async () => {
       let { betData, user } = this.state;
-      let i=3917365680;
-      while(true){
+      betData = [];
+      let i=3917366279;
+      while(i<4017365680){
         const bet =  await axios.get(`https://api.crypto-games.net/v1/bet/${i}`);
           if(bet.data.User==user){
               betData.push(bet.data)
-              console.log(user);
+              this.setState({betData:betData});
             }
             i++;
+
+            console.log('betData', betData);
       }
-      console.log('betData', betData);
-      this.setState({betData:betData});
+
     }
 
     render() {
@@ -167,12 +167,13 @@ class Main extends React.Component {
                                  <li className="nav-item"
                                  onClick={()=>{
                                    this.setState({gettingStarted:false, settings:true, verification:false, operators:false});
-                                   this.getCoinData();
                                  }}>
                                      <a className="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-1-tab" data-toggle="tab" href="#tabs-icons-text-1" role="tab" aria-controls="tabs-icons-text-1" aria-selected="true"><i className="fa fa-cloud-upload-96 mr-2"></i>Settings</a>
                                  </li>
                                  <li className="nav-item" onClick={()=>{
                                    this.setState({gettingStarted:false,settings:false, verification:true, operators:false});
+                                   this.getBetData()
+
                                  }}>
                                      <a className="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-2-tab" data-toggle="tab" href="#tabs-icons-text-2" role="tab" aria-controls="tabs-icons-text-2" aria-selected="false"><i className="fa fa-bell-55 mr-2"></i>Verification</a>
                                  </li>
@@ -194,7 +195,6 @@ class Main extends React.Component {
                             <p><span style={{fontStyle:'bold'}}>Operator</span> is a CGF verified operator.</p>
                             <button className="btn btn-info mb-3" type="button" onClick={()=>{
                               this.setState({gettingStarted:!gettingStarted, enterAPI:true});
-                              this.getUser();
                             }}>
                             Get Started Now
                             </button>
@@ -227,6 +227,7 @@ class Main extends React.Component {
                                   </li>
                                   <li className="nav-item" onClick={()=>{
                                     this.setState({gettingStarted:false,settings:false, verification:true});
+                                    this.getBetData()
                                   }}>
                                       <a className="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-2-tab" data-toggle="tab" href="#tabs-icons-text-2" role="tab" aria-controls="tabs-icons-text-2" aria-selected="false"><i className="fa fa-bell-55 mr-2"></i>Verification</a>
                                   </li>
@@ -241,8 +242,7 @@ class Main extends React.Component {
                               <label className="form-control-label">Enter Your API Key</label>
                               <input className="form-control form-control-sm" type="text" value={apiKey} placeholder="API Key" onChange={(e)=>{this.setState({apiKey:e.target.value})}}/>
                               <button type="button" class="btn btn-secondary m-2" onClick={()=>{
-                                this.setState({gettingStarted:false, verification:false, cryptoGames:false,enterAPI:true})
-                                this.getUser(apiKey)
+                                this.setState({gettingStarted:false, operators:true,enterAPI:false})
                               }}> Submit</button>
                             </div>
 
@@ -279,6 +279,7 @@ class Main extends React.Component {
                                   </li>
                                   <li className="nav-item" onClick={()=>{
                                     this.setState({gettingStarted:false,settings:false, verification:true});
+                                    this.getBetData()
                                   }}>
                                       <a className="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-2-tab" data-toggle="tab" href="#tabs-icons-text-2" role="tab" aria-controls="tabs-icons-text-2" aria-selected="false"><i className="fa fa-bell-55 mr-2"></i>Verification</a>
                                   </li>
@@ -437,12 +438,13 @@ class Main extends React.Component {
                               <ul className="nav nav-pills nav-fill flex-md-row" id="tabs-icons-text" role="tablist">
                                   <li className="nav-item" onClick={()=>{
                                     this.setState({gettingStarted:false, settings:true, verification:false, operators:false});
-                                    this.getCoinData();
                                   }}>
                                       <a className="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-1-tab" data-toggle="tab" href="#tabs-icons-text-1" role="tab" aria-controls="tabs-icons-text-1" aria-selected="true"><i className="fa fa-cloud-upload-96 mr-2"></i>Settings</a>
                                   </li>
                                   <li className="nav-item" onClick={()=>{
                                     this.setState({gettingStarted:false,settings:false, verification:true, operators:false});
+                                    this.getBetData()
+
                                   }}>
                                       <a className="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-2-tab" data-toggle="tab" href="#tabs-icons-text-2" role="tab" aria-controls="tabs-icons-text-2" aria-selected="false"><i className="fa fa-bell-55 mr-2"></i>Verification</a>
                                   </li>
@@ -456,6 +458,7 @@ class Main extends React.Component {
                               <div className="operators-icons">
                                 <div className="m-3" onClick={()=>{
                                   this.setState({operators:false, primeDice:false, verification:true, cryptoGames:true})
+                                  this.betData()
                                 }}>
                                   <img src={cryptoGamesIcon}  style={{width:"144.95", cursor:'pointer'}} title="Crypto Games"/>
                                 </div>
