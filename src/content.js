@@ -100,7 +100,7 @@ class Main extends React.Component {
 
       // return dec/1000;
     };
-      // let diceVerify = roll(serverSeed, clientSeed);
+      let diceVerify = roll(serverSeed, clientSeed);
       // this.setState({diceVerify:diceVerify});
       // console.log("diceVerify",diceVerify);
     }
@@ -307,7 +307,7 @@ class Main extends React.Component {
                                       <td>
                                         {item.DateCreated}
                                       </td>
-                                      <td onClick={()=>{
+                                      <td  style={{cursor:'pointer'}} onClick={()=>{
                                         this.handleCryptoGamesBet(item.ServerSeed, item.ClientSeed)
                                       }}>
                                         +
