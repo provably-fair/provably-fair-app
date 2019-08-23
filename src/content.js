@@ -29,7 +29,8 @@ class Main extends React.Component {
         primeDice:false,
         verify:false,
         diceResult:0,
-        diceVerify:0
+        diceVerify:0,
+        user:'Shahista'
       }
       this.getBetData();
     }
@@ -121,17 +122,24 @@ class Main extends React.Component {
     }
 
     getBalance = async () => {
-      const balance = axios.get('https://api.crypto-games.net/v1/balance/btc/49odKs01H8tOrOCY21Vsnqkuwo6KGuZ5RZ6mBigrzqacI1MFIs');
+      const balance = await axios.get('https://api.crypto-games.net/v1/balance/btc/49odKs01H8tOrOCY21Vsnqkuwo6KGuZ5RZ6mBigrzqacI1MFIs');
       console.log(balance.data);
     }
 
+    getUser = async () => {
+      const user = await axios.get('https://api.crypto-games.net/v1/user/btc/49odKs01H8tOrOCY21Vsnqkuwo6KGuZ5RZ6mBigrzqacI1MFIs');
+      console.log(user.data.Nickname);
+      this.setState({user:user.data.Nickname});
+    }
+
     getBetData = async () => {
-      let { betData } = this.state;
-      let i=0
-      while(i<9){
-        const bet =  await axios.get(`https://api.crypto-games.net/v1/bet/327333161${i}`);
-          if(bet.data.User=="Shahista"){
+      let { betData, user } = this.state;
+      let i=3273331610;
+      while(true){
+        const bet =  await axios.get(`https://api.crypto-games.net/v1/bet/${i}`);
+          if(bet.data.User==user){
               betData.push(bet.data)
+              console.log(user);
             }
             i++;
       }
@@ -184,7 +192,7 @@ class Main extends React.Component {
                             <p><span style={{fontStyle:'bold'}}>Operator</span> is a CGF verified operator.</p>
                             <button className="btn btn-info mb-3" type="button" onClick={()=>{
                               this.setState({gettingStarted:!gettingStarted, settings:true});
-                              this.getBalance();
+                              this.getUser();
                             }}>
                             Get Started Now
                             </button>
