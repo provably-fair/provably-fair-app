@@ -27,6 +27,7 @@ class Main extends React.Component {
         betData:[],
         cryptoGames:true,
         primeDice:false,
+        verify:false,
         diceResult:0,
         diceVerify:0
       }
@@ -100,8 +101,9 @@ class Main extends React.Component {
       return dec/1000;
     };
       let diceVerify = roll(serverSeed, clientSeed);
-      this.setState({diceVerify:diceVerify});
+      this.setState({diceVerify:diceVerify, verify:true, serverSeed:serverSeed, clientSeed:clientSeed});
       console.log("diceVerify",diceVerify);
+
     }
 
     getCoinData = async () => {
@@ -138,7 +140,7 @@ class Main extends React.Component {
     }
 
     render() {
-      const { gettingStarted, settings, verification, operators, clientSeed, serverSeed, nonce, betData, cryptoGames,primeDice, diceResult, diceVerify } = this.state;
+      const { gettingStarted, settings, verification, operators, clientSeed, serverSeed, nonce, betData, cryptoGames,primeDice, diceResult, diceVerify, verify } = this.state;
         return (
             <Frame head={[<link type="text/css" rel="stylesheet" href={chrome.runtime.getURL("/static/css/content.css")} ></link>]}>
                <FrameContextConsumer>
@@ -309,15 +311,20 @@ class Main extends React.Component {
                                       <td  style={{cursor:'pointer'}} onClick={()=>{
                                         this.handleCryptoGamesBet(item.ServerSeed, item.ClientSeed)
                                       }}>
-                                        +
+                                        Verify
                                       </td>
+
                                     </tr>
 
                                   })
 }
                                 </tbody>
                               </table>
+
+
+
                             </div>
+
                             <div className="primeDice" style={{display:primeDice?'block':'none'}}>
                                 <div className="form-group">
                                   <button type="button" class="btn btn-secondary m-2" onClick={()=>{
@@ -330,6 +337,20 @@ class Main extends React.Component {
                                   <strong>Your verified result : {diceVerify}</strong>
                               </div>
                             </div>
+                            {
+                            <div style={{display:verify?'block':'none'}}>
+                              <div class="alert alert-info" role="alert">
+                                <strong>Your verified result : {diceVerify}</strong>
+                              </div>
+                                <div class="alert alert-primary" role="alert" style={{fontSize: '11px'}}>
+                                  ServerSeed : {serverSeed}
+                              </div>
+                              <div class="alert alert-warning" role="alert" style={{fontSize: '11px'}}>
+                                Client Seed : {clientSeed}
+                              </div>
+                          </div>
+
+                            }
                               <ul className="nav nav-pills nav-pills-circle ml-5 pl-3" id="tabs_2" role="tablist">
                                 <li className="nav-item">
                                   <a className="nav-link rounded-circle " id="home-tab" data-toggle="tab" href="#tabs_2_1" role="tab" aria-controls="home" aria-selected="true">
