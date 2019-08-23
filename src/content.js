@@ -130,17 +130,19 @@ class Main extends React.Component {
                              <ul className="nav nav-pills nav-fill flex-md-row" id="tabs-icons-text" role="tablist">
                                  <li className="nav-item"
                                  onClick={()=>{
-                                   this.setState({gettingStarted:false, settings:true});
+                                   this.setState({gettingStarted:false, settings:true, verification:false, operators:false});
                                    this.getCoinData();
                                  }}>
                                      <a className="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-1-tab" data-toggle="tab" href="#tabs-icons-text-1" role="tab" aria-controls="tabs-icons-text-1" aria-selected="true"><i className="fa fa-cloud-upload-96 mr-2"></i>Settings</a>
                                  </li>
                                  <li className="nav-item" onClick={()=>{
-                                   this.setState({gettingStarted:false,settings:false, verification:true});
+                                   this.setState({gettingStarted:false,settings:false, verification:true, operators:false});
                                  }}>
                                      <a className="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-2-tab" data-toggle="tab" href="#tabs-icons-text-2" role="tab" aria-controls="tabs-icons-text-2" aria-selected="false"><i className="fa fa-bell-55 mr-2"></i>Verification</a>
                                  </li>
-                                 <li className="nav-item">
+                                 <li className="nav-item" onClick={()=>{
+                                   this.setState({gettingStarted:false,settings:false, verification:false, operators:true});
+                                 }}>
                                      <a className="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-3-tab" data-toggle="tab" href="#tabs-icons-text-3" role="tab" aria-controls="tabs-icons-text-3" aria-selected="false"><i className="fa fa-calendar-grid-58 mr-2"></i>Operators</a>
                                  </li>
                              </ul>
@@ -237,17 +239,19 @@ class Main extends React.Component {
                             <div className="nav-wrapper">
                               <ul className="nav nav-pills nav-fill flex-md-row" id="tabs-icons-text" role="tablist">
                                   <li className="nav-item" onClick={()=>{
-                                    this.setState({gettingStarted:false, settings:true, verification:false});
+                                    this.setState({gettingStarted:false, settings:true, verification:false, operators:false});
                                     this.getCoinData();
                                   }}>
                                       <a className="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-1-tab" data-toggle="tab" href="#tabs-icons-text-1" role="tab" aria-controls="tabs-icons-text-1" aria-selected="true"><i className="fa fa-cloud-upload-96 mr-2"></i>Settings</a>
                                   </li>
                                   <li className="nav-item show" onClick={()=>{
-                                    this.setState({gettingStarted:false,settings:false, verification:true});
+                                    this.setState({gettingStarted:false,settings:false, verification:true, operators:false});
                                   }}>
                                       <a className="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-2-tab" data-toggle="tab" href="#tabs-icons-text-2" role="tab" aria-controls="tabs-icons-text-2" aria-selected="false"><i className="fa fa-bell-55 mr-2"></i>Verification</a>
                                   </li>
-                                  <li className="nav-item">
+                                  <li className="nav-item" onClick={()=>{
+                                    this.setState({gettingStarted:false,settings:false, verification:false, operators:true});
+                                  }}>
                                       <a className="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-3-tab" data-toggle="tab" href="#tabs-icons-text-3" role="tab" aria-controls="tabs-icons-text-3" aria-selected="false"><i className="fa fa-calendar-grid-58 mr-2"></i>Operators</a>
                                   </li>
                               </ul>
@@ -285,7 +289,7 @@ class Main extends React.Component {
                                 </tbody>
                               </table>
                             </div>
-                              <div className="primeDice" style={{display:primeDice?'block':'none'}}>
+                            <div className="primeDice" style={{display:primeDice?'block':'none'}}>
                                 <div className="form-group">
                                   <button type="button" class="btn btn-secondary m-2" onClick={()=>{
                                     this.handleVerifyBet(serverSeed, clientSeed, nonce);
@@ -315,6 +319,52 @@ class Main extends React.Component {
                                 </li>
                               </ul>
                             </div>
+
+
+                            <div class="table-responsive" style={{display:operators?'block':'none'}}>
+                            <div className="nav-wrapper">
+                              <ul className="nav nav-pills nav-fill flex-md-row" id="tabs-icons-text" role="tablist">
+                                  <li className="nav-item" onClick={()=>{
+                                    this.setState({gettingStarted:false, settings:true, verification:false, operators:false});
+                                    this.getCoinData();
+                                  }}>
+                                      <a className="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-1-tab" data-toggle="tab" href="#tabs-icons-text-1" role="tab" aria-controls="tabs-icons-text-1" aria-selected="true"><i className="fa fa-cloud-upload-96 mr-2"></i>Settings</a>
+                                  </li>
+                                  <li className="nav-item" onClick={()=>{
+                                    this.setState({gettingStarted:false,settings:false, verification:true, operators:false});
+                                  }}>
+                                      <a className="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-2-tab" data-toggle="tab" href="#tabs-icons-text-2" role="tab" aria-controls="tabs-icons-text-2" aria-selected="false"><i className="fa fa-bell-55 mr-2"></i>Verification</a>
+                                  </li>
+                                  <li className="nav-item show" onClick={()=>{
+                                    this.setState({gettingStarted:false,settings:false, verification:false, operators:true});
+                                  }}>
+                                      <a className="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-3-tab" data-toggle="tab" href="#tabs-icons-text-3" role="tab" aria-controls="tabs-icons-text-3" aria-selected="false"><i className="fa fa-calendar-grid-58 mr-2"></i>Operators</a>
+                                  </li>
+                              </ul>
+                            </div>
+                              <div className="operators-icons">
+                                <img src="assets/img/cryptogames.png" />
+                              </div>
+
+                              <ul className="nav nav-pills nav-pills-circle ml-5 pl-3" id="tabs_2" role="tablist">
+                                <li className="nav-item">
+                                  <a className="nav-link rounded-circle " id="home-tab" data-toggle="tab" href="#tabs_2_1" role="tab" aria-controls="home" aria-selected="true">
+                                    <span className="nav-link-icon d-block"></span>
+                                  </a>
+                                </li>
+                                <li className="nav-item">
+                                  <a className="nav-link active" id="profile-tab" data-toggle="tab" href="#tabs_2_2" role="tab" aria-controls="profile" aria-selected="false">
+                                    <span className="nav-link-icon d-block"></span>
+                                  </a>
+                                </li>
+                                <li className="nav-item">
+                                  <a className="nav-link" id="contact-tab" data-toggle="tab" href="#tabs_2_3" role="tab" aria-controls="contact" aria-selected="false">
+                                    <span className="nav-link-icon d-block"></span>
+                                  </a>
+                                </li>
+                              </ul>
+                            </div>
+
 
                            </div>
                         )
