@@ -221,16 +221,19 @@ class Main extends React.Component {
                                   }}>
                                       <a className="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-2-tab" data-toggle="tab" href="#tabs-icons-text-2" role="tab" aria-controls="tabs-icons-text-2" aria-selected="false"><i className="fa fa-bell-55 mr-2"></i>Verification</a>
                                   </li>
-                                  <li className="nav-item">
+                                  <li className="nav-item" onClick={()=>{
+                                    this.setState({gettingStarted:false,settings:false, verification:false, operators:true});
+                                  }}>
                                       <a className="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-3-tab" data-toggle="tab" href="#tabs-icons-text-3" role="tab" aria-controls="tabs-icons-text-3" aria-selected="false"><i className="fa fa-calendar-grid-58 mr-2"></i>Operators</a>
                                   </li>
                               </ul>
                             </div>
                             <div className="form-group">
                               <label className="form-control-label">Server Seed</label>
-                              <input className="form-control form-control-sm" type="text" placeholder="7dfh6fg6jg6k4hj5khj6kl4h67l7mbngdcghgkv" onChange={(e)=>{this.setState({serverSeed:e.target.value})}}/>
+                              <input className="form-control form-control-sm" type="text" value={serverSeed} placeholder="7dfh6fg6jg6k4hj5khj6kl4h67l7mbngdcghgkv" onChange={(e)=>{this.setState({serverSeed:e.target.value})}}/>
                               <button type="button" class="btn btn-secondary m-2" onClick={()=>{
-                                this.setState({settings:false, verification:true})
+                                // this.setState({settings:false, verification:true})
+                                this.handleCryptoGamesBet(serverSeed, clientSeed)
                               }}> Submit</button>
                             </div>
                             <div className="form-group">
