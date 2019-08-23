@@ -6,6 +6,7 @@ import Frame, { FrameContextConsumer }from 'react-frame-component';
 import axios from 'axios';
 import createHmac from 'create-hmac';
 import uuidv4 from 'uuid/v4';
+import converter from 'hex2dec';
 import cryptoGamesIcon from './assets/img/cryptogames.png';
 import "./content.css";
 import './assets/css/argon.css';
@@ -79,6 +80,29 @@ class Main extends React.Component {
       this.setState({diceVerify:diceVerify});
       console.log(diceVerify);
       this.setState({nonce:0})
+    }
+
+
+    handleCryptoGamesBet = (serverSeed,clientSeed) => {
+      // bet made with seed pair (excluding current bet)
+      // crypto lib for hmac function
+      const crypto = require('crypto');
+      const roll = function(key, text) {
+      // create HMAC using server seed as key and client seed as message
+      const hash = crypto .createHmac('sha512', key) .update(text) .digest('hex');
+      let index = 0;
+      let lucky = hash.substring(index, index + 4);
+
+      console.log('lucky', lucky);
+
+      let dec = converter.hexToDec(lucky);
+      console.log("dec",dec);
+
+      return dec/1000;
+    };
+      let diceVerify = roll(serverSeed, `${clientSeed}`);
+      this.setState({diceVerify:diceVerify});
+      console.log("diceVerify",diceVerify);
     }
 
     getCoinData = async () => {
@@ -282,6 +306,11 @@ class Main extends React.Component {
                                       </td>
                                       <td>
                                         {item.DateCreated}
+                                      </td>
+                                      <td onClick={()=>{
+                                        this.handleCryptoGamesBet(item.ServerSeed, item.ClientSeed)
+                                      }}>
+                                        +
                                       </td>
                                     </tr>
 
