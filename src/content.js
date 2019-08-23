@@ -89,19 +89,14 @@ class Main extends React.Component {
       const roll = function(key, text) {
       // create HMAC using server seed as key and client seed as message
       const hash = crypto .createHash('sha512') .update(`${key}${text}`) .digest('hex');
-      console.log('hash',hash);
-
       let index = 0;
       let lucky = hash.substring(index, index + 5);
-      console.log('lucky', lucky);
-
       let dec = converter.hexToDec(lucky);
       let str = dec.toString();
       if(str.length>5){
-          str.slice(str.length-5);
+          str = str.slice(str.length-5);
         }
       dec = parseInt(str);
-
       return dec/1000;
     };
       let diceVerify = roll(serverSeed, clientSeed);
