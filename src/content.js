@@ -122,9 +122,12 @@ class Main extends React.Component {
       console.log(coin.data);
     }
 
-    getBalance = async () => {
-      const balance = await axios.get('https://api.crypto-games.net/v1/balance/btc/49odKs01H8tOrOCY21Vsnqkuwo6KGuZ5RZ6mBigrzqacI1MFIs');
-      console.log(balance.data);
+    getServerSeed = async (apiKey) => {
+      let {serverSeed} = this.state;
+      const seed = await axios.get(`https://api.crypto-games.net/v1/nextseed/btc/${apiKey}`);
+
+      console.log(seed.data.NextServerSeedHash);
+      this.setState({serverSeed:seed.data.NextServerSeedHash})
     }
 
     getUser = async (apiKey) => {
@@ -242,7 +245,9 @@ class Main extends React.Component {
                               <label className="form-control-label">Enter Your API Key</label>
                               <input className="form-control form-control-sm" type="text" value={apiKey} placeholder="API Key" onChange={(e)=>{this.setState({apiKey:e.target.value})}}/>
                               <button type="button" class="btn btn-secondary m-2" onClick={()=>{
-                                this.setState({gettingStarted:false, operators:true,enterAPI:false})
+                                this.setState({gettingStarted:false, settings:true,enterAPI:false})
+                                this.getUser(apiKey)
+                                this.getServerSeed(apiKey)
                               }}> Submit</button>
                             </div>
 
@@ -291,7 +296,7 @@ class Main extends React.Component {
                               </ul>
                             </div>
                             <div className="form-group">
-                              <label className="form-control-label">Server Seed</label>
+                              <label className="form-control-label">Server Seed Hash</label>
                               <input className="form-control form-control-sm" type="text" value={serverSeed} placeholder="7dfh6fg6jg6k4hj5khj6kl4h67l7mbngdcghgkv" onChange={(e)=>{this.setState({serverSeed:e.target.value})}}/>
                               <button type="button" class="btn btn-secondary m-2" onClick={()=>{
                                 this.setState({settings:false, verification:true, cryptoGames:false})
@@ -458,7 +463,6 @@ class Main extends React.Component {
                               <div className="operators-icons">
                                 <div className="m-3" onClick={()=>{
                                   this.setState({operators:false, primeDice:false, verification:true, cryptoGames:true})
-                                  this.betData()
                                 }}>
                                   <img src={cryptoGamesIcon}  style={{width:"144.95", cursor:'pointer'}} title="Crypto Games"/>
                                 </div>
