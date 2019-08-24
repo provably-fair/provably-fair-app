@@ -33,9 +33,8 @@ class Main extends React.Component {
         diceVerify:0,
         user:'',
         apiKey:'',
-        betId:null,
+        BetId:null,
         Balance:null,
-        Profit:null,
         Roll:null
       }
     }
@@ -147,16 +146,15 @@ class Main extends React.Component {
         data, { headers: {'Content-Type': 'application/json' }}
       );
       console.log(bet.data);
-      let { Balance, BetId, Profit, Roll } = bet.data
-      console.log(Balance, BetId, Profit.toNumber(), Roll);
-      Profit = Profit.toNumber();
-      this.setState({betId:BetId, Balance:Balance, Profit:Profit, Roll:Roll});
+      let { Balance, BetId, Roll } = bet.data
+      console.log(Balance, BetId, Roll);
+      this.setState({BetId:BetId, Balance:Balance, Roll:Roll});
     }
 
-    getBetData = async (betId) => {
+    getBetData = async (BetId) => {
       let { betData, user } = this.state;
       betData = [];
-      let i=betId?betId:3917366279;
+      let i=BetId?BetId:3917366279;
         const bet =  await axios.get(`https://api.crypto-games.net/v1/bet/${i}`);
           if(bet.data.User==user){
               betData.push(bet.data)
@@ -168,8 +166,8 @@ class Main extends React.Component {
     }
 
     render() {
-      const { gettingStarted, settings, verification, operators, clientSeed, serverSeed, nonce, betData, cryptoGames,primeDice, diceResult, diceVerify, verify, apiKey, enterAPI, betId,
-      Balance, BetId, Profit, Roll } = this.state;
+      const { gettingStarted, settings, verification, operators, clientSeed, serverSeed, nonce, betData, cryptoGames,primeDice, diceResult, diceVerify, verify, apiKey, enterAPI,
+      Balance, BetId, Roll } = this.state;
         return (
             <Frame head={[<link type="text/css" rel="stylesheet" href={chrome.runtime.getURL("/static/css/content.css")} ></link>]}>
                <FrameContextConsumer>
@@ -411,9 +409,9 @@ class Main extends React.Component {
 
                               <div className="form-group">
                                 <label className="form-control-label">Enter Your BetId to search</label>
-                                <input className="form-control form-control-sm" type="text" value={betId} placeholder="Bet Id" onChange={(e)=>{this.setState({betId:e.target.value})}}/>
+                                <input className="form-control form-control-sm" type="text" value={BetId} placeholder="Bet Id" onChange={(e)=>{this.setState({BetId:e.target.value})}}/>
                                 <button type="button" class="btn btn-secondary m-2" onClick={()=>{
-                                  this.getBetData(betId)
+                                  this.getBetData(BetId)
                                 }}> Submit</button>
                               </div>
 
@@ -444,13 +442,13 @@ class Main extends React.Component {
 
                           <div style={{display:!verify?'block':'none'}}>
                             <div class="alert alert-info" role="alert">
-                              <strong>Your Placed Bet result : {Balance, BetId, Profit, Roll}</strong>
+                              <strong>Your Placed Bet result : {Roll}</strong>
                             </div>
                               <div class="alert alert-primary" role="alert" style={{fontSize: '11px'}}>
-                                ServerSeed : {serverSeed}
+                                Balance : {Balance}
                             </div>
                             <div class="alert alert-warning" role="alert" style={{fontSize: '11px'}}>
-                              Client Seed : {clientSeed}
+                              BetId : {BetId}
                             </div>
                         </div>
 
