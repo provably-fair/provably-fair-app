@@ -144,6 +144,7 @@ class Main extends React.Component {
         data, { headers: {'Content-Type': 'application/json' }}
       );
       console.log(bet.data);
+      this.setState({betId:bet.data.BetId});
     }
 
     getBetData = async (betId) => {
@@ -310,8 +311,7 @@ class Main extends React.Component {
                                 this.getServerSeed(apiKey)
                               }}> Request</button>
                               <button type="button" class="btn btn-secondary m-2" onClick={()=>{
-                                this.setState({settings:false, verification:true, cryptoGames:false})
-                                this.handleCryptoGamesBet(serverSeed, clientSeed)
+                                this.setState({settings:false, verification:true})
                                 this.placeBet(apiKey)
                               }}> Submit</button>
                             </div>
