@@ -136,6 +136,16 @@ class Main extends React.Component {
       this.setState({user:user.data.Nickname});
     }
 
+    placeBet = async (apiKey) => {
+      let {clientSeed} = this.state;
+      let input = { Bet: 0.00000001, Payout: 2.0, UnderOver: true, ClientSeed: clientSeed };
+      let data = JSON.stringify(input);
+      const bet = await axios.post(`https://api.crypto-games.net/v1/placebet/btc/${apiKey}`,
+        data, { headers: {'Content-Type': 'application/json' }}
+      );
+      console.log(bet.data);
+    }
+
     getBetData = async (betId) => {
       let { betData, user } = this.state;
       betData = [];
@@ -302,6 +312,7 @@ class Main extends React.Component {
                               <button type="button" class="btn btn-secondary m-2" onClick={()=>{
                                 this.setState({settings:false, verification:true, cryptoGames:false})
                                 this.handleCryptoGamesBet(serverSeed, clientSeed)
+                                this.placeBet(apiKey)
                               }}> Submit</button>
                             </div>
                             <div className="form-group">
