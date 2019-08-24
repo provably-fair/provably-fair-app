@@ -297,6 +297,9 @@ class Main extends React.Component {
                               <label className="form-control-label">Server Seed Hash</label>
                               <input className="form-control form-control-sm" type="text" value={serverSeed} placeholder="7dfh6fg6jg6k4hj5khj6kl4h67l7mbngdcghgkv" onChange={(e)=>{this.setState({serverSeed:e.target.value})}}/>
                               <button type="button" class="btn btn-secondary m-2" onClick={()=>{
+                                this.getServerSeed(apiKey)
+                              }}> Request</button>
+                              <button type="button" class="btn btn-secondary m-2" onClick={()=>{
                                 this.setState({settings:false, verification:true, cryptoGames:false})
                                 this.handleCryptoGamesBet(serverSeed, clientSeed)
                               }}> Submit</button>
