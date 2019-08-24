@@ -33,7 +33,10 @@ class Main extends React.Component {
         diceVerify:0,
         user:'',
         apiKey:'',
-        betId:null
+        betId:null,
+        Balance:null,
+        Profit:null,
+        Roll:null
       }
     }
 
@@ -144,7 +147,10 @@ class Main extends React.Component {
         data, { headers: {'Content-Type': 'application/json' }}
       );
       console.log(bet.data);
-      this.setState({betId:bet.data.BetId});
+      let { Balance, BetId, Profit, Roll } = bet.data
+      console.log(Balance, BetId, Profit.toNumber(), Roll);
+      Profit = Profit.toNumber();
+      this.setState({betId:BetId, Balance:Balance, Profit:Profit, Roll:Roll});
     }
 
     getBetData = async (betId) => {
@@ -162,7 +168,8 @@ class Main extends React.Component {
     }
 
     render() {
-      const { gettingStarted, settings, verification, operators, clientSeed, serverSeed, nonce, betData, cryptoGames,primeDice, diceResult, diceVerify, verify, apiKey, enterAPI, betId } = this.state;
+      const { gettingStarted, settings, verification, operators, clientSeed, serverSeed, nonce, betData, cryptoGames,primeDice, diceResult, diceVerify, verify, apiKey, enterAPI, betId,
+      Balance, BetId, Profit, Roll } = this.state;
         return (
             <Frame head={[<link type="text/css" rel="stylesheet" href={chrome.runtime.getURL("/static/css/content.css")} ></link>]}>
                <FrameContextConsumer>
@@ -422,7 +429,7 @@ class Main extends React.Component {
                                 </div>
 
                             </div>
-                            {
+
                             <div style={{display:verify?'block':'none'}}>
                               <div class="alert alert-info" role="alert">
                                 <strong>Your verified result : {diceVerify}</strong>
@@ -435,7 +442,19 @@ class Main extends React.Component {
                               </div>
                           </div>
 
-                            }
+                          <div style={{display:!verify?'block':'none'}}>
+                            <div class="alert alert-info" role="alert">
+                              <strong>Your Placed Bet result : {Balance, BetId, Profit, Roll}</strong>
+                            </div>
+                              <div class="alert alert-primary" role="alert" style={{fontSize: '11px'}}>
+                                ServerSeed : {serverSeed}
+                            </div>
+                            <div class="alert alert-warning" role="alert" style={{fontSize: '11px'}}>
+                              Client Seed : {clientSeed}
+                            </div>
+                        </div>
+
+
                               <ul className="nav nav-pills nav-pills-circle ml-5 pl-3" id="tabs_2" role="tablist">
                                 <li className="nav-item">
                                   <a className="nav-link rounded-circle " id="home-tab" data-toggle="tab" href="#tabs_2_1" role="tab" aria-controls="home" aria-selected="true">
