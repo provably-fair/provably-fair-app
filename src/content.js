@@ -32,10 +32,11 @@ class Main extends React.Component {
         diceResult:0,
         diceVerify:0,
         user:'',
-        apiKey:'',
+        apiKey:null,
         BetId:null,
         Balance:null,
-        Roll:null
+        Roll:null,
+        nonceChecked:false
       }
     }
 
@@ -139,7 +140,7 @@ class Main extends React.Component {
     }
 
     placeBet = async (apiKey) => {
-      let {clientSeed} = this.state;
+      let { clientSeed, nonce } = this.state;
       let input = { Bet: 0.00000001, Payout: 2.0, UnderOver: true, ClientSeed: clientSeed };
       let data = JSON.stringify(input);
       const bet = await axios.post(`https://api.crypto-games.net/v1/placebet/btc/${apiKey}`,
@@ -167,7 +168,7 @@ class Main extends React.Component {
 
     render() {
       const { gettingStarted, settings, verification, operators, clientSeed, serverSeed, nonce, betData, cryptoGames,primeDice, diceResult, diceVerify, verify, apiKey, enterAPI,
-      Balance, BetId, Roll } = this.state;
+      Balance, BetId, Roll, nonceChecked } = this.state;
         return (
             <Frame head={[<link type="text/css" rel="stylesheet" href={chrome.runtime.getURL("/static/css/content.css")} ></link>]}>
                <FrameContextConsumer>
@@ -258,7 +259,7 @@ class Main extends React.Component {
                             <div className="form-group">
                               <label className="form-control-label">Enter Your API Key</label>
                               <input className="form-control form-control-sm" type="text" value={apiKey} placeholder="API Key" onChange={(e)=>{this.setState({apiKey:e.target.value})}}/>
-                              <button type="button" class="btn btn-secondary m-2" onClick={()=>{
+                              <button type="button" className="btn btn-secondary m-2" onClick={()=>{
                                 this.setState({gettingStarted:false, settings:true,enterAPI:false})
                                 this.getUser(apiKey)
                                 this.getServerSeed(apiKey)
@@ -312,10 +313,10 @@ class Main extends React.Component {
                             <div className="form-group">
                               <label className="form-control-label">Server Seed Hash</label>
                               <input className="form-control form-control-sm" type="text" value={serverSeed} placeholder="7dfh6fg6jg6k4hj5khj6kl4h67l7mbngdcghgkv" onChange={(e)=>{this.setState({serverSeed:e.target.value})}}/>
-                              <button type="button" class="btn btn-secondary m-2" onClick={()=>{
+                              <button type="button" className="btn btn-secondary m-2" onClick={()=>{
                                 this.getServerSeed(apiKey)
                               }}> Request</button>
-                              <button type="button" class="btn btn-secondary m-2" onClick={()=>{
+                              <button type="button" className="btn btn-secondary m-2" onClick={()=>{
                                 this.setState({settings:false, verification:true})
                                 this.placeBet(apiKey)
                               }}> Submit</button>
@@ -323,11 +324,15 @@ class Main extends React.Component {
                             <div className="form-group">
                               <label className="form-control-label">Client Seed</label>
                               <input className="form-control form-control-sm" type="text" value={clientSeed} placeholder="CURRENT CLIENT SEED" onChange={(e)=>{this.setState({clientSeed:e.target.value})}}/>
-                              <button type="button" class="btn btn-secondary m-2"   onClick={this.getClientSeed}> Generate</button>
+                              <button type="button" className="btn btn-secondary m-2"   onClick={this.getClientSeed}> Generate</button>
                             </div>
-                            <div className="form-group">
+                            <div className="custom-control custom-checkbox mb-3">
+                              <input className="custom-control-input" id="customCheck2" type="checkbox" checked={nonceChecked} onChange={(e)=>{this.setState({nonceChecked:e.target.checked})}}/>
+                              <label className="custom-control-label" for="customCheck2">Add Nonce.</label>
+                            </div>
+                            <div className="form-group" style={{display:nonceChecked?'block':'none'}}>
                               <label className="form-control-label">Nonce</label>
-                              <input className="form-control form-control-sm" type="text" placeholder="0" value={nonce}  onChange={(e)=>{this.setState({nonce:e.target.value})}}/>
+                              <input className="form-control form-control-sm" type="text" placeholder="" value={nonce}  onChange={(e)=>{this.setState({nonce:e.target.value})}}/>
                             </div>
                             <ul className="nav nav-pills nav-pills-circle ml-5 pl-3" id="tabs_2" role="tablist">
                               <li className="nav-item">
@@ -348,7 +353,7 @@ class Main extends React.Component {
                             </ul>
                             </div>
 
-                            <div class="table-responsive" style={{display:verification?'block':'none', fontSize: '11px'}}>
+                            <div className="table-responsive" style={{display:verification?'block':'none', fontSize: '11px'}}>
                             <div className="nav-wrapper">
                               <ul className="nav nav-pills nav-fill flex-md-row" id="tabs-icons-text" role="tablist">
                                   <li className="nav-item" onClick={()=>{
@@ -370,8 +375,8 @@ class Main extends React.Component {
                               </ul>
                             </div>
                             <div className="crypto-games" style={{display:cryptoGames?'block':'none'}}>
-                              <table class="table align-items-center table-flush table-hover">
-                                <thead class="thead-light">
+                              <table className="table align-items-center table-flush table-hover">
+                                <thead className="thead-light">
                                   <tr>
                                     <th>Id</th>
                                     <th>Game</th>
@@ -383,11 +388,11 @@ class Main extends React.Component {
                                 <tbody>
                                   {betData.map((item)=>{
                                     return <tr>
-                                      <td class="table-user">
+                                      <td className="table-user">
                                       {item.BetId}
                                       </td>
                                       <td>
-                                        <span class="text-muted">Dice</span>
+                                        <span className="text-muted">Dice</span>
                                       </td>
                                       <td>
                                       {item.Roll}
@@ -396,7 +401,7 @@ class Main extends React.Component {
                                         {item.DateCreated}
                                       </td>
                                       <div className="form-group  mt-5" style={{marginLeft: '-366px'}}>
-                                        <button type="button" class="btn btn-info" onClick={()=>{
+                                        <button type="button" className="btn btn-info" onClick={()=>{
                                           this.handleCryptoGamesBet(item.ServerSeed, item.ClientSeed)
                                         }}> Verify</button>
                                       </div>
@@ -410,7 +415,7 @@ class Main extends React.Component {
                               <div className="form-group">
                                 <label className="form-control-label">Enter Your BetId to search</label>
                                 <input className="form-control form-control-sm" type="text" value={BetId} placeholder="Bet Id" onChange={(e)=>{this.setState({BetId:e.target.value})}}/>
-                                <button type="button" class="btn btn-secondary m-2" onClick={()=>{
+                                <button type="button" className="btn btn-secondary m-2" onClick={()=>{
                                   this.getBetData(BetId)
                                 }}> Submit</button>
                               </div>
@@ -419,7 +424,7 @@ class Main extends React.Component {
 
                             <div className="primeDice" style={{display:primeDice?'block':'none'}}>
                                 <div className="form-group">
-                                  <button type="button" class="btn btn-secondary m-2" onClick={()=>{
+                                  <button type="button" className="btn btn-secondary m-2" onClick={()=>{
                                     this.handleVerifyBet(serverSeed, clientSeed, nonce);
                                     console.log(serverSeed, clientSeed, nonce);
                                   }}> Verify</button>
@@ -429,25 +434,25 @@ class Main extends React.Component {
                             </div>
 
                             <div style={{display:verify?'block':'none'}}>
-                              <div class="alert alert-info" role="alert">
+                              <div className="alert alert-info" role="alert">
                                 <strong>Your verified result : {diceVerify}</strong>
                               </div>
-                                <div class="alert alert-primary" role="alert" style={{fontSize: '11px'}}>
+                                <div className="alert alert-primary" role="alert" style={{fontSize: '11px'}}>
                                   ServerSeed : {serverSeed}
                               </div>
-                              <div class="alert alert-warning" role="alert" style={{fontSize: '11px'}}>
+                              <div className="alert alert-warning" role="alert" style={{fontSize: '11px'}}>
                                 Client Seed : {clientSeed}
                               </div>
                           </div>
 
                           <div style={{display:!verify?'block':'none'}}>
-                            <div class="alert alert-info" role="alert">
+                            <div className="alert alert-info" role="alert">
                               <strong>Your Placed Bet result : {Roll}</strong>
                             </div>
-                              <div class="alert alert-primary" role="alert" style={{fontSize: '11px'}}>
+                              <div className="alert alert-primary" role="alert" style={{fontSize: '11px'}}>
                                 Balance : {Balance}
                             </div>
-                            <div class="alert alert-warning" role="alert" style={{fontSize: '11px'}}>
+                            <div className="alert alert-warning" role="alert" style={{fontSize: '11px'}}>
                               BetId : {BetId}
                             </div>
                         </div>
@@ -473,7 +478,7 @@ class Main extends React.Component {
                             </div>
 
 
-                            <div class="table-responsive" style={{display:operators?'block':'none'}}>
+                            <div className="table-responsive" style={{display:operators?'block':'none'}}>
                             <div className="nav-wrapper">
                               <ul className="nav nav-pills nav-fill flex-md-row" id="tabs-icons-text" role="tablist">
                                   <li className="nav-item" onClick={()=>{
