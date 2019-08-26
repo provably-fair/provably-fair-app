@@ -42,12 +42,8 @@ class Main extends React.Component {
 
 
     componentDidMount(){
-      console.stdlog = console.log.bind(console);
-      console.logs = [];
-      console.log = function(){
-          console.logs.push(Array.from(arguments));
-          console.stdlog.apply(console, arguments);
-        }
+        console.log('window.localStorage.apiKey',window.localStorage.apiKey);
+        this.setState({apiKey:window.localStorage.apiKey})
     }
 
     getRandomInt = (max) => {
@@ -128,6 +124,7 @@ class Main extends React.Component {
 
     getServerSeed = async (apiKey) => {
       let {serverSeed} = this.state;
+      window.localStorage.setItem('apiKey', apiKey);
       const seed = await axios.get(`https://api.crypto-games.net/v1/nextseed/btc/${apiKey}`);
 
       console.log(seed.data.NextServerSeedHash);
@@ -149,13 +146,14 @@ class Main extends React.Component {
       console.log(bet.data);
       let { Balance, BetId, Roll } = bet.data
       console.log(Balance, BetId, Roll);
+      this.getBetData(BetId);
       this.setState({BetId:BetId, Balance:Balance, Roll:Roll});
     }
 
     getBetData = async (BetId) => {
       let { betData, user } = this.state;
       betData = [];
-      let i=BetId?BetId:3917366279;
+      let i=BetId;
         const bet =  await axios.get(`https://api.crypto-games.net/v1/bet/${i}`);
           if(bet.data.User==user){
               betData.push(bet.data)
