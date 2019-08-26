@@ -2,14 +2,42 @@
 /* src/content.js */
 import React from 'react';
 import ReactDOM from 'react-dom';
-import axios from 'axios';
 import Frame, { FrameContextConsumer }from 'react-frame-component';
+import axios from 'axios';
+import createHmac from 'create-hmac';
+import uuidv4 from 'uuid/v4';
+import converter from 'hex2dec';
+import cryptoGamesIcon from './assets/img/cryptogames.png';
 import "./content.css";
 import './assets/css/argon.css';
 import './assets/vendor/font-awesome/css/font-awesome.css';
 
 class Main extends React.Component {
 
+    constructor(){
+      super();
+      this.state = {
+        gettingStarted:true,
+        enterAPI:false,
+        settings:false,
+        verification:false,
+        operators:false,
+        clientSeed:'',
+        serverSeed:'',
+        nonce:0,
+        betData:[],
+        cryptoGames:true,
+        primeDice:false,
+        verify:false,
+        diceResult:0,
+        diceVerify:0,
+        user:'',
+        apiKey:'',
+        BetId:null,
+        Balance:null,
+        Roll:null
+      }
+    }
 
 
     componentDidMount(){
@@ -21,22 +49,125 @@ class Main extends React.Component {
         }
     }
 
+    getRandomInt = (max) => {
+      return Math.floor(Math.random() * Math.floor(max));
+    }
+
+    getClientSeed = () => {
+      let key = uuidv4();
+      let hash = createHmac('sha256', key)
+      .update('provably')
+      .digest('hex');
+      hash = hash.substring(0, 32);
+      this.setState({clientSeed:hash, nonce:0});
+    }
+
+    handleVerifyBet = (serverSeed,clientSeed, nonce) => {
+      // bet made with seed pair (excluding current bet)
+      // crypto lib for hmac function
+      const crypto = require('crypto');
+      const roll = function(key, text) {
+      // create HMAC using server seed as key and client seed as message
+      const hash = crypto .createHmac('sha512', key) .update(text) .digest('hex');
+      let index = 0;
+      let lucky = parseInt(hash.substring(index * 5, index * 5 + 5), 16);
+      // keep grabbing characters from the hash while greater than
+      while (lucky >= Math.pow(10, 6)) {
+        index++; lucky = parseInt(hash.substring(index * 5, index * 5 + 5), 16);
+      // if we reach the end of the hash, just default to highest number
+       if (index * 5 + 5 > 128) {
+         lucky = 9999; break;
+       }
+      }
+      lucky %= Math.pow(10, 4);
+      lucky /= Math.pow(10, 2); return lucky;
+    };
+      let diceVerify = roll(serverSeed, `${clientSeed}-${nonce}`);
+      this.setState({diceVerify:diceVerify});
+      console.log(diceVerify);
+      this.setState({nonce:0})
+    }
+
+
+    handleCryptoGamesBet = (serverSeed,clientSeed) => {
+      // crypto lib for hmac function
+      const crypto = require('crypto');
+      const roll = function(key, text) {
+      // create HMAC using server seed as key and client seed as message
+      const hash = crypto .createHash('sha512') .update(`${key}${text}`) .digest('hex');
+      let index = 0;
+      let lucky = hash.substring(index, index + 5);
+      let dec = converter.hexToDec(lucky);
+      let str = dec.toString();
+      if(str.length>5){
+          str = str.slice(str.length-5);
+        }
+      dec = parseInt(str);
+      return dec/1000;
+    };
+      let diceVerify = roll(serverSeed, clientSeed);
+      this.setState({diceVerify:diceVerify, verify:true, serverSeed:serverSeed, clientSeed:clientSeed});
+      console.log("diceVerify",diceVerify);
+
+    }
+
     getCoinData = async () => {
+
       const coin =  await axios.get('https://api.crypto-games.net/v1/settings/btc');
       console.log(coin.data);
+
     }
+
+
 
     getCoinStats = async () => {
       const coin =  await axios.get('https://api.crypto-games.net/v1/coinstats/btc');
       console.log(coin.data);
     }
 
-    getBalance = async () => {
-      const balance = axios.get('https://api.crypto-games.net/v1/balance/btc/Uj4HHIjBYOXrtnSSiqwLRcApS8iqv7Fd9rUtrrHXY8ku5PCpvz');
-      console.log(balance.data);
+    getServerSeed = async (apiKey) => {
+      let {serverSeed} = this.state;
+      const seed = await axios.get(`https://api.crypto-games.net/v1/nextseed/btc/${apiKey}`);
+
+      console.log(seed.data.NextServerSeedHash);
+      this.setState({serverSeed:seed.data.NextServerSeedHash})
+    }
+
+    getUser = async (apiKey) => {
+      const user = await axios.get(`https://api.crypto-games.net/v1/user/btc/${apiKey}`);
+      this.setState({user:user.data.Nickname});
+    }
+
+    placeBet = async (apiKey) => {
+      let {clientSeed} = this.state;
+      let input = { Bet: 0.00000001, Payout: 2.0, UnderOver: true, ClientSeed: clientSeed };
+      let data = JSON.stringify(input);
+      const bet = await axios.post(`https://api.crypto-games.net/v1/placebet/btc/${apiKey}`,
+        data, { headers: {'Content-Type': 'application/json' }}
+      );
+      console.log(bet.data);
+      let { Balance, BetId, Roll } = bet.data
+      console.log(Balance, BetId, Roll);
+      this.setState({BetId:BetId, Balance:Balance, Roll:Roll});
+    }
+
+    getBetData = async (BetId) => {
+      let { betData, user } = this.state;
+      betData = [];
+      let i=BetId?BetId:3917366279;
+        const bet =  await axios.get(`https://api.crypto-games.net/v1/bet/${i}`);
+          if(bet.data.User==user){
+              betData.push(bet.data)
+              this.setState({betData:betData});
+            }
+
+            console.log('betData', betData);
+
     }
 
     render() {
+      const { gettingStarted, settings, verification, operators, clientSeed, serverSeed, nonce, betData, cryptoGames,primeDice, diceResult, diceVerify, verify, apiKey, enterAPI,
+      Balance, BetId, Roll } = this.state;
         return (
             <Frame head={[<link type="text/css" rel="stylesheet" href={chrome.runtime.getURL("/static/css/content.css")} ></link>]}>
                <FrameContextConsumer>
@@ -45,18 +176,27 @@ class Main extends React.Component {
                    ({document, window}) => {
                       // Render Children
                         return (
-                           <div className={'my-extension text-center'} onClick={()=>{
-                             this.getBalance();
-                           }}>
+                           <div className={'my-extension text-center'}>
+
+                           <div style={{display:gettingStarted?'block':'none'}}>
                            <div className="nav-wrapper">
                              <ul className="nav nav-pills nav-fill flex-md-row" id="tabs-icons-text" role="tablist">
-                                 <li className="nav-item">
+                                 <li className="nav-item"
+                                 onClick={()=>{
+                                   this.setState({gettingStarted:false, settings:true, verification:false, operators:false});
+                                 }}>
                                      <a className="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-1-tab" data-toggle="tab" href="#tabs-icons-text-1" role="tab" aria-controls="tabs-icons-text-1" aria-selected="true"><i className="fa fa-cloud-upload-96 mr-2"></i>Settings</a>
                                  </li>
-                                 <li className="nav-item">
+                                 <li className="nav-item" onClick={()=>{
+                                   this.setState({gettingStarted:false,settings:false, verification:true, operators:false});
+                                   this.getBetData()
+
+                                 }}>
                                      <a className="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-2-tab" data-toggle="tab" href="#tabs-icons-text-2" role="tab" aria-controls="tabs-icons-text-2" aria-selected="false"><i className="fa fa-bell-55 mr-2"></i>Verification</a>
                                  </li>
-                                 <li className="nav-item">
+                                 <li className="nav-item" onClick={()=>{
+                                   this.setState({gettingStarted:false,settings:false, verification:false, operators:true});
+                                 }}>
                                      <a className="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-3-tab" data-toggle="tab" href="#tabs-icons-text-3" role="tab" aria-controls="tabs-icons-text-3" aria-selected="false"><i className="fa fa-calendar-grid-58 mr-2"></i>Operators</a>
                                  </li>
                              </ul>
@@ -70,26 +210,324 @@ class Main extends React.Component {
                                 </g>
                             </svg>
                             <p><span style={{fontStyle:'bold'}}>Operator</span> is a CGF verified operator.</p>
-                            <a className="nav-link rounded-circle active" id="home-tab" data-toggle="tab" href="#tabs_2_1" role="tab" aria-controls="home" aria-selected="true">
-                              <span className="nav-link-icon d-block"><i className="fa fa-atom"></i></span>
-                            </a>
-                            <ul class="nav nav-pills nav-pills-circle ml-5" id="tabs_2" role="tablist">
-                              <li class="nav-item">
-                                <a class="nav-link rounded-circle" id="home-tab" data-toggle="tab" href="#tabs_2_1" role="tab" aria-controls="home" aria-selected="true">
-                                  <span class="nav-link-icon d-block"></span>
+                            <button className="btn btn-info mb-3" type="button" onClick={()=>{
+                              this.setState({gettingStarted:!gettingStarted, enterAPI:true});
+                            }}>
+                            Get Started Now
+                            </button>
+                            <ul className="nav nav-pills nav-pills-circle ml-5 pl-3" id="tabs_2" role="tablist">
+                              <li className="nav-item">
+                                <a className="nav-link rounded-circle" id="home-tab" data-toggle="tab" href="#tabs_2_1" role="tab" aria-controls="home" aria-selected="true">
+                                  <span className="nav-link-icon d-block"></span>
                                 </a>
                               </li>
-                              <li class="nav-item">
-                                <a class="nav-link active" id="profile-tab" data-toggle="tab" href="#tabs_2_2" role="tab" aria-controls="profile" aria-selected="false">
-                                  <span class="nav-link-icon d-block"></span>
+                              <li className="nav-item">
+                                <a className="nav-link active" id="profile-tab" data-toggle="tab" href="#tabs_2_2" role="tab" aria-controls="profile" aria-selected="false">
+                                  <span className="nav-link-icon d-block"></span>
                                 </a>
                               </li>
-                              <li class="nav-item">
-                                <a class="nav-link" id="contact-tab" data-toggle="tab" href="#tabs_2_3" role="tab" aria-controls="contact" aria-selected="false">
-                                  <span class="nav-link-icon d-block"></span>
+                              <li className="nav-item">
+                                <a className="nav-link" id="contact-tab" data-toggle="tab" href="#tabs_2_3" role="tab" aria-controls="contact" aria-selected="false">
+                                  <span className="nav-link-icon d-block"></span>
                                 </a>
                               </li>
                             </ul>
+                            </div>
+
+                            <div style={{display:enterAPI?'block':'none'}}>
+                            <div className="nav-wrapper">
+                              <ul className="nav nav-pills nav-fill flex-md-row" id="tabs-icons-text" role="tablist">
+                                  <li className="nav-item show" onClick={()=>{
+                                    this.setState({gettingStarted:false, settings:true, verification:false});
+                                  }}>
+                                      <a className="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-1-tab" data-toggle="tab" href="#tabs-icons-text-1" role="tab" aria-controls="tabs-icons-text-1" aria-selected="true"><i className="fa fa-cloud-upload-96 mr-2"></i>Settings</a>
+                                  </li>
+                                  <li className="nav-item" onClick={()=>{
+                                    this.setState({gettingStarted:false,settings:false, verification:true});
+                                    this.getBetData()
+                                  }}>
+                                      <a className="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-2-tab" data-toggle="tab" href="#tabs-icons-text-2" role="tab" aria-controls="tabs-icons-text-2" aria-selected="false"><i className="fa fa-bell-55 mr-2"></i>Verification</a>
+                                  </li>
+                                  <li className="nav-item" onClick={()=>{
+                                    this.setState({gettingStarted:false,settings:false, verification:false, operators:true});
+                                  }}>
+                                      <a className="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-3-tab" data-toggle="tab" href="#tabs-icons-text-3" role="tab" aria-controls="tabs-icons-text-3" aria-selected="false"><i className="fa fa-calendar-grid-58 mr-2"></i>Operators</a>
+                                  </li>
+                              </ul>
+                            </div>
+                            <div className="form-group">
+                              <label className="form-control-label">Enter Your API Key</label>
+                              <input className="form-control form-control-sm" type="text" value={apiKey} placeholder="API Key" onChange={(e)=>{this.setState({apiKey:e.target.value})}}/>
+                              <button type="button" class="btn btn-secondary m-2" onClick={()=>{
+                                this.setState({gettingStarted:false, settings:true,enterAPI:false})
+                                this.getUser(apiKey)
+                                this.getServerSeed(apiKey)
+                              }}> Submit</button>
+                            </div>
+
+
+                            <ul className="nav nav-pills nav-pills-circle ml-5 pl-3" id="tabs_2" role="tablist">
+                              <li className="nav-item">
+                                <a className="nav-link rounded-circle active" id="home-tab" data-toggle="tab" href="#tabs_2_1" role="tab" aria-controls="home" aria-selected="true">
+                                  <span className="nav-link-icon d-block"></span>
+                                </a>
+                              </li>
+                              <li className="nav-item">
+                                <a className="nav-link" id="profile-tab" data-toggle="tab" href="#tabs_2_2" role="tab" aria-controls="profile" aria-selected="false">
+                                  <span className="nav-link-icon d-block"></span>
+                                </a>
+                              </li>
+                              <li className="nav-item">
+                                <a className="nav-link" id="contact-tab" data-toggle="tab" href="#tabs_2_3" role="tab" aria-controls="contact" aria-selected="false">
+                                  <span className="nav-link-icon d-block"></span>
+                                </a>
+                              </li>
+                            </ul>
+                            </div>
+
+
+
+                            <div style={{display:settings?'block':'none'}}>
+                            <div className="nav-wrapper">
+                              <ul className="nav nav-pills nav-fill flex-md-row" id="tabs-icons-text" role="tablist">
+                                  <li className="nav-item show" onClick={()=>{
+                                    this.setState({gettingStarted:false, settings:true, verification:false});
+                                    this.getCoinData();
+                                  }}>
+                                      <a className="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-1-tab" data-toggle="tab" href="#tabs-icons-text-1" role="tab" aria-controls="tabs-icons-text-1" aria-selected="true"><i className="fa fa-cloud-upload-96 mr-2"></i>Settings</a>
+                                  </li>
+                                  <li className="nav-item" onClick={()=>{
+                                    this.setState({gettingStarted:false,settings:false, verification:true});
+                                    this.getBetData()
+                                  }}>
+                                      <a className="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-2-tab" data-toggle="tab" href="#tabs-icons-text-2" role="tab" aria-controls="tabs-icons-text-2" aria-selected="false"><i className="fa fa-bell-55 mr-2"></i>Verification</a>
+                                  </li>
+                                  <li className="nav-item" onClick={()=>{
+                                    this.setState({gettingStarted:false,settings:false, verification:false, operators:true});
+                                  }}>
+                                      <a className="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-3-tab" data-toggle="tab" href="#tabs-icons-text-3" role="tab" aria-controls="tabs-icons-text-3" aria-selected="false"><i className="fa fa-calendar-grid-58 mr-2"></i>Operators</a>
+                                  </li>
+                              </ul>
+                            </div>
+                            <div className="form-group">
+                              <label className="form-control-label">Server Seed Hash</label>
+                              <input className="form-control form-control-sm" type="text" value={serverSeed} placeholder="7dfh6fg6jg6k4hj5khj6kl4h67l7mbngdcghgkv" onChange={(e)=>{this.setState({serverSeed:e.target.value})}}/>
+                              <button type="button" class="btn btn-secondary m-2" onClick={()=>{
+                                this.getServerSeed(apiKey)
+                              }}> Request</button>
+                              <button type="button" class="btn btn-secondary m-2" onClick={()=>{
+                                this.setState({settings:false, verification:true})
+                                this.placeBet(apiKey)
+                              }}> Submit</button>
+                            </div>
+                            <div className="form-group">
+                              <label className="form-control-label">Client Seed</label>
+                              <input className="form-control form-control-sm" type="text" value={clientSeed} placeholder="CURRENT CLIENT SEED" onChange={(e)=>{this.setState({clientSeed:e.target.value})}}/>
+                              <button type="button" class="btn btn-secondary m-2"   onClick={this.getClientSeed}> Generate</button>
+                            </div>
+                            <div className="form-group">
+                              <label className="form-control-label">Nonce</label>
+                              <input className="form-control form-control-sm" type="text" placeholder="0" value={nonce}  onChange={(e)=>{this.setState({nonce:e.target.value})}}/>
+                            </div>
+                            <ul className="nav nav-pills nav-pills-circle ml-5 pl-3" id="tabs_2" role="tablist">
+                              <li className="nav-item">
+                                <a className="nav-link rounded-circle active" id="home-tab" data-toggle="tab" href="#tabs_2_1" role="tab" aria-controls="home" aria-selected="true">
+                                  <span className="nav-link-icon d-block"></span>
+                                </a>
+                              </li>
+                              <li className="nav-item">
+                                <a className="nav-link" id="profile-tab" data-toggle="tab" href="#tabs_2_2" role="tab" aria-controls="profile" aria-selected="false">
+                                  <span className="nav-link-icon d-block"></span>
+                                </a>
+                              </li>
+                              <li className="nav-item">
+                                <a className="nav-link" id="contact-tab" data-toggle="tab" href="#tabs_2_3" role="tab" aria-controls="contact" aria-selected="false">
+                                  <span className="nav-link-icon d-block"></span>
+                                </a>
+                              </li>
+                            </ul>
+                            </div>
+
+                            <div class="table-responsive" style={{display:verification?'block':'none', fontSize: '11px'}}>
+                            <div className="nav-wrapper">
+                              <ul className="nav nav-pills nav-fill flex-md-row" id="tabs-icons-text" role="tablist">
+                                  <li className="nav-item" onClick={()=>{
+                                    this.setState({gettingStarted:false, settings:true, verification:false, operators:false});
+                                    this.getCoinData();
+                                  }}>
+                                      <a className="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-1-tab" data-toggle="tab" href="#tabs-icons-text-1" role="tab" aria-controls="tabs-icons-text-1" aria-selected="true"><i className="fa fa-cloud-upload-96 mr-2"></i>Settings</a>
+                                  </li>
+                                  <li className="nav-item show" onClick={()=>{
+                                    this.setState({gettingStarted:false,settings:false, verification:true, operators:false});
+                                  }}>
+                                      <a className="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-2-tab" data-toggle="tab" href="#tabs-icons-text-2" role="tab" aria-controls="tabs-icons-text-2" aria-selected="false"><i className="fa fa-bell-55 mr-2"></i>Verification</a>
+                                  </li>
+                                  <li className="nav-item" onClick={()=>{
+                                    this.setState({gettingStarted:false,settings:false, verification:false, operators:true});
+                                  }}>
+                                      <a className="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-3-tab" data-toggle="tab" href="#tabs-icons-text-3" role="tab" aria-controls="tabs-icons-text-3" aria-selected="false"><i className="fa fa-calendar-grid-58 mr-2"></i>Operators</a>
+                                  </li>
+                              </ul>
+                            </div>
+                            <div className="crypto-games" style={{display:cryptoGames?'block':'none'}}>
+                              <table class="table align-items-center table-flush table-hover">
+                                <thead class="thead-light">
+                                  <tr>
+                                    <th>Id</th>
+                                    <th>Game</th>
+                                    <th>Roll</th>
+                                    <th>Time</th>
+                                  </tr>
+                                </thead>
+
+                                <tbody>
+                                  {betData.map((item)=>{
+                                    return <tr>
+                                      <td class="table-user">
+                                      {item.BetId}
+                                      </td>
+                                      <td>
+                                        <span class="text-muted">Dice</span>
+                                      </td>
+                                      <td>
+                                      {item.Roll}
+                                      </td>
+                                      <td>
+                                        {item.DateCreated}
+                                      </td>
+                                      <div className="form-group  mt-5" style={{marginLeft: '-366px'}}>
+                                        <button type="button" class="btn btn-info" onClick={()=>{
+                                          this.handleCryptoGamesBet(item.ServerSeed, item.ClientSeed)
+                                        }}> Verify</button>
+                                      </div>
+                                    </tr>
+
+                                  })
+}
+                                </tbody>
+                              </table>
+
+                              <div className="form-group">
+                                <label className="form-control-label">Enter Your BetId to search</label>
+                                <input className="form-control form-control-sm" type="text" value={BetId} placeholder="Bet Id" onChange={(e)=>{this.setState({BetId:e.target.value})}}/>
+                                <button type="button" class="btn btn-secondary m-2" onClick={()=>{
+                                  this.getBetData(BetId)
+                                }}> Submit</button>
+                              </div>
+
+                            </div>
+
+                            <div className="primeDice" style={{display:primeDice?'block':'none'}}>
+                                <div className="form-group">
+                                  <button type="button" class="btn btn-secondary m-2" onClick={()=>{
+                                    this.handleVerifyBet(serverSeed, clientSeed, nonce);
+                                    console.log(serverSeed, clientSeed, nonce);
+                                  }}> Verify</button>
+
+                                </div>
+
+                            </div>
+
+                            <div style={{display:verify?'block':'none'}}>
+                              <div class="alert alert-info" role="alert">
+                                <strong>Your verified result : {diceVerify}</strong>
+                              </div>
+                                <div class="alert alert-primary" role="alert" style={{fontSize: '11px'}}>
+                                  ServerSeed : {serverSeed}
+                              </div>
+                              <div class="alert alert-warning" role="alert" style={{fontSize: '11px'}}>
+                                Client Seed : {clientSeed}
+                              </div>
+                          </div>
+
+                          <div style={{display:!verify?'block':'none'}}>
+                            <div class="alert alert-info" role="alert">
+                              <strong>Your Placed Bet result : {Roll}</strong>
+                            </div>
+                              <div class="alert alert-primary" role="alert" style={{fontSize: '11px'}}>
+                                Balance : {Balance}
+                            </div>
+                            <div class="alert alert-warning" role="alert" style={{fontSize: '11px'}}>
+                              BetId : {BetId}
+                            </div>
+                        </div>
+
+
+                              <ul className="nav nav-pills nav-pills-circle ml-5 pl-3" id="tabs_2" role="tablist">
+                                <li className="nav-item">
+                                  <a className="nav-link rounded-circle " id="home-tab" data-toggle="tab" href="#tabs_2_1" role="tab" aria-controls="home" aria-selected="true">
+                                    <span className="nav-link-icon d-block"></span>
+                                  </a>
+                                </li>
+                                <li className="nav-item">
+                                  <a className="nav-link active" id="profile-tab" data-toggle="tab" href="#tabs_2_2" role="tab" aria-controls="profile" aria-selected="false">
+                                    <span className="nav-link-icon d-block"></span>
+                                  </a>
+                                </li>
+                                <li className="nav-item">
+                                  <a className="nav-link" id="contact-tab" data-toggle="tab" href="#tabs_2_3" role="tab" aria-controls="contact" aria-selected="false">
+                                    <span className="nav-link-icon d-block"></span>
+                                  </a>
+                                </li>
+                              </ul>
+                            </div>
+
+
+                            <div class="table-responsive" style={{display:operators?'block':'none'}}>
+                            <div className="nav-wrapper">
+                              <ul className="nav nav-pills nav-fill flex-md-row" id="tabs-icons-text" role="tablist">
+                                  <li className="nav-item" onClick={()=>{
+                                    this.setState({gettingStarted:false, settings:true, verification:false, operators:false});
+                                  }}>
+                                      <a className="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-1-tab" data-toggle="tab" href="#tabs-icons-text-1" role="tab" aria-controls="tabs-icons-text-1" aria-selected="true"><i className="fa fa-cloud-upload-96 mr-2"></i>Settings</a>
+                                  </li>
+                                  <li className="nav-item" onClick={()=>{
+                                    this.setState({gettingStarted:false,settings:false, verification:true, operators:false});
+                                    this.getBetData()
+
+                                  }}>
+                                      <a className="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-2-tab" data-toggle="tab" href="#tabs-icons-text-2" role="tab" aria-controls="tabs-icons-text-2" aria-selected="false"><i className="fa fa-bell-55 mr-2"></i>Verification</a>
+                                  </li>
+                                  <li className="nav-item show" onClick={()=>{
+                                    this.setState({gettingStarted:false,settings:false, verification:false, operators:true});
+                                  }}>
+                                      <a className="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-3-tab" data-toggle="tab" href="#tabs-icons-text-3" role="tab" aria-controls="tabs-icons-text-3" aria-selected="false"><i className="fa fa-calendar-grid-58 mr-2"></i>Operators</a>
+                                  </li>
+                              </ul>
+                            </div>
+                              <div className="operators-icons">
+                                <div className="m-3" onClick={()=>{
+                                  this.setState({operators:false, primeDice:false, verification:true, cryptoGames:true})
+                                }}>
+                                  <img src={cryptoGamesIcon}  style={{width:"144.95", cursor:'pointer'}} title="Crypto Games"/>
+                                </div>
+                              <div className="m-3" style={{cursor:'pointer'}} onClick={()=>{
+                                this.setState({operators:false, primeDice:true, verification:true, cryptoGames:false})
+                              }}>
+                                <svg width="144.95" height="50" viewBox="0 0 1896 327"><title>Prime Dice</title><path d="M1750 263a74 74 0 0 1-23 17q-13 6-31 6t-31-6a63 63 0 0 1-23-14 66 66 0 0 1-15-24 86 86 0 0 1-5-29 74 74 0 0 1 6-29 72 72 0 0 1 15-23 71 71 0 0 1 23-16 80 80 0 0 1 61 0 71 71 0 0 1 23 17l-22 22a43 43 0 0 0-14-11 41 41 0 0 0-18-4 38 38 0 0 0-17 4 37 37 0 0 0-12 10 39 39 0 0 0-7 13 56 56 0 0 0-3 16 53 53 0 0 0 3 16 42 42 0 0 0 7 14 36 36 0 0 0 29 14 44 44 0 0 0 19-4 42 42 0 0 0 14-11l21 22zm-489-103a69 69 0 0 0-14 23 76 76 0 0 0-5 28 87 87 0 0 0 5 30 66 66 0 0 0 37 39 77 77 0 0 0 30 6q16 0 28-4a88 88 0 0 0 19-7 57 57 0 0 0 11-9l-19-21a41 41 0 0 1-8 5 73 73 0 0 1-13 5 71 71 0 0 1-18 1 42 42 0 0 1-13-2 39 39 0 0 1-12-7 35 35 0 0 1-9-10 28 28 0 0 1-4-14h103v-5a118 118 0 0 0-4-29 74 74 0 0 0-11-25 59 59 0 0 0-21-18q-13-7-32-7c-19 0-37 7-50 21zm80 28a29 29 0 0 1 2 10h-67a26 26 0 0 1 2-10 30 30 0 0 1 7-10 35 35 0 0 1 11-7 39 39 0 0 1 15-3 34 34 0 0 1 14 3 31 31 0 0 1 10 7 30 30 0 0 1 6 10zm459-43a67 67 0 0 0-22 15 69 69 0 0 0-14 23 76 76 0 0 0-6 28 87 87 0 0 0 6 30 66 66 0 0 0 37 39 77 77 0 0 0 30 6q16 0 28-4a88 88 0 0 0 19-7 57 57 0 0 0 11-9l-19-21a42 42 0 0 1-9 5 73 73 0 0 1-12 5 71 71 0 0 1-18 1 42 42 0 0 1-13-2 40 40 0 0 1-13-7 35 35 0 0 1-8-10 28 28 0 0 1-4-14h103v-5a118 118 0 0 0-4-29 74 74 0 0 0-11-25 59 59 0 0 0-21-18q-13-7-32-7a70 70 0 0 0-28 6zm58 43a29 29 0 0 1 2 10h-67a26 26 0 0 1 2-10 30 30 0 0 1 7-10 36 36 0 0 1 11-7 38 38 0 0 1 15-3 34 34 0 0 1 14 3 31 31 0 0 1 10 7 30 30 0 0 1 6 10zm-446-22a73 73 0 0 0-12 21q-5 12-5 28 0 17 6 30a70 70 0 0 0 13 23 57 57 0 0 0 20 13 55 55 0 0 0 22 5 53 53 0 0 0 14-2 60 60 0 0 0 11-4 47 47 0 0 0 9-6 69 69 0 0 0 7-6v13h34V86h-34v61l-7-2a39 39 0 0 0-7-2c-25-6-54 3-71 23zm73 7a28 28 0 0 1 12 5v42a45 45 0 0 1-2 13 36 36 0 0 1-6 11 29 29 0 0 1-10 9 31 31 0 0 1-15 3q-16 0-25-12t-9-29a52 52 0 0 1 3-16 46 46 0 0 1 6-14c12-14 28-17 46-12zM669 86v196h36v-73h29c16 0 32-5 44-14a56 56 0 0 0 15-20c8-14 8-32 3-47a53 53 0 0 0-10-20 70 70 0 0 0-54-22zm36 92v-60h26q13 0 22 8c12 11 12 32 1 44q-9 8-23 8zm121-34h33l1 17a67 67 0 0 1 6-6 51 51 0 0 1 42-13v33a31 31 0 0 0-4-1 55 55 0 0 0-9 0 39 39 0 0 0-13 2 32 32 0 0 0-11 7 33 33 0 0 0-10 24v74h-35V144zm109-58h37v36h-37V86zm1 58h34v137h-34V144zm66 0h33l1 16c12-13 22-19 40-19q27 0 41 20 11-11 22-15t25-5q26 0 40 15t14 42v83h-34v-83q0-13-7-20t-18-7a30 30 0 0 0-23 10 34 34 0 0 0-6 12 45 45 0 0 0-3 14v74h-34v-83q0-13-7-20c-11-12-31-8-41 3a35 35 0 0 0-6 12 45 45 0 0 0-2 14v74h-35V144zm559-58h37v36h-37V86zm2 58h34v137h-34z"></path><rect width="417" height="41" x="53" y="285" rx="8" ry="8"></rect><path d="M62 259l128-1a9 9 0 0 0 6-2 12 12 0 0 0 3-4 13 13 0 0 0 1-5 10 10 0 0 0-3-7L17 68a10 10 0 0 0-7-3 10 10 0 0 0-7 2 9 9 0 0 0-3 4 13 13 0 0 0 0 6l51 174c1 6 5 8 11 8zm399 0l-128-1a9 9 0 0 1-6-2 12 12 0 0 1-3-4 13 13 0 0 1-1-5 10 10 0 0 1 3-7L506 68a10 10 0 0 1 7-3 10 10 0 0 1 7 2 9 9 0 0 1 3 4 14 14 0 0 1 0 6l-51 174c-1 6-5 8-11 8zm-75-141L272 4a15 15 0 0 0-22 0L136 118a15 15 0 0 0 0 22l114 114c6 6 17 6 23 0l113-114a15 15 0 0 0 0-22zm-193 30a19 19 0 1 1 19-19 19 19 0 0 1-19 19zm68 68a19 19 0 1 1 19-19 19 19 0 0 1-19 19zm0-68a19 19 0 1 1 19-19 19 19 0 0 1-19 19zm0-68a19 19 0 1 1 19-19 19 19 0 0 1-19 19zm68 68a19 19 0 1 1 19-19 19 19 0 0 1-19 19z"></path></svg>
+                              </div>
+                              </div>
+
+
+                              <ul className="nav nav-pills nav-pills-circle ml-5 pl-3" id="tabs_2" role="tablist">
+                                <li className="nav-item">
+                                  <a className="nav-link rounded-circle " id="home-tab" data-toggle="tab" href="#tabs_2_1" role="tab" aria-controls="home" aria-selected="true">
+                                    <span className="nav-link-icon d-block"></span>
+                                  </a>
+                                </li>
+                                <li className="nav-item">
+                                  <a className="nav-link active" id="profile-tab" data-toggle="tab" href="#tabs_2_2" role="tab" aria-controls="profile" aria-selected="false">
+                                    <span className="nav-link-icon d-block"></span>
+                                  </a>
+                                </li>
+                                <li className="nav-item">
+                                  <a className="nav-link" id="contact-tab" data-toggle="tab" href="#tabs_2_3" role="tab" aria-controls="contact" aria-selected="false">
+                                    <span className="nav-link-icon d-block"></span>
+                                  </a>
+                                </li>
+                              </ul>
+                            </div>
+
 
                            </div>
                         )
