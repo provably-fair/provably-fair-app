@@ -143,7 +143,7 @@ class Main extends React.Component {
 
     placeBet = async (apiKey) => {
       let { clientSeed, nonce, BetIdArray, betAmount, betPayout } = this.state;
-      let input = { Bet: betAmount, Payout: betPayout, UnderOver: true, ClientSeed: clientSeed };
+      let input = { Bet: betAmount, Payout: betPayout, UnderOver: true, ClientSeed: clientSeed, Nonce:nonce };
       let data = JSON.stringify(input);
       const bet = await axios.post(`https://api.crypto-games.net/v1/placebet/btc/${apiKey}`,
         data, { headers: {'Content-Type': 'application/json' }}
@@ -153,7 +153,9 @@ class Main extends React.Component {
       BetIdArray.push(BetId)
       this.setState({BetIdArray:BetIdArray});
       this.getBetData(BetIdArray);
-      this.setState({BetId:BetId, Balance:Balance, Roll:Roll});
+      var newNonce = parseInt(nonce);
+      this.setState({BetId:BetId, Balance:Balance, Roll:Roll, nonce:newNonce+1});
+      this.getServerSeed(apiKey);
     }
 
     getBetData = async (BetIdArray) => {
@@ -365,7 +367,7 @@ class Main extends React.Component {
                               </div>
                               <div className="form-group" style={{display:nonceChecked?'block':'none'}}>
                                 <label className="form-control-label">Nonce</label>
-                                <input className="form-control form-control-sm" type="text" placeholder="" value={nonce}  onChange={(e)=>{this.setState({nonce:e.target.value})}}/>
+                                <input className="form-control form-control-sm" type="number" placeholder="" value={nonce}  onChange={(e)=>{this.setState({nonce:e.target.value})}}/>
                               </div>
                               <button type="button" className="btn btn-secondary m-2" onClick={()=>{
                                 this.setState({betPlaced:true, verification:false})
