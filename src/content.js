@@ -172,6 +172,20 @@ class Main extends React.Component {
 
     }
 
+    getBetDataById = async (BetId) => {
+      let { betData, user } = this.state;
+      betData = [];
+       const bet =  await axios.get(`https://api.crypto-games.net/v1/bet/${BetId}`);
+          if(bet.data.User==user){
+              betData.push(bet.data)
+              this.setState({betData:betData});
+            }
+
+
+            console.log('betData', betData);
+
+    }
+
     render() {
       const { gettingStarted, settings, verification, operators, clientSeed, serverSeed, nonce, betData, cryptoGames,primeDice, diceResult, diceVerify, verify, apiKey, enterAPI,
       Balance, BetId, Roll, nonceChecked, BetIdArray, toggleState, betAmount, betPayout, betPlaced } = this.state;
@@ -455,8 +469,8 @@ class Main extends React.Component {
                                 <label className="form-control-label">Enter Your BetId to search</label>
                                 <input className="form-control form-control-sm" type="text" value={BetId} placeholder="Bet Id" onChange={(e)=>{this.setState({BetId:e.target.value})}}/>
                                 <button type="button" className="btn btn-secondary m-2" onClick={()=>{
-                                  this.getBetData(BetIdArray)
-                                }}> Submit</button>
+                                  this.getBetDataById(BetId)
+                                }}> Search</button>
                               </div>
 
                             </div>
