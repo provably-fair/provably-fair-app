@@ -34,16 +34,21 @@ class Main extends React.Component {
         user:'',
         apiKey:null,
         BetId:null,
+        BetIdArray:[],
         Balance:null,
         Roll:null,
-        nonceChecked:false
+        nonceChecked:false,
+        toggleState:false,
+        betAmount:0.0001,
+        betPayout:2.0,
+        betPlaced:false
       }
     }
 
 
     componentDidMount(){
-        console.log('window.localStorage.apiKey',window.localStorage.apiKey);
-        this.setState({apiKey:window.localStorage.apiKey})
+        console.log('window.localStorage.apiKey',window.localStorage.getItem('apiKey'));
+        this.setState({apiKey:window.localStorage.getItem('apiKey')})
     }
 
     getRandomInt = (max) => {
@@ -137,28 +142,31 @@ class Main extends React.Component {
     }
 
     placeBet = async (apiKey) => {
-      let { clientSeed, nonce } = this.state;
-      let input = { Bet: 0.00000001, Payout: 2.0, UnderOver: true, ClientSeed: clientSeed };
+      let { clientSeed, nonce, BetIdArray, betAmount, betPayout } = this.state;
+      let input = { Bet: betAmount, Payout: betPayout, UnderOver: true, ClientSeed: clientSeed };
       let data = JSON.stringify(input);
       const bet = await axios.post(`https://api.crypto-games.net/v1/placebet/btc/${apiKey}`,
         data, { headers: {'Content-Type': 'application/json' }}
       );
       console.log(bet.data);
       let { Balance, BetId, Roll } = bet.data
-      console.log(Balance, BetId, Roll);
-      this.getBetData(BetId);
+      BetIdArray.push(BetId)
+      this.setState({BetIdArray:BetIdArray});
+      this.getBetData(BetIdArray);
       this.setState({BetId:BetId, Balance:Balance, Roll:Roll});
     }
 
-    getBetData = async (BetId) => {
+    getBetData = async (BetIdArray) => {
       let { betData, user } = this.state;
       betData = [];
-      let i=BetId;
-        const bet =  await axios.get(`https://api.crypto-games.net/v1/bet/${i}`);
+      BetIdArray.map(async (i)=>{
+       const bet =  await axios.get(`https://api.crypto-games.net/v1/bet/${i}`);
           if(bet.data.User==user){
               betData.push(bet.data)
               this.setState({betData:betData});
             }
+      })
+
 
             console.log('betData', betData);
 
@@ -166,7 +174,7 @@ class Main extends React.Component {
 
     render() {
       const { gettingStarted, settings, verification, operators, clientSeed, serverSeed, nonce, betData, cryptoGames,primeDice, diceResult, diceVerify, verify, apiKey, enterAPI,
-      Balance, BetId, Roll, nonceChecked } = this.state;
+      Balance, BetId, Roll, nonceChecked, BetIdArray, toggleState, betAmount, betPayout, betPlaced } = this.state;
         return (
             <Frame head={[<link type="text/css" rel="stylesheet" href={chrome.runtime.getURL("/static/css/content.css")} ></link>]}>
                <FrameContextConsumer>
@@ -183,12 +191,14 @@ class Main extends React.Component {
                                  <li className="nav-item"
                                  onClick={()=>{
                                    this.setState({gettingStarted:false, settings:true, verification:false, operators:false});
+                                   this.getServerSeed(apiKey)
+
                                  }}>
                                      <a className="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-1-tab" data-toggle="tab" href="#tabs-icons-text-1" role="tab" aria-controls="tabs-icons-text-1" aria-selected="true"><i className="fa fa-cloud-upload-96 mr-2"></i>Settings</a>
                                  </li>
                                  <li className="nav-item" onClick={()=>{
                                    this.setState({gettingStarted:false,settings:false, verification:true, operators:false});
-                                   this.getBetData()
+                                   this.getBetData(BetIdArray)
 
                                  }}>
                                      <a className="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-2-tab" data-toggle="tab" href="#tabs-icons-text-2" role="tab" aria-controls="tabs-icons-text-2" aria-selected="false"><i className="fa fa-bell-55 mr-2"></i>Verification</a>
@@ -238,12 +248,14 @@ class Main extends React.Component {
                               <ul className="nav nav-pills nav-fill flex-md-row" id="tabs-icons-text" role="tablist">
                                   <li className="nav-item show" onClick={()=>{
                                     this.setState({gettingStarted:false, settings:true, verification:false});
+                                    this.getServerSeed(apiKey)
+
                                   }}>
                                       <a className="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-1-tab" data-toggle="tab" href="#tabs-icons-text-1" role="tab" aria-controls="tabs-icons-text-1" aria-selected="true"><i className="fa fa-cloud-upload-96 mr-2"></i>Settings</a>
                                   </li>
                                   <li className="nav-item" onClick={()=>{
                                     this.setState({gettingStarted:false,settings:false, verification:true});
-                                    this.getBetData()
+                                    this.getBetData(BetIdArray)
                                   }}>
                                       <a className="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-2-tab" data-toggle="tab" href="#tabs-icons-text-2" role="tab" aria-controls="tabs-icons-text-2" aria-selected="false"><i className="fa fa-bell-55 mr-2"></i>Verification</a>
                                   </li>
@@ -292,12 +304,14 @@ class Main extends React.Component {
                                   <li className="nav-item show" onClick={()=>{
                                     this.setState({gettingStarted:false, settings:true, verification:false});
                                     this.getCoinData();
+                                    this.getServerSeed(apiKey)
+
                                   }}>
                                       <a className="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-1-tab" data-toggle="tab" href="#tabs-icons-text-1" role="tab" aria-controls="tabs-icons-text-1" aria-selected="true"><i className="fa fa-cloud-upload-96 mr-2"></i>Settings</a>
                                   </li>
                                   <li className="nav-item" onClick={()=>{
                                     this.setState({gettingStarted:false,settings:false, verification:true});
-                                    this.getBetData()
+                                    this.getBetData(BetIdArray)
                                   }}>
                                       <a className="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-2-tab" data-toggle="tab" href="#tabs-icons-text-2" role="tab" aria-controls="tabs-icons-text-2" aria-selected="false"><i className="fa fa-bell-55 mr-2"></i>Verification</a>
                                   </li>
@@ -308,30 +322,55 @@ class Main extends React.Component {
                                   </li>
                               </ul>
                             </div>
+                            <label className="custom-toggle" style={{position: 'absolute'}}>
+                              <input type="checkbox" checked={toggleState} onChange={(e)=>{this.setState({toggleState:!toggleState, betPlaced:false})}}/>
+                              <span className="custom-toggle-slider rounded-circle" data-label-off="No" data-label-on="Yes"></span>
+                            </label>
+                            <label className="ml-5 pl-3 form-control-label">Make bets from extension</label>
+
                             <div className="form-group">
                               <label className="form-control-label">Server Seed Hash</label>
                               <input className="form-control form-control-sm" type="text" value={serverSeed} placeholder="7dfh6fg6jg6k4hj5khj6kl4h67l7mbngdcghgkv" onChange={(e)=>{this.setState({serverSeed:e.target.value})}}/>
-                              <button type="button" className="btn btn-secondary m-2" onClick={()=>{
-                                this.getServerSeed(apiKey)
-                              }}> Request</button>
-                              <button type="button" className="btn btn-secondary m-2" onClick={()=>{
-                                this.setState({settings:false, verification:true})
-                                this.placeBet(apiKey)
-                              }}> Submit</button>
                             </div>
                             <div className="form-group">
                               <label className="form-control-label">Client Seed</label>
                               <input className="form-control form-control-sm" type="text" value={clientSeed} placeholder="CURRENT CLIENT SEED" onChange={(e)=>{this.setState({clientSeed:e.target.value})}}/>
                               <button type="button" className="btn btn-secondary m-2"   onClick={this.getClientSeed}> Generate</button>
                             </div>
-                            <div className="custom-control custom-checkbox mb-3">
-                              <input className="custom-control-input" id="customCheck2" type="checkbox" checked={nonceChecked} onChange={(e)=>{this.setState({nonceChecked:e.target.checked})}}/>
-                              <label className="custom-control-label" for="customCheck2">Add Nonce.</label>
+
+                            <div className="form-group" style={{display:toggleState?'block':'none'}}>
+                              <h3> Place Bet</h3>
+                              <label className="form-control-label">Amount</label>
+                              <input className="form-control form-control-sm" type="number" value={betAmount} placeholder="" onChange={(e)=>{this.setState({betAmount:e.target.value})}}/>
+                              <label className="form-control-label">Payout</label>
+                              <input className="form-control form-control-sm" type="number" value={betPayout} placeholder="" onChange={(e)=>{this.setState({betPayout:e.target.value})}}/>
+
+                              <div className="custom-control custom-checkbox mb-3">
+                                <input className="custom-control-input" id="customCheck2" type="checkbox" checked={nonceChecked} onChange={(e)=>{this.setState({nonceChecked:e.target.checked})}}/>
+                                <label className="custom-control-label" for="customCheck2">Add Nonce.</label>
+                              </div>
+                              <div className="form-group" style={{display:nonceChecked?'block':'none'}}>
+                                <label className="form-control-label">Nonce</label>
+                                <input className="form-control form-control-sm" type="text" placeholder="" value={nonce}  onChange={(e)=>{this.setState({nonce:e.target.value})}}/>
+                              </div>
+                              <button type="button" className="btn btn-secondary m-2" onClick={()=>{
+                                this.setState({betPlaced:true, verification:false})
+                                this.placeBet(apiKey)
+                              }}> Bet</button>
                             </div>
-                            <div className="form-group" style={{display:nonceChecked?'block':'none'}}>
-                              <label className="form-control-label">Nonce</label>
-                              <input className="form-control form-control-sm" type="text" placeholder="" value={nonce}  onChange={(e)=>{this.setState({nonce:e.target.value})}}/>
-                            </div>
+
+                            <div style={{display:betPlaced?'block':'none'}}>
+                              <div className="alert alert-info" role="alert">
+                                <strong>Your Placed Bet result : {Roll}</strong>
+                              </div>
+                                <div className="alert alert-primary" role="alert" style={{fontSize: '11px'}}>
+                                  Balance : {Balance}
+                              </div>
+                              <div className="alert alert-warning" role="alert" style={{fontSize: '11px'}}>
+                                BetId : {BetId}
+                              </div>
+                          </div>
+
                             <ul className="nav nav-pills nav-pills-circle ml-5 pl-3" id="tabs_2" role="tablist">
                               <li className="nav-item">
                                 <a className="nav-link rounded-circle active" id="home-tab" data-toggle="tab" href="#tabs_2_1" role="tab" aria-controls="home" aria-selected="true">
@@ -357,6 +396,8 @@ class Main extends React.Component {
                                   <li className="nav-item" onClick={()=>{
                                     this.setState({gettingStarted:false, settings:true, verification:false, operators:false});
                                     this.getCoinData();
+                                    this.getServerSeed(apiKey)
+
                                   }}>
                                       <a className="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-1-tab" data-toggle="tab" href="#tabs-icons-text-1" role="tab" aria-controls="tabs-icons-text-1" aria-selected="true"><i className="fa fa-cloud-upload-96 mr-2"></i>Settings</a>
                                   </li>
@@ -414,7 +455,7 @@ class Main extends React.Component {
                                 <label className="form-control-label">Enter Your BetId to search</label>
                                 <input className="form-control form-control-sm" type="text" value={BetId} placeholder="Bet Id" onChange={(e)=>{this.setState({BetId:e.target.value})}}/>
                                 <button type="button" className="btn btn-secondary m-2" onClick={()=>{
-                                  this.getBetData(BetId)
+                                  this.getBetData(BetIdArray)
                                 }}> Submit</button>
                               </div>
 
@@ -443,17 +484,7 @@ class Main extends React.Component {
                               </div>
                           </div>
 
-                          <div style={{display:!verify?'block':'none'}}>
-                            <div className="alert alert-info" role="alert">
-                              <strong>Your Placed Bet result : {Roll}</strong>
-                            </div>
-                              <div className="alert alert-primary" role="alert" style={{fontSize: '11px'}}>
-                                Balance : {Balance}
-                            </div>
-                            <div className="alert alert-warning" role="alert" style={{fontSize: '11px'}}>
-                              BetId : {BetId}
-                            </div>
-                        </div>
+
 
 
                               <ul className="nav nav-pills nav-pills-circle ml-5 pl-3" id="tabs_2" role="tablist">
@@ -481,12 +512,14 @@ class Main extends React.Component {
                               <ul className="nav nav-pills nav-fill flex-md-row" id="tabs-icons-text" role="tablist">
                                   <li className="nav-item" onClick={()=>{
                                     this.setState({gettingStarted:false, settings:true, verification:false, operators:false});
+                                    this.getServerSeed(apiKey)
+
                                   }}>
                                       <a className="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-1-tab" data-toggle="tab" href="#tabs-icons-text-1" role="tab" aria-controls="tabs-icons-text-1" aria-selected="true"><i className="fa fa-cloud-upload-96 mr-2"></i>Settings</a>
                                   </li>
                                   <li className="nav-item" onClick={()=>{
                                     this.setState({gettingStarted:false,settings:false, verification:true, operators:false});
-                                    this.getBetData()
+                                    this.getBetData(BetIdArray)
 
                                   }}>
                                       <a className="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-2-tab" data-toggle="tab" href="#tabs-icons-text-2" role="tab" aria-controls="tabs-icons-text-2" aria-selected="false"><i className="fa fa-bell-55 mr-2"></i>Verification</a>
