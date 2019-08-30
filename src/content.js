@@ -11,6 +11,34 @@ import cryptoGamesIcon from './assets/img/cryptogames.png';
 import "./content.css";
 import './assets/css/argon.css';
 import './assets/vendor/font-awesome/css/font-awesome.css';
+import { request } from 'graphql-request'
+
+const query1 = `query {
+  publicChats {
+    id
+    name
+  }
+}`
+
+const query = `{
+  user(name: "Dan") {
+    houseBetList(limit: 50, offset: 0) {
+      id
+      iid
+      bet {
+        ... on CasinoBet {
+          game
+          payout
+          amountMultiplier
+          payoutMultiplier
+          amount
+          currency
+          createdAt
+        }
+      }
+    }
+  }
+}`
 
 class Main extends React.Component {
 
@@ -62,6 +90,8 @@ class Main extends React.Component {
       .digest('hex');
       hash = hash.substring(0, 32);
       this.setState({clientSeed:hash, nonce:0});
+
+      request('https://api.stake.com/graphql', query).then(data => console.log(data))
     }
 
     handleVerifyBet = (serverSeed,clientSeed, nonce) => {
