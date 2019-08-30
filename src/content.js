@@ -11,7 +11,13 @@ import cryptoGamesIcon from './assets/img/cryptogames.png';
 import "./content.css";
 import './assets/css/argon.css';
 import './assets/vendor/font-awesome/css/font-awesome.css';
-import { request } from 'graphql-request'
+import { GraphQLClient } from 'graphql-request'
+
+const client = new GraphQLClient('https://api.stake.com/graphql', {
+  headers: {
+    "x-access-token": 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI5MzI0NmMzMS1mY2RjLTRjZTctOWZiYi00NmE1MmM5MDFjNGIiLCJzY29wZXMiOlsiYmV0Il0sImlhdCI6MTU2NzE2MDU3MywiZXhwIjoxNTcyMzQ0NTczfQ.RPcBGcTKCY_WnewEo692DK3mZaSZ0K8Y_QOyLhqWZVE',
+  },
+})
 
 const query1 = `query {
   publicChats {
@@ -20,8 +26,8 @@ const query1 = `query {
   }
 }`
 
-const query = `{
-  user(name: "Dan") {
+const query3 = `{
+  user(name: "livingrock") {
     houseBetList(limit: 50, offset: 0) {
       id
       iid
@@ -37,6 +43,25 @@ const query = `{
         }
       }
     }
+  }
+}`
+
+const query = `mutation RotateServerSeedMutation {
+  rotateServerSeed {
+    id
+    seedHash
+    nonce
+    user {
+      id
+      activeServerSeed {
+        id
+        seedHash
+        nonce
+        __typename
+      }
+      __typename
+    }
+    __typename
   }
 }`
 
@@ -91,7 +116,7 @@ class Main extends React.Component {
       hash = hash.substring(0, 32);
       this.setState({clientSeed:hash, nonce:0});
 
-      request('https://api.stake.com/graphql', query).then(data => console.log(data))
+      client.request(query).then(data => console.log(data))
     }
 
     handleVerifyBet = (serverSeed,clientSeed, nonce) => {
