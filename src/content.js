@@ -46,7 +46,7 @@ const query3 = `{
   }
 }`
 
-const query = `mutation RotateServerSeedMutation {
+const query4 = `mutation RotateServerSeedMutation {
   rotateServerSeed {
     id
     seedHash
@@ -65,6 +65,17 @@ const query = `mutation RotateServerSeedMutation {
   }
 }`
 
+const variables = {
+  seed: "11553f793112b28242"
+}
+
+const query = `mutation ChangeClientSeedMutation($seed: String!) {
+  changeClientSeed(seed: $seed) {
+    id
+    seed
+    __typename
+  }
+}`
 class Main extends React.Component {
 
     constructor(){
@@ -116,7 +127,7 @@ class Main extends React.Component {
       hash = hash.substring(0, 32);
       this.setState({clientSeed:hash, nonce:0});
 
-      client.request(query).then(data => console.log(data))
+      client.request(query, variables).then(data => console.log(data))
     }
 
     handleVerifyBet = (serverSeed,clientSeed, nonce) => {
