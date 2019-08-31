@@ -65,9 +65,7 @@ const query4 = `mutation RotateServerSeedMutation {
   }
 }`
 
-const variables = {
-  seed: "11553f793112b28242"
-}
+
 
 const query = `mutation ChangeClientSeedMutation($seed: String!) {
   changeClientSeed(seed: $seed) {
@@ -90,7 +88,7 @@ class Main extends React.Component {
         serverSeed:'',
         nonce:0,
         betData:[],
-        cryptoGames:true,
+        cryptoGames:false,
         primeDice:false,
         verify:false,
         diceResult:0,
@@ -105,8 +103,10 @@ class Main extends React.Component {
         toggleState:false,
         betAmount:0.0001,
         betPayout:2.0,
-        betPlaced:false
+        betPlaced:false,
+        stake:true
       }
+      this.getAllBetsStake()
     }
 
 
@@ -119,6 +119,10 @@ class Main extends React.Component {
       return Math.floor(Math.random() * Math.floor(max));
     }
 
+    getAllBetsStake = () => {
+      client.request(query3).then(data => console.log(data))
+    }
+
     getClientSeed = () => {
       let key = uuidv4();
       let hash = createHmac('sha256', key)
@@ -127,7 +131,20 @@ class Main extends React.Component {
       hash = hash.substring(0, 32);
       this.setState({clientSeed:hash, nonce:0});
 
+    }
+
+    submitClientSeedStake = (clientSeed) => {
+      const variables = {
+        seed: clientSeed
+      }
       client.request(query, variables).then(data => console.log(data))
+    }
+
+    getServerSeedStake = () =>{
+      client.request(query4).then((data) => {
+        console.log(data.rotateServerSeed.seedHash)
+        this.setState({serverSeed:data.rotateServerSeed.seedHash})
+      })
     }
 
     handleVerifyBet = (serverSeed,clientSeed, nonce) => {
@@ -256,7 +273,7 @@ class Main extends React.Component {
 
     render() {
       const { gettingStarted, settings, verification, operators, clientSeed, serverSeed, nonce, betData, cryptoGames,primeDice, diceResult, diceVerify, verify, apiKey, enterAPI,
-      Balance, BetId, Roll, nonceChecked, BetIdArray, toggleState, betAmount, betPayout, betPlaced } = this.state;
+      Balance, BetId, Roll, nonceChecked, BetIdArray, toggleState, betAmount, betPayout, betPlaced, stake } = this.state;
         return (
             <Frame head={[<link type="text/css" rel="stylesheet" href={chrome.runtime.getURL("/static/css/content.css")} ></link>]}>
                <FrameContextConsumer>
@@ -302,7 +319,7 @@ class Main extends React.Component {
                             </svg>
                             <p><span style={{fontStyle:'bold'}}>Operator</span> is a CGF verified operator.</p>
                             <button className="btn btn-info mb-3" type="button" onClick={()=>{
-                              this.setState({gettingStarted:!gettingStarted, enterAPI:true});
+                              this.setState({gettingStarted:!gettingStarted, enterAPI:false});
                             }}>
                             Get Started Now
                             </button>
@@ -379,8 +396,93 @@ class Main extends React.Component {
                             </div>
 
 
+                            <div style={{display:stake?'block':'none'}}>
+                            <div className="nav-wrapper">
+                              <ul className="nav nav-pills nav-fill flex-md-row" id="tabs-icons-text" role="tablist">
+                                  <li className="nav-item show" onClick={()=>{
+                                    this.setState({gettingStarted:false, settings:true, verification:false});
+                                  }}>
+                                      <a className="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-1-tab" data-toggle="tab" href="#tabs-icons-text-1" role="tab" aria-controls="tabs-icons-text-1" aria-selected="true"><i className="fa fa-cloud-upload-96 mr-2"></i>Settings</a>
+                                  </li>
+                                  <li className="nav-item" onClick={()=>{
+                                    this.setState({gettingStarted:false,settings:false, verification:true});
+                                  }}>
+                                      <a className="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-2-tab" data-toggle="tab" href="#tabs-icons-text-2" role="tab" aria-controls="tabs-icons-text-2" aria-selected="false"><i className="fa fa-bell-55 mr-2"></i>Verification</a>
+                                  </li>
+                                  <li className="nav-item" onClick={()=>{
+                                    this.setState({gettingStarted:false,settings:false, verification:false, operators:true});
+                                  }}>
+                                      <a className="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-3-tab" data-toggle="tab" href="#tabs-icons-text-3" role="tab" aria-controls="tabs-icons-text-3" aria-selected="false"><i className="fa fa-calendar-grid-58 mr-2"></i>Operators</a>
+                                  </li>
+                              </ul>
+                            </div>
+                            <div className="form-group">
+                              <label className="form-control-label">Next Server Seed Hash</label>
+                              <input className="form-control form-control-sm" type="text" value={serverSeed} placeholder="" onChange={(e)=>{this.setState({serverSeed:e.target.value})}}/>
+                              <button type="button" className="btn btn-secondary m-2"   onClick={this.getServerSeedStake}> Request</button>
+                            </div>
 
-                            <div style={{display:settings?'block':'none'}}>
+                            <div className="form-group">
+                              <label className="form-control-label">Client Seed</label>
+                              <input className="form-control form-control-sm" type="text" value={clientSeed} placeholder="CURRENT CLIENT SEED" onChange={(e)=>{this.setState({clientSeed:e.target.value})}}/>
+                              <button type="button" className="btn btn-secondary m-2"   onClick={this.getClientSeed}> Generate</button>
+                              <button type="button" className="btn btn-secondary m-2"   onClick={this.submitClientSeedStake(clientSeed)}> Submit</button>
+                            </div>
+
+                            <div className="form-group" style={{display:toggleState?'block':'none'}}>
+                              <h3> Place Bet</h3>
+                              <label className="form-control-label">Amount</label>
+                              <input className="form-control form-control-sm" type="number" value={betAmount} placeholder="" onChange={(e)=>{this.setState({betAmount:e.target.value})}}/>
+                              <label className="form-control-label">Payout</label>
+                              <input className="form-control form-control-sm" type="number" value={betPayout} placeholder="" onChange={(e)=>{this.setState({betPayout:e.target.value})}}/>
+
+                              <div className="custom-control custom-checkbox mb-3">
+                                <input className="custom-control-input" id="customCheck2" type="checkbox" checked={nonceChecked} onChange={(e)=>{this.setState({nonceChecked:e.target.checked})}}/>
+                                <label className="custom-control-label" for="customCheck2">Add Nonce.</label>
+                              </div>
+                              <div className="form-group" style={{display:nonceChecked?'block':'none'}}>
+                                <label className="form-control-label">Nonce</label>
+                                <input className="form-control form-control-sm" type="number" placeholder="" value={nonce}  onChange={(e)=>{this.setState({nonce:e.target.value})}}/>
+                              </div>
+                              <button type="button" className="btn btn-secondary m-2" onClick={()=>{
+                                this.setState({betPlaced:true, verification:false})
+                                this.placeBet(apiKey)
+                              }}> Bet</button>
+                            </div>
+
+                            <div style={{display:betPlaced?'block':'none'}}>
+                              <div className="alert alert-info" role="alert">
+                                <strong>Your Placed Bet result : {Roll}</strong>
+                              </div>
+                                <div className="alert alert-primary" role="alert" style={{fontSize: '11px'}}>
+                                  Balance : {Balance}
+                              </div>
+                              <div className="alert alert-warning" role="alert" style={{fontSize: '11px'}}>
+                                BetId : {BetId}
+                              </div>
+                          </div>
+
+                            <ul className="nav nav-pills nav-pills-circle ml-5 pl-3" id="tabs_2" role="tablist">
+                              <li className="nav-item">
+                                <a className="nav-link rounded-circle active" id="home-tab" data-toggle="tab" href="#tabs_2_1" role="tab" aria-controls="home" aria-selected="true">
+                                  <span className="nav-link-icon d-block"></span>
+                                </a>
+                              </li>
+                              <li className="nav-item">
+                                <a className="nav-link" id="profile-tab" data-toggle="tab" href="#tabs_2_2" role="tab" aria-controls="profile" aria-selected="false">
+                                  <span className="nav-link-icon d-block"></span>
+                                </a>
+                              </li>
+                              <li className="nav-item">
+                                <a className="nav-link" id="contact-tab" data-toggle="tab" href="#tabs_2_3" role="tab" aria-controls="contact" aria-selected="false">
+                                  <span className="nav-link-icon d-block"></span>
+                                </a>
+                              </li>
+                            </ul>
+                            </div>
+
+
+                            <div style={{display:cryptoGames?'block':'none'}}>
                             <div className="nav-wrapper">
                               <ul className="nav nav-pills nav-fill flex-md-row" id="tabs-icons-text" role="tablist">
                                   <li className="nav-item show" onClick={()=>{
