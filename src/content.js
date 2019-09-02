@@ -3,6 +3,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import Frame, { FrameContextConsumer }from 'react-frame-component';
+import { GraphQLClient } from 'graphql-request'
+import { CookiesProvider } from 'react-cookie';
+import { useCookies } from 'react-cookie';
+import Cookies from 'js-cookie';
 import axios from 'axios';
 import createHmac from 'create-hmac';
 import uuidv4 from 'uuid/v4';
@@ -11,7 +15,6 @@ import cryptoGamesIcon from './assets/img/cryptogames.png';
 import "./content.css";
 import './assets/css/argon.css';
 import './assets/vendor/font-awesome/css/font-awesome.css';
-import { GraphQLClient } from 'graphql-request'
 
 const client = new GraphQLClient('https://api.stake.com/graphql', {
   headers: {
@@ -74,6 +77,8 @@ const query = `mutation ChangeClientSeedMutation($seed: String!) {
     __typename
   }
 }`
+
+
 class Main extends React.Component {
 
     constructor(){
@@ -96,7 +101,7 @@ class Main extends React.Component {
         user:'',
         apiKey:null,
         BetId:null,
-        BetIdArray:[],
+        BetIdArray:[''],
         Balance:null,
         Roll:null,
         nonceChecked:false,
@@ -107,6 +112,7 @@ class Main extends React.Component {
         stake:true
       }
       this.getAllBetsStake()
+      this.addNewCookies()
     }
 
 
@@ -120,7 +126,21 @@ class Main extends React.Component {
     }
 
     getAllBetsStake = () => {
-      client.request(query3).then(data => console.log(data))
+      let { betData, user } = this.state;
+
+
+       client.request(query3).then((bet) => {
+
+         bet.user.houseBetList.map((houseBet)=>{
+           console.log(houseBet)
+           betData.push(houseBet)
+           this.setState({betData:betData});
+         })
+
+
+       })
+
+        console.log('betData', betData);
     }
 
     getClientSeed = () => {
@@ -243,7 +263,7 @@ class Main extends React.Component {
 
     getBetData = async (BetIdArray) => {
       let { betData, user } = this.state;
-      betData = [];
+
       BetIdArray.map(async (i)=>{
        const bet =  await axios.get(`https://api.crypto-games.net/v1/bet/${i}`);
           if(bet.data.User==user){
@@ -259,7 +279,7 @@ class Main extends React.Component {
 
     getBetDataById = async (BetId) => {
       let { betData, user } = this.state;
-      betData = [];
+
        const bet =  await axios.get(`https://api.crypto-games.net/v1/bet/${BetId}`);
           if(bet.data.User==user){
               betData.push(bet.data)
@@ -271,10 +291,21 @@ class Main extends React.Component {
 
     }
 
+
+     addNewCookies = async (newName) => {
+       let phpssid = Cookies.get('PHPSESSID');
+       Cookies.set('PHPSESSID',phpssid);
+
+       console.log('PHPSESSID : ',phpssid);
+      const bitvest = await axios.get('https://bitvest.io/update.php?dice=1&json=1&self-only=1');
+      console.log('bitvest',bitvest.data);
+    }
+
     render() {
       const { gettingStarted, settings, verification, operators, clientSeed, serverSeed, nonce, betData, cryptoGames,primeDice, diceResult, diceVerify, verify, apiKey, enterAPI,
       Balance, BetId, Roll, nonceChecked, BetIdArray, toggleState, betAmount, betPayout, betPlaced, stake } = this.state;
         return (
+          <CookiesProvider>
             <Frame head={[<link type="text/css" rel="stylesheet" href={chrome.runtime.getURL("/static/css/content.css")} ></link>]}>
                <FrameContextConsumer>
                {
@@ -298,6 +329,7 @@ class Main extends React.Component {
                                  <li className="nav-item" onClick={()=>{
                                    this.setState({gettingStarted:false,settings:false, verification:true, operators:false});
                                    this.getBetData(BetIdArray)
+                                   this.getAllBetsStake()
 
                                  }}>
                                      <a className="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-2-tab" data-toggle="tab" href="#tabs-icons-text-2" role="tab" aria-controls="tabs-icons-text-2" aria-selected="false"><i className="fa fa-bell-55 mr-2"></i>Verification</a>
@@ -354,7 +386,7 @@ class Main extends React.Component {
                                   </li>
                                   <li className="nav-item" onClick={()=>{
                                     this.setState({gettingStarted:false,settings:false, verification:true});
-                                    this.getBetData(BetIdArray)
+                                    this.getAllBetsStake()
                                   }}>
                                       <a className="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-2-tab" data-toggle="tab" href="#tabs-icons-text-2" role="tab" aria-controls="tabs-icons-text-2" aria-selected="false"><i className="fa fa-bell-55 mr-2"></i>Verification</a>
                                   </li>
@@ -495,7 +527,7 @@ class Main extends React.Component {
                                   </li>
                                   <li className="nav-item" onClick={()=>{
                                     this.setState({gettingStarted:false,settings:false, verification:true});
-                                    this.getBetData(BetIdArray)
+                                    this.getAllBetsStake()
                                   }}>
                                       <a className="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-2-tab" data-toggle="tab" href="#tabs-icons-text-2" role="tab" aria-controls="tabs-icons-text-2" aria-selected="false"><i className="fa fa-bell-55 mr-2"></i>Verification</a>
                                   </li>
@@ -612,16 +644,16 @@ class Main extends React.Component {
                                   {betData.map((item)=>{
                                     return <tr>
                                       <td className="table-user">
-                                      {item.BetId}
+                                      {item.id}
                                       </td>
                                       <td>
-                                        <span className="text-muted">Dice</span>
+                                        <span className="text-muted">{item.bet.game}</span>
                                       </td>
                                       <td>
-                                      {item.Roll}
+                                      {item.bet.payout}
                                       </td>
                                       <td>
-                                        {item.DateCreated}
+                                        {item.bet.createdAt}
                                       </td>
                                       <div className="form-group  mt-5" style={{marginLeft: '-366px'}}>
                                         <button type="button" className="btn btn-info" onClick={()=>{
@@ -703,7 +735,7 @@ class Main extends React.Component {
                                   </li>
                                   <li className="nav-item" onClick={()=>{
                                     this.setState({gettingStarted:false,settings:false, verification:true, operators:false});
-                                    this.getBetData(BetIdArray)
+                                    this.getAllBetsStake()
 
                                   }}>
                                       <a className="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-2-tab" data-toggle="tab" href="#tabs-icons-text-2" role="tab" aria-controls="tabs-icons-text-2" aria-selected="false"><i className="fa fa-bell-55 mr-2"></i>Verification</a>
@@ -755,6 +787,7 @@ class Main extends React.Component {
                 }
                 </FrameContextConsumer>
             </Frame>
+          </CookiesProvider>
         )
     }
 }
