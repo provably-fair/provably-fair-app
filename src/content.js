@@ -15,6 +15,7 @@ import cryptoGamesIcon from './assets/img/cryptogames.png';
 import "./content.css";
 import './assets/css/argon.css';
 import './assets/vendor/font-awesome/css/font-awesome.css';
+import qs from 'querystring';
 
 const client = new GraphQLClient('https://api.stake.com/graphql', {
   headers: {
@@ -111,8 +112,9 @@ class Main extends React.Component {
         betPlaced:false,
         stake:true
       }
-      this.getAllBetsStake()
-      this.addNewCookies()
+      // this.getAllBetsStake()
+      // this.addNewCookies()
+      this.getNewServerseedHashBitvest()
     }
 
 
@@ -294,11 +296,27 @@ class Main extends React.Component {
 
      addNewCookies = async (newName) => {
        let phpssid = Cookies.get('PHPSESSID');
-       Cookies.set('PHPSESSID',phpssid);
+       // Cookies.set('PHPSESSID',phpssid);
 
-       console.log('PHPSESSID : ',phpssid);
       const bitvest = await axios.get('https://bitvest.io/update.php?dice=1&json=1&self-only=1');
       console.log('bitvest',bitvest.data);
+    }
+
+    getNewServerseedHashBitvest = async () => {
+      // let phpssid = Cookies.get('PHPSESSID');
+      // Cookies.set('PHPSESSID',"f0eut20pqdg1952slbo33ep0d7");
+      // console.log('PHPSESSID : ',phpssid);
+
+     const bitvest = await axios.post('https://bitvest.io/action.php',
+      qs.stringify({
+            "token":"1ORb2RB6feajCP",
+            "secret":0,
+            "act":"new_server_seed"
+          }),
+          { headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      }});
+     console.log('NEXT SERVER SEEED HASH : ',bitvest.data);
     }
 
     render() {
