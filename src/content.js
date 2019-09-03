@@ -225,6 +225,34 @@ class Main extends React.Component {
 
     }
 
+    handleVerifyBetBitvest = (serverSeed, clientSeed, nonce) => {
+      // bet made with seed pair (excluding current bet)
+      // crypto lib for hmac function
+      const crypto = require('crypto');
+      const roll = function(key, text) {
+      // create HMAC using server seed as key and client seed as message
+      const hash = crypto .createHmac('sha512', key) .update(text) .digest('hex');
+      console.log('=============>>>>>>h>>>>>>>>>>>>>>>>>>>hash',hash);
+      let index = 0;
+      let lucky = parseInt(hash.substring(index * 5, index * 5 + 5), 16);
+      // keep grabbing characters from the hash while greater than
+      while (lucky >= Math.pow(10, 6)) {
+        index++; lucky = parseInt(hash.substring(index * 5, index * 5 + 5), 16);
+      // if we reach the end of the hash, just default to highest number
+       if (index * 5 + 5 > 128) {
+         lucky = 9999;
+         break;
+       }
+      }
+      lucky %= Math.pow(10, 4);
+      lucky /= Math.pow(10, 2);
+      console.log('======================>>>>>>>>>>>>>>>>>>lucky',lucky);
+      return lucky;
+    };
+        let diceVerify = roll(serverSeed, `${clientSeed}|${nonce}`);
+        this.setState({diceVerify:diceVerify});
+    }
+
     getCoinData = async () => {
 
       const coin =  await axios.get('https://api.crypto-games.net/v1/settings/btc');
@@ -331,10 +359,11 @@ class Main extends React.Component {
        const bet =  await axios.get(`https://bitvest.io/results?query=${item.id}&game=dice&json=1`);
        BetIdArray.push(item.id); gameArray.push(item.game); rollArray.push(item.roll); sideArray.push(item.side); targetArray.push(item.target);
        this.setState({BetIdArray:BetIdArray, gameArray:gameArray, rollArray:rollArray, sideArray:sideArray, targetArray:targetArray})
-
-        console.log(`betId-${item.id}: `, bet.data);
-        previousSeedArray.push(item.bet.dat.server_seed); clientSeedArray.push(item.bet.dat.user_seed); nonceArray.push(item.bet.dat.user_seed_nonce);
-        this.set({previousSeedArray:previousSeedArray, clientSeedArray:clientSeedArray, nonceArray:nonceArray})
+        if(bet.data!='undefined'){
+          this.handleVerifyBetBitvest(bet.data.server_seed,bet.data.user_seed, bet.data.user_seed_nonce);
+          previousSeedArray.push(bet.data.server_seed); clientSeedArray.push(bet.data.user_seed); nonceArray.push(bet.data.user_seed_nonce);
+          this.set({previousSeedArray:previousSeedArray, clientSeedArray:clientSeedArray, nonceArray:nonceArray})
+        }
      })
    }
 
