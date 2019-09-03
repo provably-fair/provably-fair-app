@@ -92,6 +92,7 @@ class Main extends React.Component {
         operators:false,
         clientSeed:'',
         serverSeedHash:'',
+        previousSeed:'',
         nonce:0,
         betData:[],
         cryptoGames:false,
@@ -108,6 +109,9 @@ class Main extends React.Component {
         sideArray:[],
         targetArray:[],
         nonceArray:[],
+        clientSeedArray:[],
+        serverSeedHashArray:[],
+        previousSeedArray:[],
         Balance:null,
         Roll:null,
         nonceChecked:false,
@@ -116,7 +120,6 @@ class Main extends React.Component {
         betPayout:2.0,
         betPlaced:false,
         stake:false,
-        previousSeed:''
       }
 
     }
@@ -319,18 +322,19 @@ class Main extends React.Component {
     getMyBetsBitvest = async () => {
       // let phpssid = Cookies.get('PHPSESSID');
       // Cookies.set('PHPSESSID',phpssid);
-      let { BetIdArray, gameArray, rollArray, sideArray, targetArray, nonceArray } = this.state;
+      let { BetIdArray, gameArray, rollArray, sideArray, targetArray, nonceArray, serverSeedHashArray, previousSeedArray, clientSeedArray } = this.state;
       BetIdArray = [];
 
      const bitvest = await axios.get('https://bitvest.io/update.php?dice=1&json=1&self-only=1');
      console.log('bitvest',bitvest.data.game.data);
      bitvest.data.game.data.map( async (item)=>{
        const bet =  await axios.get(`https://bitvest.io/results?query=${item.id}&game=dice&json=1`);
-       BetIdArray.push(item.id); gameArray.push(item.game); rollArray.push(item.roll); sideArray.push(item.side); targetArray.push(item.target); nonceArray.push(item.nonce)
-       this.setState({BetIdArray:BetIdArray, gameArray:gameArray, rollArray:rollArray, sideArray:sideArray, targetArray:targetArray, nonceArray:nonceArray})
+       BetIdArray.push(item.id); gameArray.push(item.game); rollArray.push(item.roll); sideArray.push(item.side); targetArray.push(item.target);
+       this.setState({BetIdArray:BetIdArray, gameArray:gameArray, rollArray:rollArray, sideArray:sideArray, targetArray:targetArray})
 
         console.log(`betId-${item.id}: `, bet.data);
-        window.setTimeout(5000);
+        previousSeedArray.push(item.bet.dat.server_seed); clientSeedArray.push(item.bet.dat.user_seed); nonceArray.push(item.bet.dat.user_seed_nonce);
+        this.set({previousSeedArray:previousSeedArray, clientSeedArray:clientSeedArray, nonceArray:nonceArray})
      })
    }
 
@@ -696,30 +700,10 @@ class Main extends React.Component {
 
                                       </div>
                                     </tr>
-
-                                  })
-}
+                                  })}
                                 </tbody>
                               </table>
                             </div>
-
-
-
-                            <div style={{display:verify?'block':'none'}}>
-                              <div className="alert alert-info" role="alert">
-                                <strong>Your verified result : {diceVerify}</strong>
-                              </div>
-                                <div className="alert alert-primary" role="alert" style={{fontSize: '11px'}}>
-                                  ServerSeed : {serverSeedHash}
-                              </div>
-                              <div className="alert alert-warning" role="alert" style={{fontSize: '11px'}}>
-                                Client Seed : {clientSeed}
-                              </div>
-                          </div>
-
-
-
-
                               <ul className="nav nav-pills nav-pills-circle ml-5 pl-3" id="tabs_2" role="tablist">
                                 <li className="nav-item">
                                   <a className="nav-link rounded-circle " id="home-tab" data-toggle="tab" href="#tabs_2_1" role="tab" aria-controls="home" aria-selected="true">
