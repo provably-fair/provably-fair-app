@@ -102,7 +102,12 @@ class Main extends React.Component {
         user:'',
         apiKey:null,
         BetId:null,
-        BetIdArray:[''],
+        BetIdArray:[],
+        gameArray:[],
+        rollArray:[],
+        sideArray:[],
+        targetArray:[],
+        nonceArray:[],
         Balance:null,
         Roll:null,
         nonceChecked:false,
@@ -286,10 +291,7 @@ class Main extends React.Component {
               betData.push(bet.data)
               this.setState({betData:betData});
             }
-
-
             console.log('betData', betData);
-
     }
 
 
@@ -298,7 +300,6 @@ class Main extends React.Component {
     getNewServerseedHashBitvest = async () => {
       // let phpssid = Cookies.get('PHPSESSID');
       // Cookies.set('PHPSESSID',"f0eut20pqdg1952slbo33ep0d7");
-      // console.log('PHPSESSID : ',phpssid);
      let { previousSeedHash, previousSeed, serverSeedHash } = this.state;
      this.setState({previousSeedHash:serverSeedHash})
      const bitvest = await axios.post('https://bitvest.io/action.php',
@@ -318,29 +319,24 @@ class Main extends React.Component {
     getMyBetsBitvest = async () => {
       // let phpssid = Cookies.get('PHPSESSID');
       // Cookies.set('PHPSESSID',phpssid);
+      let { BetIdArray, gameArray, rollArray, sideArray, targetArray, nonceArray } = this.state;
+      BetIdArray = [];
 
      const bitvest = await axios.get('https://bitvest.io/update.php?dice=1&json=1&self-only=1');
      console.log('bitvest',bitvest.data.game.data);
-     bitvest.data.game.data.map((item)=>{
-        this.getBetDataByIdBitvest(item.id);
+     bitvest.data.game.data.map( async (item)=>{
+       const bet =  await axios.get(`https://bitvest.io/results?query=${item.id}&game=dice&json=1`);
+       BetIdArray.push(item.id); gameArray.push(item.game); rollArray.push(item.roll); sideArray.push(item.side); targetArray.push(item.target); nonceArray.push(item.nonce)
+       this.setState({BetIdArray:BetIdArray, gameArray:gameArray, rollArray:rollArray, sideArray:sideArray, targetArray:targetArray, nonceArray:nonceArray})
+
+        console.log(`betId-${item.id}: `, bet.data);
+        window.setTimeout(5000);
      })
    }
 
-    getBetDataByIdBitvest = async (BetId) => {
-      let { betData, user } = this.state;
-
-       const bet =  await axios.get(`https://bitvest.io/results?query=${BetId}&game=dice&json=1`);
-       // betData.push(bet.data)
-       // this.setState({betData:betData});
-
-
-            console.log('betData Bitvest : ', bet.data);
-
-    }
-
     render() {
       const { gettingStarted, settings, verification, operators, clientSeed, serverSeedHash, nonce, betData, cryptoGames,primeDice, diceResult, diceVerify, verify, apiKey, enterAPI,
-      Balance, BetId, Roll, nonceChecked, BetIdArray, toggleState, betAmount, betPayout, betPlaced, stake } = this.state;
+      Balance, BetId, Roll, nonceChecked, BetIdArray, gameArray, rollArray, sideArray, targetArray, nonceArray, toggleState, betAmount, betPayout, betPlaced, stake } = this.state;
         return (
           <CookiesProvider>
             <Frame head={[<link type="text/css" rel="stylesheet" href={chrome.runtime.getURL("/static/css/content.css")} ></link>]}>
@@ -556,7 +552,7 @@ class Main extends React.Component {
                               <ul className="nav nav-pills nav-fill flex-md-row" id="tabs-icons-text" role="tablist">
                                   <li className="nav-item show" onClick={()=>{
                                     this.setState({gettingStarted:false, settings:true, stake:true,  verification:false});
-                                    
+
                                     this.getServerSeed(apiKey)
 
                                   }}>
@@ -642,8 +638,107 @@ class Main extends React.Component {
                               </li>
                             </ul>
                             </div>
+                            <div className="table-responsive" style={{display:'block', fontSize: '11px'}}>
+                            <div className="nav-wrapper">
+                              <ul className="nav nav-pills nav-fill flex-md-row" id="tabs-icons-text" role="tablist">
+                                  <li className="nav-item" onClick={()=>{
+                                    this.setState({gettingStarted:false, settings:true, stake:true,  verification:false, operators:false});
+                                  }}>
+                                      <a className="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-1-tab" data-toggle="tab" href="#tabs-icons-text-1" role="tab" aria-controls="tabs-icons-text-1" aria-selected="true"><i className="fa fa-cloud-upload-96 mr-2"></i>Settings</a>
+                                  </li>
+                                  <li className="nav-item show" onClick={()=>{
+                                    this.setState({gettingStarted:false,settings:false, verification:true, stake:false, operators:false});
+                                  }}>
+                                      <a className="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-2-tab" data-toggle="tab" href="#tabs-icons-text-2" role="tab" aria-controls="tabs-icons-text-2" aria-selected="false"><i className="fa fa-bell-55 mr-2"></i>Verification</a>
+                                  </li>
+                                  <li className="nav-item" onClick={()=>{
+                                    this.setState({gettingStarted:false,settings:false, verification:false, operators:true});
+                                  }}>
+                                      <a className="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-3-tab" data-toggle="tab" href="#tabs-icons-text-3" role="tab" aria-controls="tabs-icons-text-3" aria-selected="false"><i className="fa fa-calendar-grid-58 mr-2"></i>Operators</a>
+                                  </li>
+                              </ul>
+                            </div>
+                            <div className="Bitvest" style={{display:'block'}}>
+                              <table className="table align-items-center table-flush table-hover">
+                                <thead className="thead-light">
+                                  <tr>
+                                    <th>Id</th>
+                                    <th>Game</th>
+                                    <th>Roll</th>
+                                    <th>Side</th>
+                                    <th>Target</th>
+                                    <th>Nonce</th>
+                                  </tr>
+                                </thead>
 
-                            <div className="table-responsive" style={{display:verification?'block':'none', fontSize: '11px'}}>
+                                <tbody>
+                                  {BetIdArray.map((item,i)=>{
+                                    return <tr id={item}>
+                                      <td className="table-user">
+                                      {item}
+                                      </td>
+                                      <td>
+                                        <span className="text-muted">{gameArray[i]}</span>
+                                      </td>
+                                      <td>
+                                      {rollArray[i]}
+                                      </td>
+                                      <td>
+                                        {sideArray[i]}
+                                      </td>
+                                      <td>
+                                        {targetArray[i]}
+                                      </td>
+                                      <td>
+                                        {nonceArray[i]}
+                                      </td>
+                                      <div className="form-group  mt-5" style={{marginLeft: '-366px'}}>
+
+                                      </div>
+                                    </tr>
+
+                                  })
+}
+                                </tbody>
+                              </table>
+                            </div>
+
+
+
+                            <div style={{display:verify?'block':'none'}}>
+                              <div className="alert alert-info" role="alert">
+                                <strong>Your verified result : {diceVerify}</strong>
+                              </div>
+                                <div className="alert alert-primary" role="alert" style={{fontSize: '11px'}}>
+                                  ServerSeed : {serverSeedHash}
+                              </div>
+                              <div className="alert alert-warning" role="alert" style={{fontSize: '11px'}}>
+                                Client Seed : {clientSeed}
+                              </div>
+                          </div>
+
+
+
+
+                              <ul className="nav nav-pills nav-pills-circle ml-5 pl-3" id="tabs_2" role="tablist">
+                                <li className="nav-item">
+                                  <a className="nav-link rounded-circle " id="home-tab" data-toggle="tab" href="#tabs_2_1" role="tab" aria-controls="home" aria-selected="true">
+                                    <span className="nav-link-icon d-block"></span>
+                                  </a>
+                                </li>
+                                <li className="nav-item">
+                                  <a className="nav-link active" id="profile-tab" data-toggle="tab" href="#tabs_2_2" role="tab" aria-controls="profile" aria-selected="false">
+                                    <span className="nav-link-icon d-block"></span>
+                                  </a>
+                                </li>
+                                <li className="nav-item">
+                                  <a className="nav-link" id="contact-tab" data-toggle="tab" href="#tabs_2_3" role="tab" aria-controls="contact" aria-selected="false">
+                                    <span className="nav-link-icon d-block"></span>
+                                  </a>
+                                </li>
+                              </ul>
+                            </div>
+                            <div className="table-responsive" style={{display:verification&&cryptoGames?'block':'none', fontSize: '11px'}}>
                             <div className="nav-wrapper">
                               <ul className="nav nav-pills nav-fill flex-md-row" id="tabs-icons-text" role="tablist">
                                   <li className="nav-item" onClick={()=>{
