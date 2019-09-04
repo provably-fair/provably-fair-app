@@ -92,6 +92,7 @@ class Main extends React.Component {
         operators:false,
         clientSeed:'',
         serverSeedHash:'',
+        previousSeedHash:'',
         previousSeed:'',
         session_token:'',
         nonce:0,
@@ -233,7 +234,7 @@ class Main extends React.Component {
       const crypto = require('crypto');
       const roll = function(key, text) {
       // create HMAC using server seed as key and client seed as message
-      const hash = crypto .createHmac('sha512', key) .update(text) .digest('hex');
+      const hash = crypto .createHmac('sha512', text) .update(key) .digest('hex');
       console.log('=============>>>>>>>>>>>>>>>>>>>>>>>>>key',key)
       console.log('=============>>>>>>>>>>>>>>>>>>>>>>>>>text',text)
       console.log('=============>>>>>>>>>>>>>>>>>>>>>>>>>hash',hash)
@@ -345,9 +346,9 @@ class Main extends React.Component {
     getNewServerseedHashBitvest = async () => {
       // let phpssid = Cookies.get('PHPSESSID');
       // Cookies.set('PHPSESSID',"f0eut20pqdg1952slbo33ep0d7");
-     let { previousSeedHash, previousSeed, serverSeedHash, session_token } = this.state;
-     this.setState({previousSeedHash:serverSeedHash})
-     console.log('session_token', session_token)
+     let {previousSeed, serverSeedHash, session_token } = this.state;
+     //this.setState({previousSeedHash:serverSeedHash})
+     console.log('session_token', session_token);
      const bitvest = await axios.post('https://bitvest.io/action.php',
       qs.stringify({
             "token":session_token,
@@ -359,27 +360,34 @@ class Main extends React.Component {
       }});
       // console.log('#############################################################',bitvest.data);
      this.setState({serverSeedHash:bitvest.data.server_hash, previousSeed:bitvest.data.server_seed})
-     this.getMyBetsBitvest(previousSeedHash);
+     this.getMyBetsBitvest();
     }
 
-    getMyBetsBitvest = async (previousSeedHash) => {
+    getMyBetsBitvest = async () => {
       let { betData } = this.state;
       const crypto = require('crypto');
      const bitvest = await axios.get('https://bitvest.io/update.php?dice=1&json=1&self-only=1');
      // console.log('bitvest',bitvest.data.game.data);
+     //console.log("server seed hash that was used:",previousSeedHash);
      bitvest.data.game.data.map( async (item)=>{
        const bet =  await axios.get(`https://bitvest.io/results?query=${item.id}&game=dice&json=1`);
-        if(bet.data!='undefined' && bet.data.server_seed!='undefined'){
-          let hash = crypto .createHash('sha512') .update(bet.data.server_seed) .digest('hex');
-          if(previousSeedHash===hash){
+       console.log("betDetails",bet.data);
+       console.log("serverseed",bet.data.server_seed);
+        //if(bet.data!='undefined' && bet.data.server_seed!='undefined'){
+          //let hash = crypto .createHash('sha256') .update(bet.data.server_seed) .digest('hex');
+          //console.log("hashing the unhashed:",hash);
+          //if(previousSeedHash===hash){
+          //console.log("verification eligible");
           let isVerified = this.handleVerifyBetBitvest(bet.data.server_seed,bet.data.user_seed, bet.data.user_seed_nonce, item.roll);
+          let value;
+          if(isVerified) {value = "yes"} else {value = "no"};
+          console.log("verified?",value);
           let betsDataObject = {
             id:item.id, game:item.game, roll:item.roll, side:item.side, target:item.target, server_seed:bet.data.server_seed, user_seed:bet.data.user_seed, user_seed_nonce:bet.data.user_seed_nonce, isVerified:isVerified
           }
-          betData.push(betsDataObject)
-          this.setState({betData:betData})
-          console.log("My Bets :", betsDataObject)
-        }}
+          betData.push(betsDataObject);
+          this.setState({betData:betData});
+          console.log("My Bets :", betsDataObject);        
      })
    }
 
@@ -724,7 +732,7 @@ class Main extends React.Component {
                                 </thead>
 
                                 <tbody>
-                                  {betData.map((item)=>{
+                                  {!!betData && betData.map((item)=>{
                                     return <tr id={item}>
                                       <td className="table-user">
                                       {item.id}
