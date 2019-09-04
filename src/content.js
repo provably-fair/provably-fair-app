@@ -235,9 +235,13 @@ class Main extends React.Component {
       const roll = function(key, text) {
       // create HMAC using server seed as key and client seed as message
       const hash = crypto .createHmac('sha512', key) .update(text) .digest('hex');
-      console.log('=============>>>>>>h>>>>>>>>>>>>>>>>>>>hash',hash);
+      console.log('=============>>>>>>>>>>>>>>>>>>>>>>>>>key',key)
+      console.log('=============>>>>>>>>>>>>>>>>>>>>>>>>>text',text)
+      console.log('=============>>>>>>>>>>>>>>>>>>>>>>>>>hash',hash)
       let index = 0;
       let lucky = parseInt(hash.substring(index * 5, index * 5 + 5), 16);
+      console.log('======================>>>>>>>>>>>>>>>>>>lucky',lucky);
+
       // keep grabbing characters from the hash while greater than
       while (lucky >= Math.pow(10, 6)) {
         index++; lucky = parseInt(hash.substring(index * 5, index * 5 + 5), 16);
@@ -249,7 +253,6 @@ class Main extends React.Component {
       }
       lucky %= Math.pow(10, 4);
       lucky /= Math.pow(10, 2);
-      console.log('======================>>>>>>>>>>>>>>>>>>lucky',lucky);
       return lucky;
     };
         let diceVerify = roll(serverSeed, `${clientSeed}|${nonce}`);
@@ -350,7 +353,7 @@ class Main extends React.Component {
           { headers: {
         'Content-Type': 'application/x-www-form-urlencoded'
       }});
-      console.log('#############################################################',bitvest.data);
+      // console.log('#############################################################',bitvest.data);
      this.setState({serverSeedHash:bitvest.data.server_hash, previousSeed:bitvest.data.server_seed})
      this.getMyBetsBitvest();
     }
@@ -366,7 +369,7 @@ class Main extends React.Component {
       BetIdArray = [];
 
      const bitvest = await axios.get('https://bitvest.io/update.php?dice=1&json=1&self-only=1');
-     console.log('bitvest',bitvest.data.game.data);
+     // console.log('bitvest',bitvest.data.game.data);
      bitvest.data.game.data.map( async (item)=>{
        const bet =  await axios.get(`https://bitvest.io/results?query=${item.id}&game=dice&json=1`);
        BetIdArray.push(item.id); gameArray.push(item.game); rollArray.push(item.roll); sideArray.push(item.side); targetArray.push(item.target);
@@ -374,7 +377,7 @@ class Main extends React.Component {
         if(bet.data!='undefined'){
           this.handleVerifyBetBitvest(bet.data.server_seed,bet.data.user_seed, bet.data.user_seed_nonce);
           previousSeedArray.push(bet.data.server_seed); clientSeedArray.push(bet.data.user_seed); nonceArray.push(bet.data.user_seed_nonce);
-          this.set({previousSeedArray:previousSeedArray, clientSeedArray:clientSeedArray, nonceArray:nonceArray})
+          this.setState({previousSeedArray:previousSeedArray, clientSeedArray:clientSeedArray, nonceArray:nonceArray})
         }
      })
    }
