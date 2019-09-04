@@ -130,7 +130,6 @@ class Main extends React.Component {
     componentDidMount(){
         console.log('window.localStorage.apiKey',window.localStorage.getItem('apiKey'));
         this.setState({apiKey:window.localStorage.getItem('apiKey')})
-        this.getSessionTokenBitvest();
     }
 
     getRandomInt = (max) => {
@@ -228,7 +227,7 @@ class Main extends React.Component {
 
     }
 
-    handleVerifyBetBitvest = (serverSeed, clientSeed, nonce) => {
+    handleVerifyBetBitvest = (serverSeed, clientSeed, nonce, result) => {
       // bet made with seed pair (excluding current bet)
       // crypto lib for hmac function
       const crypto = require('crypto');
@@ -239,7 +238,7 @@ class Main extends React.Component {
       console.log('=============>>>>>>>>>>>>>>>>>>>>>>>>>text',text)
       console.log('=============>>>>>>>>>>>>>>>>>>>>>>>>>hash',hash)
       let index = 0;
-      let lucky = parseInt(hash.substring(index * 5, index * 5 + 5), 16);
+      let lucky = hash.substring(index * 5, index * 5 + 5);
       console.log('======================>>>>>>>>>>>>>>>>>>lucky',lucky);
 
       // keep grabbing characters from the hash while greater than
@@ -251,12 +250,16 @@ class Main extends React.Component {
          break;
        }
       }
-      lucky %= Math.pow(10, 4);
-      lucky /= Math.pow(10, 2);
-      return lucky;
+      lucky = converter.hexToDec(lucky);
+      // lucky %= Math.pow(10, 4);
+      lucky /= Math.pow(10, 4);
+      return (lucky==result);
     };
         let diceVerify = roll(serverSeed, `${clientSeed}|${nonce}`);
         this.setState({diceVerify:diceVerify});
+        console.log('diceVerify', diceVerify);
+
+        return diceVerify;
     }
 
     getCoinData = async () => {
@@ -333,8 +336,8 @@ class Main extends React.Component {
 
     getSessionTokenBitvest = async () => {
       const bitvest = await axios.post('https://bitvest.io/create.php');
-      console.log('Token Behanchod!', bitvest.data.session_token);
-      this.setState({session_token: bitvest.data.session_token});
+      console.log('Token Behanchod!', bitvest.data.data.session_token);
+      this.setState({session_token: bitvest.data.data.session_token});
     }
 
 
@@ -342,11 +345,12 @@ class Main extends React.Component {
     getNewServerseedHashBitvest = async () => {
       // let phpssid = Cookies.get('PHPSESSID');
       // Cookies.set('PHPSESSID',"f0eut20pqdg1952slbo33ep0d7");
-     let { previousSeedHash, previousSeed, serverSeedHash } = this.state;
-     // this.setState({previousSeedHash:serverSeedHash})
+     let { previousSeedHash, previousSeed, serverSeedHash, session_token } = this.state;
+     this.setState({previousSeedHash:serverSeedHash})
+     console.log('session_token', session_token)
      const bitvest = await axios.post('https://bitvest.io/action.php',
       qs.stringify({
-            "token":"27iYpXyFCV3Pcq",
+            "token":session_token,
             "secret":0,
             "act":"new_server_seed"
           }),
@@ -355,30 +359,27 @@ class Main extends React.Component {
       }});
       // console.log('#############################################################',bitvest.data);
      this.setState({serverSeedHash:bitvest.data.server_hash, previousSeed:bitvest.data.server_seed})
-     this.getMyBetsBitvest();
+     this.getMyBetsBitvest(previousSeedHash);
     }
 
-    getMyBetsBitvest = async () => {
-      // let phpssid = Cookies.get('PHPSESSID');
-      // Cookies.set('PHPSESSID',phpssid);
-      // let { previousSeedHash, previousSeed, serverSeedHash } = this.state;
-
-      // console.log('previousSeedHash : ',previousSeedHash, 'previousSeed : ', previousSeed);
-
-      let { BetIdArray, gameArray, rollArray, sideArray, targetArray, nonceArray, serverSeedHashArray, previousSeedArray, clientSeedArray } = this.state;
-      BetIdArray = [];
-
+    getMyBetsBitvest = async (previousSeedHash) => {
+      let { betData } = this.state;
+      const crypto = require('crypto');
      const bitvest = await axios.get('https://bitvest.io/update.php?dice=1&json=1&self-only=1');
      // console.log('bitvest',bitvest.data.game.data);
      bitvest.data.game.data.map( async (item)=>{
        const bet =  await axios.get(`https://bitvest.io/results?query=${item.id}&game=dice&json=1`);
-       BetIdArray.push(item.id); gameArray.push(item.game); rollArray.push(item.roll); sideArray.push(item.side); targetArray.push(item.target);
-       this.setState({BetIdArray:BetIdArray, gameArray:gameArray, rollArray:rollArray, sideArray:sideArray, targetArray:targetArray})
-        if(bet.data!='undefined'){
-          this.handleVerifyBetBitvest(bet.data.server_seed,bet.data.user_seed, bet.data.user_seed_nonce);
-          previousSeedArray.push(bet.data.server_seed); clientSeedArray.push(bet.data.user_seed); nonceArray.push(bet.data.user_seed_nonce);
-          this.setState({previousSeedArray:previousSeedArray, clientSeedArray:clientSeedArray, nonceArray:nonceArray})
-        }
+        if(bet.data!='undefined' && bet.data.server_seed!='undefined'){
+          let hash = crypto .createHash('sha512') .update(bet.data.server_seed) .digest('hex');
+          if(previousSeedHash===hash){
+          let isVerified = this.handleVerifyBetBitvest(bet.data.server_seed,bet.data.user_seed, bet.data.user_seed_nonce, item.roll);
+          let betsDataObject = {
+            id:item.id, game:item.game, roll:item.roll, side:item.side, target:item.target, server_seed:bet.data.server_seed, user_seed:bet.data.user_seed, user_seed_nonce:bet.data.user_seed_nonce, isVerified:isVerified
+          }
+          betData.push(betsDataObject)
+          this.setState({betData:betData})
+          console.log("My Bets :", betsDataObject)
+        }}
      })
    }
 
@@ -432,7 +433,9 @@ class Main extends React.Component {
                             </svg>
                             <p><span style={{fontStyle:'bold'}}>Operator</span> is a CGF verified operator.</p>
                             <button className="btn btn-info mb-3" type="button" onClick={()=>{
-                              this.setState({gettingStarted:!gettingStarted, enterAPI:false, stake:true});
+                              this.getSessionTokenBitvest()
+
+                              this.setState({gettingStarted:!gettingStarted, enterAPI:false, stake:true})
                             }}>
                             Get Started Now
                             </button>
@@ -716,29 +719,33 @@ class Main extends React.Component {
                                     <th>Side</th>
                                     <th>Target</th>
                                     <th>Nonce</th>
+                                    <th>Status</th>
                                   </tr>
                                 </thead>
 
                                 <tbody>
-                                  {BetIdArray.map((item,i)=>{
+                                  {betData.map((item)=>{
                                     return <tr id={item}>
                                       <td className="table-user">
-                                      {item}
+                                      {item.id}
                                       </td>
                                       <td>
-                                        <span className="text-muted">{gameArray[i]}</span>
+                                        <span className="text-muted">{item.game}</span>
                                       </td>
                                       <td>
-                                      {rollArray[i]}
+                                      {item.roll}
                                       </td>
                                       <td>
-                                        {sideArray[i]}
+                                        {item.side}
                                       </td>
                                       <td>
-                                        {targetArray[i]}
+                                        {item.target}
                                       </td>
                                       <td>
-                                        {nonceArray[i]}
+                                        {item.nonce}
+                                      </td>
+                                      <td>
+                                        {item.isVerified}
                                       </td>
                                       <div className="form-group  mt-5" style={{marginLeft: '-366px'}}>
 
