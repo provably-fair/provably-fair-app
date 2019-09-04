@@ -332,24 +332,28 @@ class Main extends React.Component {
       // let phpssid = Cookies.get('PHPSESSID');
       // Cookies.set('PHPSESSID',"f0eut20pqdg1952slbo33ep0d7");
      let { previousSeedHash, previousSeed, serverSeedHash } = this.state;
-     this.setState({previousSeedHash:serverSeedHash})
+     // this.setState({previousSeedHash:serverSeedHash})
      const bitvest = await axios.post('https://bitvest.io/action.php',
       qs.stringify({
-            "token":"V60OevanCRdnr",
+            "token":"RSo82czTaloxT",
             "secret":0,
             "act":"new_server_seed"
           }),
           { headers: {
         'Content-Type': 'application/x-www-form-urlencoded'
       }});
+      console.log('#############################################################333',bitvest.data);
      this.setState({serverSeedHash:bitvest.data.server_hash, previousSeed:bitvest.data.server_seed})
-     console.log('previousSeedHash : ',previousSeedHash, 'previousSeed : ', previousSeed);
      this.getMyBetsBitvest();
     }
 
     getMyBetsBitvest = async () => {
       // let phpssid = Cookies.get('PHPSESSID');
       // Cookies.set('PHPSESSID',phpssid);
+      // let { previousSeedHash, previousSeed, serverSeedHash } = this.state;
+
+      // console.log('previousSeedHash : ',previousSeedHash, 'previousSeed : ', previousSeed);
+
       let { BetIdArray, gameArray, rollArray, sideArray, targetArray, nonceArray, serverSeedHashArray, previousSeedArray, clientSeedArray } = this.state;
       BetIdArray = [];
 
