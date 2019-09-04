@@ -93,6 +93,7 @@ class Main extends React.Component {
         clientSeed:'',
         serverSeedHash:'',
         previousSeed:'',
+        session_token:'',
         nonce:0,
         betData:[],
         cryptoGames:false,
@@ -120,6 +121,7 @@ class Main extends React.Component {
         betPayout:2.0,
         betPlaced:false,
         stake:false,
+
       }
 
     }
@@ -128,6 +130,7 @@ class Main extends React.Component {
     componentDidMount(){
         console.log('window.localStorage.apiKey',window.localStorage.getItem('apiKey'));
         this.setState({apiKey:window.localStorage.getItem('apiKey')})
+        this.getSessionTokenBitvest();
     }
 
     getRandomInt = (max) => {
@@ -325,6 +328,11 @@ class Main extends React.Component {
             console.log('betData', betData);
     }
 
+    getSessionTokenBitvest = async () => {
+      const bitvest = await axios.post('https://bitvest.io/create.php');
+      console.log('Token Behanchod!', bitvest.data.session_token);
+      this.setState({session_token: bitvest.data.session_token});
+    }
 
 
 
@@ -335,14 +343,14 @@ class Main extends React.Component {
      // this.setState({previousSeedHash:serverSeedHash})
      const bitvest = await axios.post('https://bitvest.io/action.php',
       qs.stringify({
-            "token":"RSo82czTaloxT",
+            "token":"27iYpXyFCV3Pcq",
             "secret":0,
             "act":"new_server_seed"
           }),
           { headers: {
         'Content-Type': 'application/x-www-form-urlencoded'
       }});
-      console.log('#############################################################333',bitvest.data);
+      console.log('#############################################################',bitvest.data);
      this.setState({serverSeedHash:bitvest.data.server_hash, previousSeed:bitvest.data.server_seed})
      this.getMyBetsBitvest();
     }
