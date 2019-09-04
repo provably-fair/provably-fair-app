@@ -130,7 +130,7 @@ class Main extends React.Component {
     componentDidMount(){
         console.log('window.localStorage.apiKey',window.localStorage.getItem('apiKey'));
         this.setState({apiKey:window.localStorage.getItem('apiKey')})
-        this.getSessionTokenBitvest();
+        
     }
 
     getRandomInt = (max) => {
@@ -330,8 +330,8 @@ class Main extends React.Component {
 
     getSessionTokenBitvest = async () => {
       const bitvest = await axios.post('https://bitvest.io/create.php');
-      console.log('Token Behanchod!', bitvest.data.session_token);
-      this.setState({session_token: bitvest.data.session_token});
+      console.log('Token Behanchod!', bitvest.data.data.session_token);
+      this.setState({session_token: bitvest.data.data.session_token});
     }
 
 
@@ -339,11 +339,12 @@ class Main extends React.Component {
     getNewServerseedHashBitvest = async () => {
       // let phpssid = Cookies.get('PHPSESSID');
       // Cookies.set('PHPSESSID',"f0eut20pqdg1952slbo33ep0d7");
-     let { previousSeedHash, previousSeed, serverSeedHash } = this.state;
+     let { previousSeedHash, previousSeed, serverSeedHash, session_token } = this.state;
      // this.setState({previousSeedHash:serverSeedHash})
+     console.log('session_token', session_token)
      const bitvest = await axios.post('https://bitvest.io/action.php',
       qs.stringify({
-            "token":"27iYpXyFCV3Pcq",
+            "token":session_token,
             "secret":0,
             "act":"new_server_seed"
           }),
@@ -429,7 +430,9 @@ class Main extends React.Component {
                             </svg>
                             <p><span style={{fontStyle:'bold'}}>Operator</span> is a CGF verified operator.</p>
                             <button className="btn btn-info mb-3" type="button" onClick={()=>{
-                              this.setState({gettingStarted:!gettingStarted, enterAPI:false, stake:true});
+                              this.getSessionTokenBitvest()
+                              
+                              this.setState({gettingStarted:!gettingStarted, enterAPI:false, stake:true})
                             }}>
                             Get Started Now
                             </button>
