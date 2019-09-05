@@ -428,7 +428,6 @@ class Main extends React.Component {
           { headers: {
         'Content-Type': 'application/x-www-form-urlencoded'
       }});
-      // console.log('#############################################################',bitvest.data);
      this.setState({serverSeedHash:bitvest.data.server_hash, previousSeed:bitvest.data.server_seed})
      this.getMyBetsBitvest();
     }
@@ -437,20 +436,20 @@ class Main extends React.Component {
       let { betData } = this.state;
       betData = [];
       const crypto = require('crypto');
-     const bitvest = await axios.get('https://bitvest.io/update.php?dice=1&json=1&self-only=1');
-     // console.log('bitvest',bitvest.data.game.data);
-     //console.log("server seed hash that was used:",previousSeedHash);
-     bitvest.data.game.data.map( async (item)=>{
+      const bitvest = await axios.get('https://bitvest.io/update.php?dice=1&json=1&self-only=1');
+      bitvest.data.game.data.map( async (item)=>{
        const bet =  await axios.get(`https://bitvest.io/results?query=${item.id}&game=dice&json=1`);
           let isVerified = this.handleVerifyBetBitvest(bet.data.server_seed,bet.data.user_seed, bet.data.user_seed_nonce, item.roll);
-          var element = {};
+          var element = {id: 946296727, game: "dice", roll: "34.0387", side: "high", target: "50.0000", user_seed_nonce: 0, isVerified:true};
           element.id = item.id; element.game = item.game; element.roll = item.roll; element.side = item.side; element.target = item.target;
           element.user_seed_nonce = bet.data.user_seed_nonce; element.isVerified = isVerified;
           console.log('element : ', element);
-          betData.push(element);
+          betData.push({element: element});
           this.setState({betData:betData});
-          console.log('betData', betData);
-     })
+          betData.map((arrayItem) => {
+              console.log('Result -----------',arrayItem.element.id);
+          });
+      })
    }
 
     render() {
@@ -794,32 +793,29 @@ class Main extends React.Component {
                                 </thead>
 
                                 <tbody>
-                                  {betData.map((item)=>{
-                                    return <tr id={item}>
+                                  {betData.map((item,i)=>{
+                                    return <tr id={i}>
                                       <td className="table-user">
-                                      {item.id}
+                                      {item.element.id}
                                       </td>
-                                      <td>
-                                        <span className="text-muted">{item.game}</span>
+                                      <td className="table-user">
+                                      {item.element.game}
                                       </td>
-                                      <td>
-                                      {item.roll}
+                                      <td className="table-user">
+                                      {item.element.roll}
                                       </td>
-                                      <td>
-                                        {item.side}
+                                      <td className="table-user">
+                                      {item.element.side}
                                       </td>
-                                      <td>
-                                        {item.target}
+                                      <td className="table-user">
+                                      {item.element.target}
                                       </td>
-                                      <td>
-                                        {item.user_seed_nonce}
+                                      <td className="table-user">
+                                      {item.element.user_seed_nonce}
                                       </td>
-                                      <td>
-                                        {item.isVerified}
+                                      <td className="table-user">
+                                      {item.element.isVerified}
                                       </td>
-                                      <div className="form-group  mt-5" style={{marginLeft: '-366px'}}>
-
-                                      </div>
                                     </tr>
                                   })}
                                 </tbody>
@@ -1016,8 +1012,6 @@ class Main extends React.Component {
                                 </li>
                               </ul>
                             </div>
-
-
                            </div>
                         )
                     }
