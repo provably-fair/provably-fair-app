@@ -442,22 +442,11 @@ class Main extends React.Component {
      //console.log("server seed hash that was used:",previousSeedHash);
      bitvest.data.game.data.map( async (item)=>{
        const bet =  await axios.get(`https://bitvest.io/results?query=${item.id}&game=dice&json=1`);
-       console.log("betDetails",bet.data);
-       console.log("serverseed",bet.data.server_seed);
-        //if(bet.data!='undefined' && bet.data.server_seed!='undefined'){
-          //let hash = crypto .createHash('sha256') .update(bet.data.server_seed) .digest('hex');
-          //console.log("hashing the unhashed:",hash);
-          //if(previousSeedHash===hash){
-          //console.log("verification eligible");
           let isVerified = this.handleVerifyBetBitvest(bet.data.server_seed,bet.data.user_seed, bet.data.user_seed_nonce, item.roll);
-          let value;
-          if(isVerified) {value = "yes"} else {value = "no"};
-          // console.log("verified?",value);
-
           var element = {};
-          element.id = item.id; element.game = item.game; element.roll = item.roll; element.side = item.side; element.target = item.target; element.user_seed_nonce = item.user_seed_nonce; element.isVerified = item.isVerified;
+          element.id = item.id; element.game = item.game; element.roll = item.roll; element.side = item.side; element.target = item.target;
+          element.user_seed_nonce = bet.data.user_seed_nonce; element.isVerified = isVerified;
           console.log('element : ', element);
-          // betsDataObject.push({ id:item.id, game:item.game, roll:item.roll, side:item.side, target:item.target, server_seed:bet.data.server_seed, user_seed:bet.data.user_seed, user_seed_nonce:bet.data.user_seed_nonce, isVerified:isVerified });
           betData.push(element);
           this.setState({betData:betData});
           console.log('betData', betData);
@@ -616,7 +605,7 @@ class Main extends React.Component {
                             <div className="form-group">
                               <label className="form-control-label">Next Server Seed Hash</label>
                               <input className="form-control form-control-sm" type="text" value={serverSeedHash} placeholder="" onChange={(e)=>{this.setState({serverSeedHash:e.target.value})}}/>
-                              <button type="button" className="btn btn-secondary m-2"   onClick={()=>{this.getNewServerseedHashBitvest(); this.setState({stake:true, verification:true});}}> Request</button>
+                              <button type="button" className="btn btn-secondary m-2"   onClick={this.getNewServerseedHashBitvest}> Request</button>
                             </div>
 
                             <div className="form-group">
