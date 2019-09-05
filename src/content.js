@@ -756,11 +756,29 @@ class Main extends React.Component {
                                 </thead>
 
                                 <tbody>
-                                  {betData.forEach((item,i)=>{
+                                  {betData.map((item,i)=>{
                                     console.log("INSIDE TABLE : ", item.element.id);
                                     return <tr>
                                     <td>
                                     {item.element.id}
+                                    </td>
+                                    <td>
+                                    {item.element.game}
+                                    </td>
+                                    <td>
+                                    {item.element.roll}
+                                    </td>
+                                    <td>
+                                    {item.element.side}
+                                    </td>
+                                    <td>
+                                    {item.element.target}
+                                    </td>
+                                    <td>
+                                    {item.element.user_seed_nonce}
+                                    </td>
+                                    <td>
+                                    {item.element.isVerified?'Yes':'No'}
                                     </td>
                                     </tr>
                                   })}
@@ -789,7 +807,7 @@ class Main extends React.Component {
                             <div className="nav-wrapper">
                               <ul className="nav nav-pills nav-fill flex-md-row" id="tabs-icons-text" role="tablist">
                                   <li className="nav-item" onClick={()=>{
-                                    this.setState({gettingStarted:false, settings:true, stake:true,  verification:false, operators:false});
+                                    this.setState({gettingStarted:false, settings:true, stake:false,  verification:false, operators:false});
 
                                     this.getServerSeed(apiKey)
 
