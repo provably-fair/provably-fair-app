@@ -71,11 +71,45 @@ const query4 = `mutation RotateServerSeedMutation {
 
 
 
-const query = `mutation ChangeClientSeedMutation($seed: String!) {
+const query5 = `mutation ChangeClientSeedMutation($seed: String!) {
   changeClientSeed(seed: $seed) {
     id
     seed
     __typename
+  }
+}`
+
+
+
+/**this is for looking up one bet**/
+
+const query7 = `query betQuery($betId: String!) {
+  bet(betId: $betId) {
+    id
+    iid
+    bet {
+      ... on CasinoBet {
+        id
+        nonce
+        game
+        serverSeed {
+          seed
+          seedHash
+        }
+        clientSeed {
+          seed
+        }
+      }
+    }
+  }
+}`
+
+/**this is for unhashing a seed**/
+
+const query8 = `query serverSeedQuery($hash: String!) {
+  serverSeedByHash(hash: $hash) {
+    seed
+    seedHash
   }
 }`
 
@@ -155,6 +189,38 @@ class Main extends React.Component {
         console.log('betData', betData);
     }
 
+    getAllUserSeedsStake = () => {
+
+      const name = "livingrock";
+
+      /**this is for looking up a user**/
+
+      const query6 = `query userSeeds($name: String) {
+        user(name: $name) {
+          id
+          activeServerSeed {
+            seedHash
+          }
+          previousServerSeed {
+            seed
+            seedHash
+          }
+          activeClientSeed {
+            seed
+          }
+          previousClientSeed {
+            seed
+          }
+        }
+      }`
+
+       client.request(query6).then((userSeeds) => {
+
+         console.log('userSeeds', userSeeds);
+
+       })
+    }
+
     getClientSeed = () => {
       let key = uuidv4();
       let hash = createHmac('sha256', key)
@@ -169,7 +235,7 @@ class Main extends React.Component {
       const variables = {
         seed: clientSeed
       }
-      client.request(query, variables).then(data => console.log(data))
+      client.request(query5, variables).then(data => console.log(data))
     }
 
     getServerSeedStake = () =>{
@@ -385,9 +451,8 @@ class Main extends React.Component {
           let betsDataObject = {
             id:item.id, game:item.game, roll:item.roll, side:item.side, target:item.target, server_seed:bet.data.server_seed, user_seed:bet.data.user_seed, user_seed_nonce:bet.data.user_seed_nonce, isVerified:isVerified
           }
-          betData.push(betsDataObject);
+          betData.push(item);
           this.setState({betData:betData});
-          console.log("My Bets :", betsDataObject);        
      })
    }
 
@@ -543,7 +608,7 @@ class Main extends React.Component {
                             <div className="form-group">
                               <label className="form-control-label">Next Server Seed Hash</label>
                               <input className="form-control form-control-sm" type="text" value={serverSeedHash} placeholder="" onChange={(e)=>{this.setState({serverSeedHash:e.target.value})}}/>
-                              <button type="button" className="btn btn-secondary m-2"   onClick={this.getNewServerseedHashBitvest}> Request</button>
+                              <button type="button" className="btn btn-secondary m-2"   onClick={this.getAllUserSeedsStake}> Request</button>
                             </div>
 
                             <div className="form-group">
@@ -732,7 +797,7 @@ class Main extends React.Component {
                                 </thead>
 
                                 <tbody>
-                                  {!!betData && betData.map((item)=>{
+                                  {betData.map((item)=>{
                                     return <tr id={item}>
                                       <td className="table-user">
                                       {item.id}
@@ -750,10 +815,10 @@ class Main extends React.Component {
                                         {item.target}
                                       </td>
                                       <td>
-                                        {item.nonce}
+                                        item.nonce
                                       </td>
                                       <td>
-                                        {item.isVerified}
+                                        item.isVerified
                                       </td>
                                       <div className="form-group  mt-5" style={{marginLeft: '-366px'}}>
 
