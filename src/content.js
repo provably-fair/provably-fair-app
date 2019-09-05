@@ -132,8 +132,7 @@ class Main extends React.Component {
 
 
     componentDidMount(){
-        console.log('window.localStorage.apiKey',window.localStorage.getItem('apiKey'));
-        this.setState({apiKey:window.localStorage.getItem('apiKey')})
+
     }
 
     getRandomInt = (max) => {
@@ -265,29 +264,6 @@ class Main extends React.Component {
       this.setState({nonce:0})
     }
 
-
-    handleCryptoGamesBet = (serverSeedHash,clientSeed) => {
-      // crypto lib for hmac function
-      const crypto = require('crypto');
-      const roll = function(key, text) {
-      // create HMAC using server seed as key and client seed as message
-      const hash = crypto .createHash('sha512') .update(`${key}${text}`) .digest('hex');
-      let index = 0;
-      let lucky = hash.substring(index, index + 5);
-      let dec = converter.hexToDec(lucky);
-      let str = dec.toString();
-      if(str.length>5){
-          str = str.slice(str.length-5);
-        }
-      dec = parseInt(str);
-      return dec/1000;
-    };
-      let diceVerify = roll(serverSeedHash, clientSeed);
-      this.setState({diceVerify:diceVerify, verify:true, serverSeedHash:serverSeedHash, clientSeed:clientSeed});
-      console.log("diceVerify",diceVerify);
-
-    }
-
     handleVerifyBetBitvest = (serverSeed, clientSeed, nonce, result) => {
       // bet made with seed pair (excluding current bet)
       // crypto lib for hmac function
@@ -312,7 +288,6 @@ class Main extends React.Component {
        }
       }
       lucky = converter.hexToDec(lucky);
-      // lucky %= Math.pow(10, 4);
       lucky /= Math.pow(10, 4);
       return (lucky==result);
     };
@@ -402,10 +377,7 @@ class Main extends React.Component {
     }
 
     getNewServerseedHashBitvest = async () => {
-      // let phpssid = Cookies.get('PHPSESSID');
-      // Cookies.set('PHPSESSID',"f0eut20pqdg1952slbo33ep0d7");
      let {previousSeed, serverSeedHash, session_token } = this.state;
-     //this.setState({previousSeedHash:serverSeedHash})
      console.log('session_token', session_token);
      const bitvest = await axios.post('https://bitvest.io/action.php',
       qs.stringify({
@@ -427,10 +399,10 @@ class Main extends React.Component {
      const bitvest = await axios.get('https://bitvest.io/update.php?dice=1&json=1&self-only=1');
      bitvest.data.game.data.map( async (item)=>{
        const bet =  await axios.get(`https://bitvest.io/results?query=${item.id}&game=dice&json=1`);
-          console.log("betDetails",bet.data);
           console.log('previousSeed:',previousSeed);
           if(previousSeed===bet.data.server_seed){
           console.log("verification eligible");
+          console.log("betDetails",bet.data);
           let isVerified = this.handleVerifyBetBitvest(bet.data.server_seed,bet.data.user_seed, bet.data.user_seed_nonce, item.roll);
           var element = {};
           element.id = item.id; element.game = item.game; element.roll = item.roll; element.side = item.side; element.target = item.target;
@@ -442,12 +414,6 @@ class Main extends React.Component {
         }
      })
    }
-
-    
-
-       
-
-    
 
     render() {
       const { gettingStarted, settings, verification, operators, clientSeed, serverSeedHash, nonce, betData, cryptoGames,primeDice, diceResult, diceVerify, verify, apiKey, enterAPI,
@@ -790,10 +756,11 @@ class Main extends React.Component {
                                 </thead>
 
                                 <tbody>
-                                  {betData.forEach((item)=>{
+                                  {betData.forEach((item,i)=>{
+                                    console.log("INSIDE TABLE : ", item.i.element.id);
                                     return <tr>
                                     <td>
-                                    {item.element.id}
+                                    {item.i.element.id}
                                     </td>
                                     </tr>
                                   })}
@@ -841,7 +808,7 @@ class Main extends React.Component {
                                   </li>
                               </ul>
                             </div>
-                            
+
                             <div className="primeDice" style={{display:primeDice?'block':'none'}}>
                                 <div className="form-group">
                                   <button type="button" className="btn btn-secondary m-2" onClick={()=>{
