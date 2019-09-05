@@ -757,10 +757,10 @@ class Main extends React.Component {
 
                                 <tbody>
                                   {betData.forEach((item,i)=>{
-                                    console.log("INSIDE TABLE : ", item.i.element.id);
+                                    console.log("INSIDE TABLE : ", item.element.id);
                                     return <tr>
                                     <td>
-                                    {item.i.element.id}
+                                    {item.element.id}
                                     </td>
                                     </tr>
                                   })}
