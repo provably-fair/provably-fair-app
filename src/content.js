@@ -105,7 +105,6 @@ class Main extends React.Component {
         operators:false,
         clientSeed:'',
         serverSeedHash:'',
-        previousSeedHash:'',
         previousSeed:'',
         session_token:'',
         nonce:0,
@@ -117,16 +116,8 @@ class Main extends React.Component {
         diceVerify:0,
         user:'',
         apiKey:null,
+        BetIdArray: [],
         BetId:null,
-        BetIdArray:[],
-        gameArray:[],
-        rollArray:[],
-        sideArray:[],
-        targetArray:[],
-        nonceArray:[],
-        clientSeedArray:[],
-        serverSeedHashArray:[],
-        previousSeedArray:[],
         Balance:null,
         Roll:null,
         nonceChecked:false,
@@ -135,7 +126,6 @@ class Main extends React.Component {
         betPayout:2.0,
         betPlaced:false,
         stake:false,
-
       }
 
     }
@@ -372,7 +362,7 @@ class Main extends React.Component {
       let { Balance, BetId, Roll } = bet.data
       BetIdArray.push(BetId)
       this.setState({BetIdArray:BetIdArray});
-      this.getBetData(BetIdArray);
+      //this.getBetData(BetIdArray);
       var newNonce = parseInt(nonce);
       this.setState({BetId:BetId, Balance:Balance, Roll:Roll, nonce:newNonce+1});
       this.getServerSeed(apiKey);
@@ -411,8 +401,6 @@ class Main extends React.Component {
       this.setState({session_token: bitvest.data.data.session_token});
     }
 
-
-
     getNewServerseedHashBitvest = async () => {
       // let phpssid = Cookies.get('PHPSESSID');
       // Cookies.set('PHPSESSID',"f0eut20pqdg1952slbo33ep0d7");
@@ -439,6 +427,8 @@ class Main extends React.Component {
      const bitvest = await axios.get('https://bitvest.io/update.php?dice=1&json=1&self-only=1');
      bitvest.data.game.data.map( async (item)=>{
        const bet =  await axios.get(`https://bitvest.io/results?query=${item.id}&game=dice&json=1`);
+          console.log("betDetails",bet.data);
+          console.log('previousSeed:',previousSeed);
           if(previousSeed===bet.data.server_seed){
           console.log("verification eligible");
           let isVerified = this.handleVerifyBetBitvest(bet.data.server_seed,bet.data.user_seed, bet.data.user_seed_nonce, item.roll);
@@ -446,14 +436,16 @@ class Main extends React.Component {
           element.id = item.id; element.game = item.game; element.roll = item.roll; element.side = item.side; element.target = item.target;
           element.user_seed_nonce = bet.data.user_seed_nonce; element.isVerified = isVerified;
           console.log('element : ', element);
-          betData.push({element: element});
+          betData.push({element:element});
+          console.log('betData',betData);
           this.setState({betData:betData});
-          betData.map((arrayItem) => {
-              console.log('Result -----------',arrayItem.element.id);
-          });
         }
      })
    }
+
+    
+
+       
 
     getMyBetsBitvest = async () => {
       let { betData } = this.state;
@@ -477,7 +469,7 @@ class Main extends React.Component {
 
     render() {
       const { gettingStarted, settings, verification, operators, clientSeed, serverSeedHash, nonce, betData, cryptoGames,primeDice, diceResult, diceVerify, verify, apiKey, enterAPI,
-      Balance, BetId, Roll, nonceChecked, BetIdArray, gameArray, rollArray, sideArray, targetArray, nonceArray, toggleState, betAmount, betPayout, betPlaced, stake } = this.state;
+      Balance, BetId, Roll, nonceChecked, toggleState, betAmount, betPayout, betPlaced, stake } = this.state;
         return (
           <CookiesProvider>
             <Frame head={[<link type="text/css" rel="stylesheet" href={chrome.runtime.getURL("/static/css/content.css")} ></link>]}>
@@ -502,7 +494,7 @@ class Main extends React.Component {
                                  </li>
                                  <li className="nav-item" onClick={()=>{
                                    this.setState({gettingStarted:false,settings:false, verification:true, stake:false, operators:false});
-                                   this.getBetData(BetIdArray)
+                                  // this.getBetData(BetIdArray)
 
 
                                  }}>
@@ -816,7 +808,7 @@ class Main extends React.Component {
                                 </thead>
 
                                 <tbody>
-                                  {betData.map((item,i)=>{
+                                  {betData.forEach((item)=>{
                                     return <tr>
                                     <td>
                                     {item.element.id}
@@ -867,54 +859,7 @@ class Main extends React.Component {
                                   </li>
                               </ul>
                             </div>
-                            <div className="crypto-games" style={{display:cryptoGames?'block':'none'}}>
-                              <table className="table align-items-center table-flush table-hover">
-                                <thead className="thead-light">
-                                  <tr>
-                                    <th>Id</th>
-                                    <th>Game</th>
-                                    <th>Roll</th>
-                                    <th>Time</th>
-                                  </tr>
-                                </thead>
-
-                                <tbody>
-                                  {betData.map((item)=>{
-                                    return <tr>
-                                      <td className="table-user">
-                                      {item.id}
-                                      </td>
-                                      <td>
-                                        <span className="text-muted">item.bet.game</span>
-                                      </td>
-                                      <td>
-                                      {item.bet.payout}
-                                      </td>
-                                      <td>
-                                        {item.bet.createdAt}
-                                      </td>
-                                      <div className="form-group  mt-5" style={{marginLeft: '-366px'}}>
-                                        <button type="button" className="btn btn-info" onClick={()=>{
-                                          this.handleCryptoGamesBet(item.ServerSeed, item.ClientSeed)
-                                        }}> Verify</button>
-                                      </div>
-                                    </tr>
-
-                                  })
-}
-                                </tbody>
-                              </table>
-
-                              <div className="form-group">
-                                <label className="form-control-label">Enter Your BetId to search</label>
-                                <input className="form-control form-control-sm" type="text" value={BetId} placeholder="Bet Id" onChange={(e)=>{this.setState({BetId:e.target.value})}}/>
-                                <button type="button" className="btn btn-secondary m-2" onClick={()=>{
-                                  this.getBetDataById(BetId)
-                                }}> Search</button>
-                              </div>
-
-                            </div>
-
+                            
                             <div className="primeDice" style={{display:primeDice?'block':'none'}}>
                                 <div className="form-group">
                                   <button type="button" className="btn btn-secondary m-2" onClick={()=>{
