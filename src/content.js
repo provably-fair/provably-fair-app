@@ -433,6 +433,29 @@ class Main extends React.Component {
     }
 
     getMyBetsBitvest = async () => {
+      let { betData, previousSeed } = this.state;
+      betData = [];
+      const crypto = require('crypto');
+     const bitvest = await axios.get('https://bitvest.io/update.php?dice=1&json=1&self-only=1');
+     bitvest.data.game.data.map( async (item)=>{
+       const bet =  await axios.get(`https://bitvest.io/results?query=${item.id}&game=dice&json=1`);
+          if(previousSeed===bet.data.server_seed){
+          console.log("verification eligible");
+          let isVerified = this.handleVerifyBetBitvest(bet.data.server_seed,bet.data.user_seed, bet.data.user_seed_nonce, item.roll);
+          var element = {};
+          element.id = item.id; element.game = item.game; element.roll = item.roll; element.side = item.side; element.target = item.target;
+          element.user_seed_nonce = bet.data.user_seed_nonce; element.isVerified = isVerified;
+          console.log('element : ', element);
+          betData.push({element: element});
+          this.setState({betData:betData});
+          betData.map((arrayItem) => {
+              console.log('Result -----------',arrayItem.element.id);
+          });
+        }
+     })
+   }
+
+    getMyBetsBitvest = async () => {
       let { betData } = this.state;
       betData = [];
       const crypto = require('crypto');
@@ -794,7 +817,11 @@ class Main extends React.Component {
 
                                 <tbody>
                                   {betData.map((item,i)=>{
-                                    return console.log('Chirag ye dekho : ', item);                                    
+                                    return <tr>
+                                    <td>
+                                    {item.element.id}
+                                    </td>
+                                    </tr>
                                   })}
                                 </tbody>
                               </table>
@@ -858,7 +885,7 @@ class Main extends React.Component {
                                       {item.id}
                                       </td>
                                       <td>
-                                        <span className="text-muted">{item.bet.game}</span>
+                                        <span className="text-muted">item.bet.game</span>
                                       </td>
                                       <td>
                                       {item.bet.payout}
