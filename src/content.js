@@ -81,28 +81,7 @@ const query5 = `mutation ChangeClientSeedMutation($seed: String!) {
 
 
 
-/**this is for looking up one bet**/
 
-const query7 = `query betQuery($betId: String!) {
-  bet(betId: $betId) {
-    id
-    iid
-    bet {
-      ... on CasinoBet {
-        id
-        nonce
-        game
-        serverSeed {
-          seed
-          seedHash
-        }
-        clientSeed {
-          seed
-        }
-      }
-    }
-  }
-}`
 
 /**this is for unhashing a seed**/
 
@@ -178,15 +157,40 @@ class Main extends React.Component {
        client.request(query3).then((bet) => {
 
          bet.user.houseBetList.map((houseBet)=>{
-           console.log(houseBet)
+           /**this is for looking up one bet**/
+           const betId = houseBet.iid.split('house:')[1].toString();
+           console.log('betId : ',betId);
+           const query7 = `query betQuery($betId: String) {
+             bet(betId: $betId) {
+               id
+               iid
+               bet {
+                 ... on CasinoBet {
+                   id
+                   nonce
+                   game
+                   serverSeed {
+                     seed
+                     seedHash
+                   }
+                   clientSeed {
+                     seed
+                   }
+                 }
+               }
+             }
+           }`
+           client.request(query7).then((betIdData) => {
+
+             console.log('betIdDta', betIdData);
+
+           })
+           console.log('houseBet',houseBet)
            betData.push(houseBet)
            this.setState({betData:betData});
          })
-
-
        })
-
-        console.log('betData', betData);
+        // console.log('betData', betData);
     }
 
     getAllUserSeedsStake = () => {
