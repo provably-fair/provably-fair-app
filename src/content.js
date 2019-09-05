@@ -794,29 +794,7 @@ class Main extends React.Component {
 
                                 <tbody>
                                   {betData.map((item,i)=>{
-                                    return <tr id={i}>
-                                      <td className="table-user">
-                                      {item.element.id}
-                                      </td>
-                                      <td className="table-user">
-                                      {item.element.game}
-                                      </td>
-                                      <td className="table-user">
-                                      {item.element.roll}
-                                      </td>
-                                      <td className="table-user">
-                                      {item.element.side}
-                                      </td>
-                                      <td className="table-user">
-                                      {item.element.target}
-                                      </td>
-                                      <td className="table-user">
-                                      {item.element.user_seed_nonce}
-                                      </td>
-                                      <td className="table-user">
-                                      {item.element.isVerified}
-                                      </td>
-                                    </tr>
+                                    return console.log('Chirag ye dekho : ', item);                                    
                                   })}
                                 </tbody>
                               </table>
