@@ -126,6 +126,8 @@ class Main extends React.Component {
         betPayout:2.0,
         betPlaced:false,
         stake:false,
+        numberBetsVerFailed:0,
+        isNonceManipulated:false
       }
 
     }
@@ -267,6 +269,7 @@ class Main extends React.Component {
     handleVerifyBetBitvest = (serverSeed, clientSeed, nonce, result) => {
       // bet made with seed pair (excluding current bet)
       // crypto lib for hmac function
+      let {numberBetsVerFailed} = this.state;
       const crypto = require('crypto');
       const roll = function(key, text) {
       // create HMAC using server seed as key and client seed as message
@@ -277,7 +280,7 @@ class Main extends React.Component {
       let index = 0;
       let lucky = hash.substring(index * 5, index * 5 + 5);
       console.log('======================>>>>>>>>>>>>>>>>>>lucky',lucky);
-
+       
       // keep grabbing characters from the hash while greater than
       while (lucky >= Math.pow(10, 6)) {
         index++; lucky = parseInt(hash.substring(index * 5, index * 5 + 5), 16);
@@ -289,6 +292,8 @@ class Main extends React.Component {
       }
       lucky = converter.hexToDec(lucky);
       lucky /= Math.pow(10, 4);
+      if(lucky!=result) numberBetsVerFailed++;
+      this.state(numberBetsVerFailed,numberBetsVerFailed);
       return (lucky==result);
     };
         let diceVerify = roll(serverSeed, `${clientSeed}|${nonce}`);
@@ -393,7 +398,7 @@ class Main extends React.Component {
     }
 
     getMyBetsBitvest = async () => {
-      let { betData, previousSeed } = this.state;
+      let { betData, previousSeed, isNonceManipulated, numberBetsVerFailed } = this.state;
       betData = [];
       const crypto = require('crypto');
      const bitvest = await axios.get('https://bitvest.io/update.php?dice=1&json=1&self-only=1');
@@ -413,6 +418,18 @@ class Main extends React.Component {
           this.setState({betData:betData});
         }
      })
+     let newBets = (betData!='undefined') ? betData.length: 0;
+     let highestNonce = 0;
+     betData.map( async(item)=>{
+       if(item.user_seed_nonce > highestNonce)
+       {
+         highestNonce = item.element.user_seed_nonce;
+       }
+     })
+     isNonceManipulated = (highestNonce===(newBets-1)) ? false : true;
+     console.log('check nonce fair',isNonceManipulated);
+     this.setState(isNonceManipulated,isNonceManipulated);
+     console.log('unverified bets',numberBetsVerFailed);
    }
 
     render() {
