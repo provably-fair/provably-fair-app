@@ -447,25 +447,7 @@ class Main extends React.Component {
 
        
 
-    getMyBetsBitvest = async () => {
-      let { betData } = this.state;
-      betData = [];
-      const crypto = require('crypto');
-      const bitvest = await axios.get('https://bitvest.io/update.php?dice=1&json=1&self-only=1');
-      bitvest.data.game.data.map( async (item)=>{
-       const bet =  await axios.get(`https://bitvest.io/results?query=${item.id}&game=dice&json=1`);
-          let isVerified = this.handleVerifyBetBitvest(bet.data.server_seed,bet.data.user_seed, bet.data.user_seed_nonce, item.roll);
-          var element = {id: 946296727, game: "dice", roll: "34.0387", side: "high", target: "50.0000", user_seed_nonce: 0, isVerified:true};
-          element.id = item.id; element.game = item.game; element.roll = item.roll; element.side = item.side; element.target = item.target;
-          element.user_seed_nonce = bet.data.user_seed_nonce; element.isVerified = isVerified;
-          console.log('element : ', element);
-          betData.push({element: element});
-          this.setState({betData:betData});
-          betData.map((arrayItem) => {
-              console.log('Result -----------',arrayItem.element.id);
-          });
-      })
-   }
+    
 
     render() {
       const { gettingStarted, settings, verification, operators, clientSeed, serverSeedHash, nonce, betData, cryptoGames,primeDice, diceResult, diceVerify, verify, apiKey, enterAPI,
