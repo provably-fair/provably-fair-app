@@ -314,9 +314,17 @@ class Main extends React.Component {
     let { betData, previousSeed, isNonceManipulated, numberBetsVerFailed } = this.state;
     betData = [];
     const crypto = require('crypto');
-   const bitvest = await axios.get('https://bitvest.io/update.php?dice=1&json=1&self-only=1');
-   bitvest.data.game.data.map( async (item)=>{
-     const bet =  await axios.get(`https://bitvest.io/results?query=${item.id}&game=dice&json=1`);
+    let bitvest = await axios.get('https://bitvest.io/update.php?dice=1&json=1&self-only=1');
+    console.log("bitvest value is : ", bitvest);
+    while(bitvest==='undefined'){
+      bitvest = await axios.get('https://bitvest.io/update.php?dice=1&json=1&self-only=1');
+    }
+    bitvest.data.game.data.map( async (item)=>{
+     let bet =  await axios.get(`https://bitvest.io/results?query=${item.id}&game=dice&json=1`);
+     console.log("bet value is : ", bet);
+     while(bet==='undefined'){
+         bet =  await axios.get(`https://bitvest.io/results?query=${item.id}&game=dice&json=1`);
+       }
         console.log('previousSeed:',previousSeed);
         if(previousSeed===bet.data.server_seed){
         console.log("verification eligible");
