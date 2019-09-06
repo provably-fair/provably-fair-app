@@ -5,7 +5,6 @@ import ReactDOM from 'react-dom';
 import Frame, { FrameContextConsumer }from 'react-frame-component';
 import { GraphQLClient } from 'graphql-request'
 import { CookiesProvider } from 'react-cookie';
-import { useCookies } from 'react-cookie';
 import Cookies from 'js-cookie';
 import axios from 'axios';
 import createHmac from 'create-hmac';
@@ -92,7 +91,6 @@ const query8 = `query serverSeedQuery($hash: String!) {
   }
 }`
 
-
 class Main extends React.Component {
 
     constructor(){
@@ -134,19 +132,32 @@ class Main extends React.Component {
 
 
     componentDidMount(){
-
+      /* Type something here, it'll be executed after the App Component is loaded */
     }
 
-    getRandomInt = (max) => {
-      return Math.floor(Math.random() * Math.floor(max));
-    }
+
+
+      /* Method for generating Randomised Client Seed */
+
+      getClientSeed = () => {
+        let key = uuidv4();
+        let hash = createHmac('sha256', key)
+        .update('provably')
+        .digest('hex');
+        hash = hash.substring(0, 32);
+        this.setState({clientSeed:hash, nonce:0});
+
+      }
+
+
+/*****************************************************************************************************************************************************************/
+
+
+    /* Method for get all Bet Data for Stake Operator */
 
     getAllBetsStake = () => {
       let { betData, user } = this.state;
-
-
        client.request(query3).then((bet) => {
-
          bet.user.houseBetList.map((houseBet)=>{
            /**this is for looking up one bet**/
            const betId = houseBet.iid.split('house:')[1].toString();
@@ -172,9 +183,7 @@ class Main extends React.Component {
              }
            }`
            client.request(query7).then((betIdData) => {
-
              console.log('betIdDta', betIdData);
-
            })
            console.log('houseBet',houseBet)
            betData.push(houseBet)
@@ -183,6 +192,8 @@ class Main extends React.Component {
        })
         // console.log('betData', betData);
     }
+
+    /* Method to get all types of User Seeds for Stake Operator */
 
     getAllUserSeedsStake = () => {
 
@@ -216,15 +227,8 @@ class Main extends React.Component {
        })
     }
 
-    getClientSeed = () => {
-      let key = uuidv4();
-      let hash = createHmac('sha256', key)
-      .update('provably')
-      .digest('hex');
-      hash = hash.substring(0, 32);
-      this.setState({clientSeed:hash, nonce:0});
 
-    }
+    /* Method for submitting a client seed for the Stake Operator */
 
     submitClientSeedStake = (clientSeed) => {
       const variables = {
@@ -233,6 +237,8 @@ class Main extends React.Component {
       client.request(query5, variables).then(data => console.log(data))
     }
 
+    /* Method for getting a Server Seed Hash for the Stake Operator */
+
     getServerSeedStake = () =>{
       client.request(query4).then((data) => {
         console.log(data.rotateServerSeed.seedHash)
@@ -240,197 +246,225 @@ class Main extends React.Component {
       })
     }
 
-    handleVerifyBet = (serverSeedHash,clientSeed, nonce) => {
-      // bet made with seed pair (excluding current bet)
-      // crypto lib for hmac function
-      const crypto = require('crypto');
-      const roll = function(key, text) {
-      // create HMAC using server seed as key and client seed as message
-      const hash = crypto .createHmac('sha512', key) .update(text) .digest('hex');
-      let index = 0;
-      let lucky = parseInt(hash.substring(index * 5, index * 5 + 5), 16);
-      // keep grabbing characters from the hash while greater than
-      while (lucky >= Math.pow(10, 6)) {
-        index++; lucky = parseInt(hash.substring(index * 5, index * 5 + 5), 16);
-      // if we reach the end of the hash, just default to highest number
-       if (index * 5 + 5 > 128) {
-         lucky = 9999; break;
-       }
+/*****************************************************************************************************************************************************************************************************/
+
+
+  /* Method for Provably Fair Verification of bets for the PrimeDice Operator */
+
+  handleVerifyBetPrimeDice = (serverSeedHash,clientSeed, nonce) => {
+    // bet made with seed pair (excluding current bet)
+    // crypto lib for hmac function
+    const crypto = require('crypto');
+    const roll = function(key, text) {
+    // create HMAC using server seed as key and client seed as message
+    const hash = crypto .createHmac('sha512', key) .update(text) .digest('hex');
+    let index = 0;
+    let lucky = parseInt(hash.substring(index * 5, index * 5 + 5), 16);
+    // keep grabbing characters from the hash while greater than
+    while (lucky >= Math.pow(10, 6)) {
+      index++; lucky = parseInt(hash.substring(index * 5, index * 5 + 5), 16);
+    // if we reach the end of the hash, just default to highest number
+     if (index * 5 + 5 > 128) {
+       lucky = 9999; break;
+     }
+    }
+    lucky %= Math.pow(10, 4);
+    lucky /= Math.pow(10, 2); return lucky;
+  };
+    let diceVerify = roll(serverSeedHash, `${clientSeed}-${nonce}`);
+    this.setState({diceVerify:diceVerify});
+    console.log(diceVerify);
+    this.setState({nonce:0})
+  }
+
+
+
+  /*****************************************************************************************************************************************************************************************************/
+
+
+  /* Method for getting Session Token for the Bitvest Operator */
+
+  getSessionTokenBitvest = async () => {
+    const bitvest = await axios.post('https://bitvest.io/create.php');
+    console.log('Token Behanchod!', bitvest.data.data.session_token);
+    this.setState({session_token: bitvest.data.data.session_token});
+  }
+
+  /* Method for getting Server Seed Hash for the Bitvest Operator */
+
+  getNewServerseedHashBitvest = async () => {
+   let {previousSeed, serverSeedHash, session_token } = this.state;
+   console.log('session_token', session_token);
+   const bitvest = await axios.post('https://bitvest.io/action.php',
+    qs.stringify({
+          "token":session_token,
+          "secret":0,
+          "act":"new_server_seed"
+        }),
+        { headers: {
+      'Content-Type': 'application/x-www-form-urlencoded'
+    }});
+   this.setState({serverSeedHash:bitvest.data.server_hash, previousSeed:bitvest.data.server_seed})
+   this.getMyBetsBitvest();
+  }
+
+  /* Method for the User's Bet Data for the Bitvest Operator */
+
+  getMyBetsBitvest = async () => {
+    let { betData, previousSeed, isNonceManipulated, numberBetsVerFailed } = this.state;
+    betData = [];
+    const crypto = require('crypto');
+   const bitvest = await axios.get('https://bitvest.io/update.php?dice=1&json=1&self-only=1');
+   bitvest.data.game.data.map( async (item)=>{
+     const bet =  await axios.get(`https://bitvest.io/results?query=${item.id}&game=dice&json=1`);
+        console.log('previousSeed:',previousSeed);
+        if(previousSeed===bet.data.server_seed){
+        console.log("verification eligible");
+        console.log("betDetails",bet.data);
+        let isVerified = this.handleVerifyBetBitvest(bet.data.server_seed,bet.data.user_seed, bet.data.user_seed_nonce, item.roll);
+        var element = {};
+        element.id = item.id; element.game = item.game; element.roll = item.roll; element.side = item.side; element.target = item.target;
+        element.nonce = bet.data.user_seed_nonce; element.isVerified = isVerified;
+        console.log('element : ', element);
+        betData.push({element:element});
+        console.log('betData',betData);
+        this.setState({betData:betData});
       }
-      lucky %= Math.pow(10, 4);
-      lucky /= Math.pow(10, 2); return lucky;
-    };
-      let diceVerify = roll(serverSeedHash, `${clientSeed}-${nonce}`);
+   })
+   let newBets = betData!='undefined' ? betData.length: 0;
+   let highestNonce = 0;
+   betData.map( async(item)=>{
+     if(item.element.nonce > highestNonce){
+       highestNonce = item.element.nonce;
+     }
+   })
+   isNonceManipulated = (highestNonce===(newBets-1)) ? false : true;
+   console.log('check nonce fair',isNonceManipulated);
+   this.setState(isNonceManipulated:isNonceManipulated);
+   console.log('unverified bets',numberBetsVerFailed);
+  }
+
+  /* Method for Provably Fair Verification of bets for the Bitvest Operator */
+
+  handleVerifyBetBitvest = (serverSeed, clientSeed, nonce, result) => {
+    // bet made with seed pair (excluding current bet)
+    // crypto lib for hmac function
+    let {numberBetsVerFailed} = this.state;
+    const crypto = require('crypto');
+    const roll = function(key, text) {
+    // create HMAC using server seed as key and client seed as message
+    const hash = crypto .createHmac('sha512', text) .update(key) .digest('hex');
+    console.log('=============>>>>>>>>>>>>>>>>>>>>>>>>>key',key)
+    console.log('=============>>>>>>>>>>>>>>>>>>>>>>>>>text',text)
+    console.log('=============>>>>>>>>>>>>>>>>>>>>>>>>>hash',hash)
+    let index = 0;
+    let lucky = parseInt(hash.substring(index * 5, index * 5 + 5));
+    console.log('======================>>>>>>>>>>>>>>>>>>lucky',lucky);
+
+    // keep grabbing characters from the hash while greater than
+    while (lucky >= Math.pow(10, 6)) {
+      index++; lucky = parseInt(hash.substring(index * 5, index * 5 + 5), 16);
+    // if we reach the end of the hash, just default to highest number
+     if (index * 5 + 5 > 128) {
+       lucky = 9999;
+       break;
+     }
+    }
+    lucky = converter.hexToDec(lucky);
+    lucky /= Math.pow(10, 4);
+    if(lucky!=result) numberBetsVerFailed++;
+    this.state(numberBetsVerFailed:numberBetsVerFailed);
+    return (lucky==result);
+  };
+      let diceVerify = roll(serverSeed, `${clientSeed}|${nonce}`);
       this.setState({diceVerify:diceVerify});
-      console.log(diceVerify);
-      this.setState({nonce:0})
-    }
+      console.log('diceVerify', diceVerify);
 
-    handleVerifyBetBitvest = (serverSeed, clientSeed, nonce, result) => {
-      // bet made with seed pair (excluding current bet)
-      // crypto lib for hmac function
-      let {numberBetsVerFailed} = this.state;
-      const crypto = require('crypto');
-      const roll = function(key, text) {
-      // create HMAC using server seed as key and client seed as message
-      const hash = crypto .createHmac('sha512', text) .update(key) .digest('hex');
-      console.log('=============>>>>>>>>>>>>>>>>>>>>>>>>>key',key)
-      console.log('=============>>>>>>>>>>>>>>>>>>>>>>>>>text',text)
-      console.log('=============>>>>>>>>>>>>>>>>>>>>>>>>>hash',hash)
-      let index = 0;
-      let lucky = hash.substring(index * 5, index * 5 + 5);
-      console.log('======================>>>>>>>>>>>>>>>>>>lucky',lucky);
-       
-      // keep grabbing characters from the hash while greater than
-      while (lucky >= Math.pow(10, 6)) {
-        index++; lucky = parseInt(hash.substring(index * 5, index * 5 + 5), 16);
-      // if we reach the end of the hash, just default to highest number
-       if (index * 5 + 5 > 128) {
-         lucky = 9999;
-         break;
-       }
-      }
-      lucky = converter.hexToDec(lucky);
-      lucky /= Math.pow(10, 4);
-      if(lucky!=result) numberBetsVerFailed++;
-      this.state(numberBetsVerFailed,numberBetsVerFailed);
-      return (lucky==result);
-    };
-        let diceVerify = roll(serverSeed, `${clientSeed}|${nonce}`);
-        this.setState({diceVerify:diceVerify});
-        console.log('diceVerify', diceVerify);
+      return diceVerify;
+  }
 
-        return diceVerify;
-    }
+  /*****************************************************************************************************************************************************************************************************/
 
-    getCoinData = async () => {
+  /* Method for getting selected coin data (say BTC) for Crypto Games Operator */
 
-      const coin =  await axios.get('https://api.crypto-games.net/v1/settings/btc');
-      console.log(coin.data);
+  getCoinData = async () => {
+    const coin =  await axios.get('https://api.crypto-games.net/v1/settings/btc');
+    console.log(coin.data);
 
-    }
+  }
 
+  /* Method for getting selected coin stats (say BTC) for Crypto Games Operator */
 
+  getCoinStats = async () => {
+    const coin =  await axios.get('https://api.crypto-games.net/v1/coinstats/btc');
+    console.log(coin.data);
+  }
 
-    getCoinStats = async () => {
-      const coin =  await axios.get('https://api.crypto-games.net/v1/coinstats/btc');
-      console.log(coin.data);
-    }
+  /* Method for getting Server Seed Hash for Crypto Games Operator */
 
-    getServerSeed = async (apiKey) => {
-      let {serverSeedHash} = this.state;
-      window.localStorage.setItem('apiKey', apiKey);
-      const seed = await axios.get(`https://api.crypto-games.net/v1/nextseed/btc/${apiKey}`);
+  getServerSeed = async (apiKey) => {
+    let {serverSeedHash} = this.state;
+    window.localStorage.setItem('apiKey', apiKey);
+    const seed = await axios.get(`https://api.crypto-games.net/v1/nextseed/btc/${apiKey}`);
 
-      console.log(seed.data.NextServerSeedHash);
-      this.setState({serverSeedHash:seed.data.NextServerSeedHash})
-    }
+    console.log(seed.data.NextServerSeedHash);
+    this.setState({serverSeedHash:seed.data.NextServerSeedHash})
+  }
 
-    getUser = async (apiKey) => {
-      const user = await axios.get(`https://api.crypto-games.net/v1/user/btc/${apiKey}`);
-      this.setState({user:user.data.Nickname});
-    }
+  /* Method for getting a User's Details for Crypto Games Operator */
 
-    placeBet = async (apiKey) => {
-      let { clientSeed, nonce, BetIdArray, betAmount, betPayout } = this.state;
-      let input = { Bet: betAmount, Payout: betPayout, UnderOver: true, ClientSeed: clientSeed, Nonce:nonce };
-      let data = JSON.stringify(input);
-      const bet = await axios.post(`https://api.crypto-games.net/v1/placebet/btc/${apiKey}`,
-        data, { headers: {'Content-Type': 'application/json' }}
-      );
-      console.log(bet.data);
-      let { Balance, BetId, Roll } = bet.data
-      BetIdArray.push(BetId)
-      this.setState({BetIdArray:BetIdArray});
-      //this.getBetData(BetIdArray);
-      var newNonce = parseInt(nonce);
-      this.setState({BetId:BetId, Balance:Balance, Roll:Roll, nonce:newNonce+1});
-      this.getServerSeed(apiKey);
-    }
+  getUser = async (apiKey) => {
+    const user = await axios.get(`https://api.crypto-games.net/v1/user/btc/${apiKey}`);
+    this.setState({user:user.data.Nickname});
+  }
 
-    getBetData = async (BetIdArray) => {
-      let { betData, user } = this.state;
+  /* Method for getting a Placing a Bet for Crypto Games Operator */
 
-      BetIdArray.map(async (i)=>{
-       const bet =  await axios.get(`https://api.crypto-games.net/v1/bet/${i}`);
-          if(bet.data.User==user){
-              betData.push(bet.data)
-              this.setState({betData:betData});
-            }
-      })
+  placeBet = async (apiKey) => {
+    let { clientSeed, nonce, BetIdArray, betAmount, betPayout } = this.state;
+    let input = { Bet: betAmount, Payout: betPayout, UnderOver: true, ClientSeed: clientSeed, Nonce:nonce };
+    let data = JSON.stringify(input);
+    const bet = await axios.post(`https://api.crypto-games.net/v1/placebet/btc/${apiKey}`,
+      data, { headers: {'Content-Type': 'application/json' }}
+    );
+    console.log(bet.data);
+    let { Balance, BetId, Roll } = bet.data
+    BetIdArray.push(BetId)
+    this.setState({BetIdArray:BetIdArray});
+    //this.getBetData(BetIdArray);
+    var newNonce = parseInt(nonce);
+    this.setState({BetId:BetId, Balance:Balance, Roll:Roll, nonce:newNonce+1});
+    this.getServerSeed(apiKey);
+  }
 
+  /* Method for getting a Bet Data (say IDs) for Crypto Games Operator */
 
-            console.log('betData', betData);
+  getBetData = async (BetIdArray) => {
+    let { betData, user } = this.state;
 
-    }
+    BetIdArray.map(async (i)=>{
+     const bet =  await axios.get(`https://api.crypto-games.net/v1/bet/${i}`);
+        if(bet.data.User==user){
+            betData.push(bet.data)
+            this.setState({betData:betData});
+          }
+    })
+          console.log('betData', betData);
+  }
 
-    getBetDataById = async (BetId) => {
-      let { betData, user } = this.state;
+  /* Method for getting Complete Bet Data for Crypto Games Operator */
 
-       const bet =  await axios.get(`https://api.crypto-games.net/v1/bet/${BetId}`);
-          if(bet.data.User==user){
-              betData.push(bet.data)
-              this.setState({betData:betData});
-            }
-            console.log('betData', betData);
-    }
+  getBetDataById = async (BetId) => {
+    let { betData, user } = this.state;
 
-    getSessionTokenBitvest = async () => {
-      const bitvest = await axios.post('https://bitvest.io/create.php');
-      console.log('Token Behanchod!', bitvest.data.data.session_token);
-      this.setState({session_token: bitvest.data.data.session_token});
-    }
+     const bet =  await axios.get(`https://api.crypto-games.net/v1/bet/${BetId}`);
+        if(bet.data.User==user){
+            betData.push(bet.data)
+            this.setState({betData:betData});
+          }
+          console.log('betData', betData);
+  }
 
-    getNewServerseedHashBitvest = async () => {
-     let {previousSeed, serverSeedHash, session_token } = this.state;
-     console.log('session_token', session_token);
-     const bitvest = await axios.post('https://bitvest.io/action.php',
-      qs.stringify({
-            "token":session_token,
-            "secret":0,
-            "act":"new_server_seed"
-          }),
-          { headers: {
-        'Content-Type': 'application/x-www-form-urlencoded'
-      }});
-     this.setState({serverSeedHash:bitvest.data.server_hash, previousSeed:bitvest.data.server_seed})
-     this.getMyBetsBitvest();
-    }
-
-    getMyBetsBitvest = async () => {
-      let { betData, previousSeed, isNonceManipulated, numberBetsVerFailed } = this.state;
-      betData = [];
-      const crypto = require('crypto');
-     const bitvest = await axios.get('https://bitvest.io/update.php?dice=1&json=1&self-only=1');
-     bitvest.data.game.data.map( async (item)=>{
-       const bet =  await axios.get(`https://bitvest.io/results?query=${item.id}&game=dice&json=1`);
-          console.log('previousSeed:',previousSeed);
-          if(previousSeed===bet.data.server_seed){
-          console.log("verification eligible");
-          console.log("betDetails",bet.data);
-          let isVerified = this.handleVerifyBetBitvest(bet.data.server_seed,bet.data.user_seed, bet.data.user_seed_nonce, item.roll);
-          var element = {};
-          element.id = item.id; element.game = item.game; element.roll = item.roll; element.side = item.side; element.target = item.target;
-          element.user_seed_nonce = bet.data.user_seed_nonce; element.isVerified = isVerified;
-          console.log('element : ', element);
-          betData.push({element:element});
-          console.log('betData',betData);
-          this.setState({betData:betData});
-        }
-     })
-     let newBets = (betData!='undefined') ? betData.length: 0;
-     let highestNonce = 0;
-     betData.map( async(item)=>{
-       if(item.user_seed_nonce > highestNonce)
-       {
-         highestNonce = item.element.user_seed_nonce;
-       }
-     })
-     isNonceManipulated = (highestNonce===(newBets-1)) ? false : true;
-     console.log('check nonce fair',isNonceManipulated);
-     this.setState(isNonceManipulated,isNonceManipulated);
-     console.log('unverified bets',numberBetsVerFailed);
-   }
 
     render() {
       const { gettingStarted, settings, verification, operators, clientSeed, serverSeedHash, nonce, betData, cryptoGames,primeDice, diceResult, diceVerify, verify, apiKey, enterAPI,
@@ -451,9 +485,8 @@ class Main extends React.Component {
                              <ul className="nav nav-pills nav-fill flex-md-row" id="tabs-icons-text" role="tablist">
                                  <li className="nav-item"
                                  onClick={()=>{
-                                   this.setState({gettingStarted:false, settings:true, stake:true,  verification:false, operators:false});
+                                   this.setState({gettingStarted:false, settings:true, verification:false, operators:false});
                                    this.getServerSeed(apiKey)
-
                                  }}>
                                      <a className="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-1-tab" data-toggle="tab" href="#tabs-icons-text-1" role="tab" aria-controls="tabs-icons-text-1" aria-selected="true"><i className="fa fa-cloud-upload-96 mr-2"></i>Settings</a>
                                  </li>
@@ -483,8 +516,7 @@ class Main extends React.Component {
                             <p><span style={{fontStyle:'bold'}}>Operator</span> is a CGF verified operator.</p>
                             <button className="btn btn-info mb-3" type="button" onClick={()=>{
                               this.getSessionTokenBitvest()
-
-                              this.setState({gettingStarted:!gettingStarted, enterAPI:false, stake:true})
+                              this.setState({gettingStarted:!gettingStarted, enterAPI:false})
                             }}>
                             Get Started Now
                             </button>
@@ -511,7 +543,7 @@ class Main extends React.Component {
                             <div className="nav-wrapper">
                               <ul className="nav nav-pills nav-fill flex-md-row" id="tabs-icons-text" role="tablist">
                                   <li className="nav-item show" onClick={()=>{
-                                    this.setState({gettingStarted:false, settings:true, stake:true,  verification:false});
+                                    this.setState({gettingStarted:false, settings:true, verification:false});
                                     this.getServerSeed(apiKey)
 
                                   }}>
@@ -519,7 +551,6 @@ class Main extends React.Component {
                                   </li>
                                   <li className="nav-item" onClick={()=>{
                                     this.setState({gettingStarted:false,settings:false, verification:true, stake:false});
-
                                   }}>
                                       <a className="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-2-tab" data-toggle="tab" href="#tabs-icons-text-2" role="tab" aria-controls="tabs-icons-text-2" aria-selected="false"><i className="fa fa-bell-55 mr-2"></i>Verification</a>
                                   </li>
@@ -534,7 +565,7 @@ class Main extends React.Component {
                               <label className="form-control-label">Enter Your API Key</label>
                               <input className="form-control form-control-sm" type="text" value={apiKey} placeholder="API Key" onChange={(e)=>{this.setState({apiKey:e.target.value})}}/>
                               <button type="button" className="btn btn-secondary m-2" onClick={()=>{
-                                this.setState({gettingStarted:false, settings:true, stake:true, enterAPI:false})
+                                this.setState({gettingStarted:false, settings:true, enterAPI:false})
                                 this.getUser(apiKey)
                                 this.getServerSeed(apiKey)
                               }}> Submit</button>
@@ -561,11 +592,11 @@ class Main extends React.Component {
                             </div>
 
 
-                            <div style={{display:stake?'block':'none'}}>
+                            <div style={{display:'block'}}>
                             <div className="nav-wrapper">
                               <ul className="nav nav-pills nav-fill flex-md-row" id="tabs-icons-text" role="tablist">
                                   <li className="nav-item show" onClick={()=>{
-                                    this.setState({gettingStarted:false, settings:true, stake:true,  verification:false});
+                                    this.setState({gettingStarted:false, settings:true,  verification:false});
                                   }}>
                                       <a className="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-1-tab" data-toggle="tab" href="#tabs-icons-text-1" role="tab" aria-controls="tabs-icons-text-1" aria-selected="true"><i className="fa fa-cloud-upload-96 mr-2"></i>Settings</a>
                                   </li>
@@ -742,12 +773,12 @@ class Main extends React.Component {
                             <div className="nav-wrapper">
                               <ul className="nav nav-pills nav-fill flex-md-row" id="tabs-icons-text" role="tablist">
                                   <li className="nav-item" onClick={()=>{
-                                    this.setState({gettingStarted:false, settings:true, stake:true,  verification:false, operators:false});
+                                    this.setState({gettingStarted:false, settings:true, stake:false,  verification:false, operators:false});
                                   }}>
                                       <a className="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-1-tab" data-toggle="tab" href="#tabs-icons-text-1" role="tab" aria-controls="tabs-icons-text-1" aria-selected="true"><i className="fa fa-cloud-upload-96 mr-2"></i>Settings</a>
                                   </li>
                                   <li className="nav-item show" onClick={()=>{
-                                    this.setState({gettingStarted:false,settings:false, verification:true, stake:false, operators:false});
+                                    this.setState({gettingStarted:false,settings:false, verification:true, stake:true, operators:false});
                                   }}>
                                       <a className="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-2-tab" data-toggle="tab" href="#tabs-icons-text-2" role="tab" aria-controls="tabs-icons-text-2" aria-selected="false"><i className="fa fa-bell-55 mr-2"></i>Verification</a>
                                   </li>
@@ -758,6 +789,14 @@ class Main extends React.Component {
                                   </li>
                               </ul>
                             </div>
+                            <button type="button"  className="btn btn-primary">
+                              <span>Nounce Manipulated</span>
+                              <span  className="badge badge-md badge-circle badge-floating badge-danger border-white">1</span>
+                            </button>
+                            <button type="button"  className="btn btn-primary">
+                              <span>Bets Failed</span>
+                              <span  className="badge badge-md badge-circle badge-floating badge-danger border-white">4</span>
+                            </button>
                             <div className="Bitvest" style={{display:'block'}}>
                               <table className="table align-items-center table-flush table-hover">
                                 <thead className="thead-light">
@@ -774,7 +813,6 @@ class Main extends React.Component {
 
                                 <tbody>
                                   {betData.map((item,i)=>{
-                                    console.log("INSIDE TABLE : ", item.element.id);
                                     return <tr>
                                     <td>
                                     {item.element.id}
@@ -792,10 +830,13 @@ class Main extends React.Component {
                                     {item.element.target}
                                     </td>
                                     <td>
-                                    {item.element.user_seed_nonce}
+                                    {item.element.nonce}
                                     </td>
                                     <td>
-                                    {item.element.isVerified?'Yes':'No'}
+                                    {item.element.isVerified
+                                      ? <a href="#"  className="badge badge-pill badge-success">Success</a>
+                                      : <a href="#"  className="badge badge-pill badge-danger">Failed</a>
+                                    }
                                     </td>
                                     </tr>
                                   })}
@@ -832,7 +873,7 @@ class Main extends React.Component {
                                       <a className="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-1-tab" data-toggle="tab" href="#tabs-icons-text-1" role="tab" aria-controls="tabs-icons-text-1" aria-selected="true"><i className="fa fa-cloud-upload-96 mr-2"></i>Settings</a>
                                   </li>
                                   <li className="nav-item show" onClick={()=>{
-                                    this.setState({gettingStarted:false,settings:false, verification:true, stake:false, operators:false});
+                                    this.setState({gettingStarted:false,settings:false, verification:true, stake:true, operators:false});
                                   }}>
                                       <a className="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-2-tab" data-toggle="tab" href="#tabs-icons-text-2" role="tab" aria-controls="tabs-icons-text-2" aria-selected="false"><i className="fa fa-bell-55 mr-2"></i>Verification</a>
                                   </li>
@@ -847,7 +888,7 @@ class Main extends React.Component {
                             <div className="primeDice" style={{display:primeDice?'block':'none'}}>
                                 <div className="form-group">
                                   <button type="button" className="btn btn-secondary m-2" onClick={()=>{
-                                    this.handleVerifyBet(serverSeedHash, clientSeed, nonce);
+                                    this.handleVerifyBetPrimeDice(serverSeedHash, clientSeed, nonce);
                                     console.log(serverSeedHash, clientSeed, nonce);
                                   }}> Verify</button>
 
@@ -894,14 +935,14 @@ class Main extends React.Component {
                             <div className="nav-wrapper">
                               <ul className="nav nav-pills nav-fill flex-md-row" id="tabs-icons-text" role="tablist">
                                   <li className="nav-item" onClick={()=>{
-                                    this.setState({gettingStarted:false, settings:true, stake:true,  verification:false, operators:false});
+                                    this.setState({gettingStarted:false, settings:true, stake:false,  verification:false, operators:false});
                                     this.getServerSeed(apiKey)
 
                                   }}>
                                       <a className="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-1-tab" data-toggle="tab" href="#tabs-icons-text-1" role="tab" aria-controls="tabs-icons-text-1" aria-selected="true"><i className="fa fa-cloud-upload-96 mr-2"></i>Settings</a>
                                   </li>
                                   <li className="nav-item" onClick={()=>{
-                                    this.setState({gettingStarted:false,settings:false, verification:true, stake:false, operators:false});
+                                    this.setState({gettingStarted:false,settings:false, verification:true, stake:true, operators:false});
 
 
                                   }}>
