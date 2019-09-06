@@ -334,13 +334,13 @@ class Main extends React.Component {
    let newBets = betData!='undefined' ? betData.length: 0;
    let highestNonce = 0;
    betData.map( async(item)=>{
+     console.log('check nonce fair',isNonceManipulated);
      if(item.element.nonce > highestNonce){
        highestNonce = item.element.nonce;
      }
    })
    isNonceManipulated = (highestNonce===(newBets-1)) ? false : true;
-   console.log('check nonce fair',isNonceManipulated);
-   this.setState(isNonceManipulated:isNonceManipulated);
+   this.setState({isNonceManipulated:isNonceManipulated});
    console.log('unverified bets',numberBetsVerFailed);
   }
 
@@ -358,12 +358,12 @@ class Main extends React.Component {
     console.log('=============>>>>>>>>>>>>>>>>>>>>>>>>>text',text)
     console.log('=============>>>>>>>>>>>>>>>>>>>>>>>>>hash',hash)
     let index = 0;
-    let lucky = parseInt(hash.substring(index * 5, index * 5 + 5));
+    let lucky = hash.substring(index * 5, index * 5 + 5);
     console.log('======================>>>>>>>>>>>>>>>>>>lucky',lucky);
 
     // keep grabbing characters from the hash while greater than
     while (lucky >= Math.pow(10, 6)) {
-      index++; lucky = parseInt(hash.substring(index * 5, index * 5 + 5), 16);
+      index++; lucky = hash.substring(index * 5, index * 5 + 5);
     // if we reach the end of the hash, just default to highest number
      if (index * 5 + 5 > 128) {
        lucky = 9999;
@@ -373,7 +373,7 @@ class Main extends React.Component {
     lucky = converter.hexToDec(lucky);
     lucky /= Math.pow(10, 4);
     if(lucky!=result) numberBetsVerFailed++;
-    this.state(numberBetsVerFailed:numberBetsVerFailed);
+    this.state({numberBetsVerFailed:numberBetsVerFailed});
     return (lucky==result);
   };
       let diceVerify = roll(serverSeed, `${clientSeed}|${nonce}`);
@@ -788,7 +788,7 @@ class Main extends React.Component {
                           </div>
                           <button type="button"  className="btn btn-primary">
                             <span>Nounce Manipulated</span>
-                            <span  className="badge badge-md badge-circle badge-floating badge-danger border-white">{isNonceManipulated}</span>
+                            <span  className={"badge badge-md badge-circle badge-floating badge-danger border-white"}>{isNonceManipulated?"Yes":"No"}</span>
                           </button>
                           <button type="button"  className="btn btn-primary">
                             <span>Bets Failed</span>
