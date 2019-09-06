@@ -491,12 +491,12 @@ class Main extends React.Component {
                                      <a className="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-1-tab" data-toggle="tab" href="#tabs-icons-text-1" role="tab" aria-controls="tabs-icons-text-1" aria-selected="true"><i className="fa fa-cloud-upload-96 mr-2"></i>Settings</a>
                                  </li>
                                  <li className="nav-item" onClick={()=>{
-                                   this.setState({gettingStarted:false,settings:false, verification:true,  operators:false});
+                                   this.setState({gettingStarted:false, settings:false, verification:true,  operators:false});
                                  }}>
                                      <a className="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-2-tab" data-toggle="tab" href="#tabs-icons-text-2" role="tab" aria-controls="tabs-icons-text-2" aria-selected="false"><i className="fa fa-bell-55 mr-2"></i>Verification</a>
                                  </li>
                                  <li className="nav-item" onClick={()=>{
-                                   this.setState({gettingStarted:false,settings:false, verification:false,  operators:true});
+                                   this.setState({gettingStarted:false, settings:false, verification:false,  operators:true});
                                  }}>
                                      <a className="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-3-tab" data-toggle="tab" href="#tabs-icons-text-3" role="tab" aria-controls="tabs-icons-text-3" aria-selected="false"><i className="fa fa-calendar-grid-58 mr-2"></i>Operators</a>
                                  </li>
@@ -548,7 +548,7 @@ class Main extends React.Component {
                                     <a className="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-1-tab" data-toggle="tab" href="#tabs-icons-text-1" role="tab" aria-controls="tabs-icons-text-1" aria-selected="true"><i className="fa fa-cloud-upload-96 mr-2"></i>Settings</a>
                                 </li>
                                 <li className="nav-item" onClick={()=>{
-                                  this.setState({gettingStarted:false,settings:false, verification:true,  operator:false});
+                                  this.setState({gettingStarted:false, settings:false, verification:true,  operator:false});
                                 }}>
                                     <a className="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-2-tab" data-toggle="tab" href="#tabs-icons-text-2" role="tab" aria-controls="tabs-icons-text-2" aria-selected="false"><i className="fa fa-bell-55 mr-2"></i>Verification</a>
                                 </li>
@@ -599,12 +599,12 @@ class Main extends React.Component {
                                     <a className="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-1-tab" data-toggle="tab" href="#tabs-icons-text-1" role="tab" aria-controls="tabs-icons-text-1" aria-selected="true"><i className="fa fa-cloud-upload-96 mr-2"></i>Settings</a>
                                 </li>
                                 <li className="nav-item" onClick={()=>{
-                                  this.setState({gettingStarted:false,settings:false, verification:true,  operators:false});
+                                  this.setState({gettingStarted:false, settings:false, verification:true,  operators:false});
                                 }}>
                                     <a className="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-2-tab" data-toggle="tab" href="#tabs-icons-text-2" role="tab" aria-controls="tabs-icons-text-2" aria-selected="false"><i className="fa fa-bell-55 mr-2"></i>Verification</a>
                                 </li>
                                 <li className="nav-item" onClick={()=>{
-                                  this.setState({gettingStarted:false,settings:false, verification:false,  operators:true});
+                                  this.setState({gettingStarted:false, settings:false, verification:false,  operators:true});
                                 }}>
                                     <a className="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-3-tab" data-toggle="tab" href="#tabs-icons-text-3" role="tab" aria-controls="tabs-icons-text-3" aria-selected="false"><i className="fa fa-calendar-grid-58 mr-2"></i>Operators</a>
                                 </li>
@@ -686,13 +686,13 @@ class Main extends React.Component {
                                     <a className="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-1-tab" data-toggle="tab" href="#tabs-icons-text-1" role="tab" aria-controls="tabs-icons-text-1" aria-selected="true"><i className="fa fa-cloud-upload-96 mr-2"></i>Settings</a>
                                 </li>
                                 <li className="nav-item" onClick={()=>{
-                                  this.setState({gettingStarted:false,settings:false, verification:true,  operator:false});
+                                  this.setState({gettingStarted:false, settings:false, verification:true,  operator:false});
 
                                 }}>
                                     <a className="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-2-tab" data-toggle="tab" href="#tabs-icons-text-2" role="tab" aria-controls="tabs-icons-text-2" aria-selected="false"><i className="fa fa-bell-55 mr-2"></i>Verification</a>
                                 </li>
                                 <li className="nav-item" onClick={()=>{
-                                  this.setState({gettingStarted:false,settings:false, settings:false, verification:false,  operators:true});
+                                  this.setState({gettingStarted:false, settings:false, verification:false,  operators:true});
                                 }}>
                                     <a className="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-3-tab" data-toggle="tab" href="#tabs-icons-text-3" role="tab" aria-controls="tabs-icons-text-3" aria-selected="false"><i className="fa fa-calendar-grid-58 mr-2"></i>Operators</a>
                                 </li>
@@ -872,12 +872,12 @@ class Main extends React.Component {
                                     <a className="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-1-tab" data-toggle="tab" href="#tabs-icons-text-1" role="tab" aria-controls="tabs-icons-text-1" aria-selected="true"><i className="fa fa-cloud-upload-96 mr-2"></i>Settings</a>
                                 </li>
                                 <li className="nav-item show" onClick={()=>{
-                                  this.setState({gettingStarted:false,settings:false, verification:true,  operators:false});
+                                  this.setState({gettingStarted:false, settings:false, verification:true,  operators:false});
                                 }}>
                                     <a className="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-2-tab" data-toggle="tab" href="#tabs-icons-text-2" role="tab" aria-controls="tabs-icons-text-2" aria-selected="false"><i className="fa fa-bell-55 mr-2"></i>Verification</a>
                                 </li>
                                 <li className="nav-item" onClick={()=>{
-                                  this.setState({gettingStarted:false,settings:false, verification:false,  operators:true});
+                                  this.setState({gettingStarted:false, settings:false, verification:false,  operators:true});
                                 }}>
                                     <a className="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-3-tab" data-toggle="tab" href="#tabs-icons-text-3" role="tab" aria-controls="tabs-icons-text-3" aria-selected="false"><i className="fa fa-calendar-grid-58 mr-2"></i>Operators</a>
                                 </li>
@@ -930,7 +930,7 @@ class Main extends React.Component {
                           </div>
 
 
-                          <div className="Operators-UI table-responsive" style={{display:operators?'block':'none'}}>
+                          <div className="Operators-UI table-responsive" style={{display:!verification&&operators?'block':'none'}}>
                           <div className="nav-wrapper">
                             <ul className="nav nav-pills nav-fill flex-md-row" id="tabs-icons-text" role="tablist">
                                 <li className="nav-item" onClick={()=>{
@@ -946,7 +946,7 @@ class Main extends React.Component {
                                     <a className="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-2-tab" data-toggle="tab" href="#tabs-icons-text-2" role="tab" aria-controls="tabs-icons-text-2" aria-selected="false"><i className="fa fa-bell-55 mr-2"></i>Verification</a>
                                 </li>
                                 <li className="nav-item show" onClick={()=>{
-                                  this.setState({gettingStarted:false,settings:false, verification:false,  operators:true});
+                                  this.setState({gettingStarted:false, settings:false, verification:false,  operators:true});
                                 }}>
                                     <a className="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-3-tab" data-toggle="tab" href="#tabs-icons-text-3" role="tab" aria-controls="tabs-icons-text-3" aria-selected="false"><i className="fa fa-calendar-grid-58 mr-2"></i>Operators</a>
                                 </li>
