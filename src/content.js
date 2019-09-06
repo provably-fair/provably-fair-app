@@ -316,13 +316,13 @@ class Main extends React.Component {
     const crypto = require('crypto');
     let bitvest = await axios.get('https://bitvest.io/update.php?dice=1&json=1&self-only=1');
     console.log("bitvest value is : ", bitvest);
-    while(bitvest==='undefined'){
+    while(bitvest.data.game.data==='undefined'){
       bitvest = await axios.get('https://bitvest.io/update.php?dice=1&json=1&self-only=1');
     }
     bitvest.data.game.data.map( async (item)=>{
      let bet =  await axios.get(`https://bitvest.io/results?query=${item.id}&game=dice&json=1`);
      console.log("bet value is : ", bet);
-     while(bet==='undefined'){
+     while(bet.data.server_seed==='undefined'){
          bet =  await axios.get(`https://bitvest.io/results?query=${item.id}&game=dice&json=1`);
        }
         console.log('previousSeed:',previousSeed);
@@ -774,7 +774,7 @@ class Main extends React.Component {
                           </ul>
                           </div>
 
-                          <div className="VerificationUI-Stake" className="table-responsive" style={{display:verification && stake?'block':'none', fontSize: '11px'}}>
+                          <div className="VerificationUI-Stake" className="table-responsive" style={{display: stake?'block':'none', fontSize: '11px'}}>
                           <div className="nav-wrapper">
                             <ul className="nav nav-pills nav-fill flex-md-row" id="tabs-icons-text" role="tablist">
                                 <li className="nav-item" onClick={()=>{
