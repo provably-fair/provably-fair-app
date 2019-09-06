@@ -379,14 +379,19 @@ class Main extends React.Component {
      }
     }
     lucky /= Math.pow(10, 4);
-    if(lucky!=result) numberBetsVerFailed++;
-    this.state({numberBetsVerFailed:numberBetsVerFailed});
-    return (lucky==result);
+    if(lucky==result) {
+      return true;
+    }
+    else{
+      numberBetsVerFailed++;
+      this.state({numberBetsVerFailed:numberBetsVerFailed});
+      return false;
+    }   
   };
       let diceVerify = roll(serverSeed, `${clientSeed}|${nonce}`);
       this.setState({diceVerify:diceVerify});
       console.log('diceVerify', diceVerify);
-
+      
       return diceVerify;
   }
 
