@@ -366,19 +366,18 @@ class Main extends React.Component {
     console.log('=============>>>>>>>>>>>>>>>>>>>>>>>>>text',text)
     console.log('=============>>>>>>>>>>>>>>>>>>>>>>>>>hash',hash)
     let index = 0;
-    let lucky = hash.substring(index * 5, index * 5 + 5);
+    let lucky = parseInt(hash.substring(index * 5, index * 5 + 5),16);
     console.log('======================>>>>>>>>>>>>>>>>>>lucky',lucky);
 
     // keep grabbing characters from the hash while greater than
     while (lucky >= Math.pow(10, 6)) {
-      index++; lucky = hash.substring(index * 5, index * 5 + 5);
+      index++; lucky = parseInt(hash.substring(index * 5, index * 5 + 5),16);
     // if we reach the end of the hash, just default to highest number
      if (index * 5 + 5 > 128) {
-       lucky = 9999;
+       lucky = 999999;
        break;
      }
     }
-    lucky = converter.hexToDec(lucky);
     lucky /= Math.pow(10, 4);
     if(lucky!=result) numberBetsVerFailed++;
     this.state({numberBetsVerFailed:numberBetsVerFailed});
