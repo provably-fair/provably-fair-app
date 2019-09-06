@@ -316,17 +316,25 @@ class Main extends React.Component {
     const crypto = require('crypto');
     let bitvest = await axios.get('https://bitvest.io/update.php?dice=1&json=1&self-only=1');
     console.log("bitvest value is : ", bitvest);
-    while(bitvest.data.game.data==='undefined'){
+    /*while(bitvest.data.game.data==='undefined'){
       bitvest = await axios.get('https://bitvest.io/update.php?dice=1&json=1&self-only=1');
-    }
+    }*/
     bitvest.data.game.data.map( async (item)=>{
-     let bet =  await axios.get(`https://bitvest.io/results?query=${item.id}&game=dice&json=1`);
+     let bet =  await axios.get(`https://bitvest.io/results?query=${item.id}&game=dice&json=1`).then(x => new Promise(resolve => setTimeout(() => resolve(x), 1000))).catch(function (error){
+        if(error.response)
+        {
+          console.log(error.response.status);
+          console.log('ye betId fata:',item.id);
+        }
+    });     
      console.log("bet value is : ", bet);
-     while(bet.data.server_seed==='undefined'){
+     /*while(bet==='undefined'){
          bet =  await axios.get(`https://bitvest.io/results?query=${item.id}&game=dice&json=1`);
-       }
+       }*/
+
         console.log('previousSeed:',previousSeed);
-        // if(previousSeed===bet.data.server_seed){
+
+        if(bet!='undefined' && previousSeed===bet.data.server_seed){
         console.log("verification eligible");
         console.log("betDetails",bet.data);
         let isVerified = this.handleVerifyBetBitvest(bet.data.server_seed,bet.data.user_seed, bet.data.user_seed_nonce, item.roll);
@@ -337,7 +345,7 @@ class Main extends React.Component {
         betData.push({element:element});
         console.log('betData',betData);
         this.setState({betData:betData});
-      // }
+      }
    })
    let newBets = betData!='undefined' ? betData.length: 0;
    let highestNonce = 0;
