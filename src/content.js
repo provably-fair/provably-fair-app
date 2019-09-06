@@ -326,7 +326,7 @@ class Main extends React.Component {
          bet =  await axios.get(`https://bitvest.io/results?query=${item.id}&game=dice&json=1`);
        }
         console.log('previousSeed:',previousSeed);
-        if(previousSeed===bet.data.server_seed){
+        // if(previousSeed===bet.data.server_seed){
         console.log("verification eligible");
         console.log("betDetails",bet.data);
         let isVerified = this.handleVerifyBetBitvest(bet.data.server_seed,bet.data.user_seed, bet.data.user_seed_nonce, item.roll);
@@ -337,7 +337,7 @@ class Main extends React.Component {
         betData.push({element:element});
         console.log('betData',betData);
         this.setState({betData:betData});
-      }
+      // }
    })
    let newBets = betData!='undefined' ? betData.length: 0;
    let highestNonce = 0;
@@ -602,7 +602,7 @@ class Main extends React.Component {
                           </div>
 
 
-                          <div className="SettingsUI Bitvest Stake" style={{display:'block'}}>
+                          <div className="SettingsUI Bitvest Stake" style={{display:!verification?'block':'none'}}>
                           <div className="nav-wrapper">
                             <ul className="nav nav-pills nav-fill flex-md-row" id="tabs-icons-text" role="tablist">
                                 <li className="nav-item show" onClick={()=>{
@@ -778,7 +778,7 @@ class Main extends React.Component {
                           </ul>
                           </div>
 
-                          <div className="VerificationUI-Stake" className="table-responsive" style={{display: stake?'block':'none', fontSize: '11px'}}>
+                          <div className="VerificationUI-Stake" className="table-responsive" style={{display: verification?'block':'none', fontSize: '11px'}}>
                           <div className="nav-wrapper">
                             <ul className="nav nav-pills nav-fill flex-md-row" id="tabs-icons-text" role="tablist">
                                 <li className="nav-item" onClick={()=>{
