@@ -16,11 +16,16 @@ import './assets/css/argon.css';
 import './assets/vendor/font-awesome/css/font-awesome.css';
 import qs from 'querystring';
 
+
+/* GraphQl Client object with x-access-token for Stake Operator */
+
 const client = new GraphQLClient('https://api.stake.com/graphql', {
   headers: {
     "x-access-token": 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI5MzI0NmMzMS1mY2RjLTRjZTctOWZiYi00NmE1MmM5MDFjNGIiLCJzY29wZXMiOlsiYmV0Il0sImlhdCI6MTU2NzE2MDU3MywiZXhwIjoxNTcyMzQ0NTczfQ.RPcBGcTKCY_WnewEo692DK3mZaSZ0K8Y_QOyLhqWZVE',
   },
 })
+
+/* GraphQL query to get public chats of Stake Operator */
 
 const query1 = `query {
   publicChats {
@@ -28,6 +33,8 @@ const query1 = `query {
     name
   }
 }`
+
+/* GraphQL query houseBetList (i.e. game, payout, amountMultiplier, payoutMultiplier, amount, currency, createdAt) for a User of Stake Operator */
 
 const query3 = `{
   user(name: "livingrock") {
@@ -49,6 +56,8 @@ const query3 = `{
   }
 }`
 
+/* GraphQl Client query to get new ServerSeed for Stake Operator */
+
 const query4 = `mutation RotateServerSeedMutation {
   rotateServerSeed {
     id
@@ -68,7 +77,7 @@ const query4 = `mutation RotateServerSeedMutation {
   }
 }`
 
-
+/* GraphQl Client query to get new ServerSeed for Stake Operator */
 
 const query5 = `mutation ChangeClientSeedMutation($seed: String!) {
   changeClientSeed(seed: $seed) {
@@ -78,11 +87,7 @@ const query5 = `mutation ChangeClientSeedMutation($seed: String!) {
   }
 }`
 
-
-
-
-
-/**this is for unhashing a seed**/
+/** GraphQl Client query for unhashing a seed **/
 
 const query8 = `query serverSeedQuery($hash: String!) {
   serverSeedByHash(hash: $hash) {
@@ -133,6 +138,7 @@ class Main extends React.Component {
 
     componentDidMount(){
       /* Type something here, it'll be executed after the App Component is loaded */
+      this.getAllBetsStake();
     }
 
 
@@ -356,6 +362,8 @@ class Main extends React.Component {
      }
    })
    isNonceManipulated = (highestNonce===(newBets-1)) ? false : true;
+   console.log('highestNonce ==>',highestNonce, 'newBets-1 ==>', newBets-1);
+   
    this.setState({isNonceManipulated:isNonceManipulated});
    console.log('unverified bets',numberBetsVerFailed);
   }
