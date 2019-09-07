@@ -643,7 +643,7 @@ class Main extends React.Component {
                           </div>
                           <div className="form-group">
                             <label className="form-control-label">Next Server Seed Hash</label>
-                            <input className="form-control form-control-sm" type="text" value={serverSeedHash} placeholder="" onChange={(e)=>{this.setState({serverSeedHash:e.target.value, stake:true })}}/>
+                            <input className="form-control form-control-sm" type="text" value={serverSeedHash} placeholder="" onChange={(e)=>{this.setState({serverSeedHash:e.target.value })}}/>
                             <button type="button" className="btn btn-secondary m-2"   onClick={this.getNewServerseedHashBitvest}> Request</button>
                           </div>
 
@@ -651,7 +651,7 @@ class Main extends React.Component {
                             <label className="form-control-label">Client Seed</label>
                             <input className="form-control form-control-sm" type="text" value={clientSeed} placeholder="CURRENT CLIENT SEED" onChange={(e)=>{this.setState({clientSeed:e.target.value})}}/>
                             <button type="button" className="btn btn-secondary m-2"   onClick={this.getClientSeed}> Generate</button>
-                            <button type="button" className="btn btn-secondary m-2"   onClick={()=>this.submitClientSeedStake(clientSeed)}> Submit</button>
+                            <button type="button" className="btn btn-secondary m-2"   onClick={stake?()=>this.submitClientSeedStake(clientSeed):''}> Submit</button>
                           </div>
 
                           <div className="form-group" style={{display:toggleState?'block':'none'}}>
