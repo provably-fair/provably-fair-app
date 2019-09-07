@@ -351,21 +351,21 @@ class Main extends React.Component {
         this.setState({betData:betData});
       }
      })
+     let newBets = 0;
+     let highestNonce = 0;
+     betData.map((item)=>{
+       newBets++;
+       console.log('check nonce fair',isNonceManipulated);
+       if(item.element.nonce > highestNonce){
+         highestNonce = item.element.nonce;
+       }
+     })
+     isNonceManipulated = (highestNonce===(newBets)) ? false : true;
+     console.log('highestNonce ==>',highestNonce, 'newBets ==>', newBets);
+     
+     this.setState({isNonceManipulated:isNonceManipulated});
+     console.log('unverified bets',numberBetsVerFailed);
    })
-   let newBets = 0;
-   let highestNonce = 0;
-   betData.map( async(item)=>{
-     newBets++;
-     console.log('check nonce fair',isNonceManipulated);
-     if(item.element.nonce > highestNonce){
-       highestNonce = item.element.nonce;
-     }
-   })
-   isNonceManipulated = (highestNonce===(newBets)) ? false : true;
-   console.log('highestNonce ==>',highestNonce, 'newBets ==>', newBets);
-   
-   this.setState({isNonceManipulated:isNonceManipulated});
-   console.log('unverified bets',numberBetsVerFailed);
   }
 
   /* Method for Provably Fair Verification of bets for the Bitvest Operator */
