@@ -132,16 +132,17 @@ class Main extends React.Component {
         numberBetsVerFailed:0,
         isNonceManipulated:false
       }
-
     }
 
 
     componentDidMount(){
       /* Type something here, it'll be executed after the App Component is loaded */
-      this.getAllBetsStake();
+      // this.getAllBetsStake();
     }
 
 
+/*****************************************************************************************************************************************************************/
+      /** Generic Methods **/
 
       /* Method for generating Randomised Client Seed */
 
@@ -152,7 +153,6 @@ class Main extends React.Component {
         .digest('hex');
         hash = hash.substring(0, 32);
         this.setState({clientSeed:hash, nonce:0});
-
       }
 
 
@@ -162,13 +162,17 @@ class Main extends React.Component {
     /* Method for get all Bet Data for Stake Operator */
 
     getAllBetsStake = () => {
+
       let { betData, user } = this.state;
+
        client.request(query3).then((bet) => {
          bet.user.houseBetList.map((houseBet)=>{
-           /**this is for looking up one bet**/
-           const betId = houseBet.iid.split('house:')[1].toString();
-           console.log('betId : ',betId);
-           const query7 = `query betQuery($betId: String) {
+
+           /**Query is for looking up one bet**/
+
+           let betId = houseBet.iid.split('house:')[1].toString();
+          //  console.log('betId : ', betId);
+           let query7 = `query betQuery($betId: String) {
              bet(betId: $betId) {
                id
                iid
@@ -191,7 +195,6 @@ class Main extends React.Component {
            client.request(query7).then((betIdData) => {
              console.log('betIdDta', betIdData);
            })
-           console.log('houseBet',houseBet)
            betData.push(houseBet)
            this.setState({betData:betData});
          })
