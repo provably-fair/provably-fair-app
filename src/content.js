@@ -56,6 +56,13 @@ const query3 = `{
   }
 }`
 
+function sleeper(ms) {
+  return function(x) {
+    console.log('Sleep ',ms,'milisecs');
+    return new Promise(resolve => setTimeout(() => resolve(x), ms));
+  };
+}
+
 /* GraphQl Client query to get new ServerSeed for Stake Operator */
 
 const query4 = `mutation RotateServerSeedMutation {
@@ -324,21 +331,10 @@ class Main extends React.Component {
     const crypto = require('crypto');
     let bitvest = await axios.get('https://bitvest.io/update.php?dice=1&json=1&self-only=1');
     console.log("bitvest value is : ", bitvest);
-    /*while(bitvest.data.game.data==='undefined'){
-      bitvest = await axios.get('https://bitvest.io/update.php?dice=1&json=1&self-only=1');
-    }*/
-    bitvest.data.game.data.map( async (item)=>{
-     let bet =  await axios.get(`https://bitvest.io/results?query=${item.id}&game=dice&json=1`).then(x => new Promise(resolve => setTimeout(() => resolve(x), 1000))).catch(function (error){
-        if(error.response)
-        {
-          console.log(error.response.status);
-          console.log('ye betId fata:',item.id);
-        }
-    });     
-     console.log("bet value is : ", bet);
-     /*while(bet==='undefined'){
-         bet =  await axios.get(`https://bitvest.io/results?query=${item.id}&game=dice&json=1`);
-       }*/
+
+    bitvest.data.game.data.map((item)=>{
+     axios.get(`https://bitvest.io/results?query=${item.id}&game=dice&json=1`).then(sleeper(1000)).then((bet)=>{
+      console.log("bet value is : ", bet);
 
         console.log('previousSeed:',previousSeed);
 
@@ -354,6 +350,7 @@ class Main extends React.Component {
         console.log('betData',betData);
         this.setState({betData:betData});
       }
+     })
    })
    let newBets = 0;
    let highestNonce = 0;
@@ -381,9 +378,9 @@ class Main extends React.Component {
     const roll = function(key, text) {
     // create HMAC using server seed as key and client seed as message
     const hash = crypto .createHmac('sha512', text) .update(key) .digest('hex');
-    console.log('=============>>>>>>>>>>>>>>>>>>>>>>>>>key',key)
-    console.log('=============>>>>>>>>>>>>>>>>>>>>>>>>>text',text)
-    console.log('=============>>>>>>>>>>>>>>>>>>>>>>>>>hash',hash)
+    console.log('=============>>>>>>>>>>>>>>>>>>>>>>>>>key',key);
+    console.log('=============>>>>>>>>>>>>>>>>>>>>>>>>>text',text);
+    console.log('=============>>>>>>>>>>>>>>>>>>>>>>>>>hash',hash);
     let index = 0;
     let lucky = parseInt(hash.substring(index * 5, index * 5 + 5),16);
     console.log('======================>>>>>>>>>>>>>>>>>>lucky',lucky);
