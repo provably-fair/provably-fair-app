@@ -329,28 +329,28 @@ class Main extends React.Component {
     let { betData, previousSeed, isNonceManipulated, numberBetsVerFailed } = this.state;
     betData = [];
     const crypto = require('crypto');
-    let bitvest = await axios.get('https://bitvest.io/update.php?dice=1&json=1&self-only=1');
+    let bitvest = await axios.get('https://bitvest.io/update?games_only=1');
     console.log("bitvest value is : ", bitvest);
 
     bitvest.data.game.data.map((item)=>{
-     axios.get(`https://bitvest.io/results?query=${item.id}&game=dice&json=1`).then(sleeper(1000)).then((bet)=>{
-      console.log("bet value is : ", bet);
+  //    axios.get(`https://bitvest.io/results?query=${item.id}&game=dice&json=1`).then(sleeper(1000)).then((bet)=>{
+  //     console.log("bet value is : ", bet);
 
-        console.log('previousSeed:',previousSeed);
+        // console.log('previousSeed:',previousSeed);
 
-        if(bet!='undefined' && previousSeed===bet.data.server_seed){
+  //       if(bet!='undefined' && previousSeed===bet.data.server_seed){
         console.log("verification eligible");
-        console.log("betDetails",bet.data);
-        let isVerified = this.handleVerifyBetBitvest(bet.data.server_seed,bet.data.user_seed, bet.data.user_seed_nonce, item.roll);
+  //       console.log("betDetails",bet.data);
+        let isVerified = this.handleVerifyBetBitvest(item.server_hash,item.user_seed, item.user_seed_nonce, item.roll);
         var element = {};
         element.id = item.id; element.game = item.game; element.roll = item.roll; element.side = item.side; element.target = item.target;
-        element.nonce = bet.data.user_seed_nonce; element.isVerified = isVerified;
+        element.nonce = item.user_seed_nonce;  element.isVerified = isVerified;
         console.log('element : ', element);
         betData.push({element:element});
         console.log('betData',betData);
         this.setState({betData:betData});
-      }
-     })
+  //     }
+  //    })
      let newBets = 0;
      let highestNonce = 0;
      betData.map((item)=>{
