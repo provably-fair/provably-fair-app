@@ -328,20 +328,27 @@ class Main extends React.Component {
   getMyBetsBitvest = async () => {
     let { betData, previousSeed, isNonceManipulated, numberBetsVerFailed } = this.state;
     betData = [];
+    numberBetsVerFailed = 0;
     const crypto = require('crypto');
     let bitvest = await axios.get('https://bitvest.io/update?games_only=1');
     console.log("bitvest value is : ", bitvest);
 
-    bitvest.data.game.data.map((item)=>{
+    bitvest.data.game.data.map(async (item)=>{
   //    axios.get(`https://bitvest.io/results?query=${item.id}&game=dice&json=1`).then(sleeper(1000)).then((bet)=>{
   //     console.log("bet value is : ", bet);
-
+         
         // console.log('previousSeed:',previousSeed);
-
-  //       if(bet!='undefined' && previousSeed===bet.data.server_seed){
+       let hashingUnhashed = crypto.createHash('sha256').update(previousSeed).digest('hex');
+       console.log('hashing the unhashed',hashingUnhashed);
+       if(hashingUnhashed===item.server_hash){
         console.log("verification eligible");
   //       console.log("betDetails",bet.data);
-        let isVerified = this.handleVerifyBetBitvest(item.server_hash,item.user_seed, item.user_seed_nonce, item.roll);
+        let bet = await axios.get(`https://bitvest.io/results?query=${item.id}&game=dice&json=1`).then(sleeper(1000));
+        console.log('bet details:',bet);
+        let serverSeed = bet.data.server_seed;
+        console.log('server seed:',serverSeed);
+        let isVerified = this.handleVerifyBetBitvest(serverSeed,item.user_seed, item.user_seed_nonce, item.roll);
+        if(!isVerified) numberBetsVerFailed++;
         var element = {};
         element.id = item.id; element.game = item.game; element.roll = item.roll; element.side = item.side; element.target = item.target;
         element.nonce = item.user_seed_nonce;  element.isVerified = isVerified;
@@ -349,21 +356,9 @@ class Main extends React.Component {
         betData.push({element:element});
         console.log('betData',betData);
         this.setState({betData:betData});
-  //     }
+        this.setState({numberBetsVerFailed:numberBetsVerFailed});
+     }
   //    })
-     let newBets = 0;
-     let highestNonce = 0;
-     betData.map((item)=>{
-       newBets++;
-       console.log('check nonce fair',isNonceManipulated);
-       if(item.element.nonce > highestNonce){
-         highestNonce = item.element.nonce;
-       }
-     })
-     isNonceManipulated = (highestNonce===(newBets)) ? false : true;
-     console.log('highestNonce ==>',highestNonce, 'newBets ==>', newBets);
-     
-     this.setState({isNonceManipulated:isNonceManipulated});
      console.log('unverified bets',numberBetsVerFailed);
    })
   }
@@ -373,7 +368,7 @@ class Main extends React.Component {
   handleVerifyBetBitvest = (serverSeed, clientSeed, nonce, result) => {
     // bet made with seed pair (excluding current bet)
     // crypto lib for hmac function
-    let {numberBetsVerFailed} = this.state;
+    //let {numberBetsVerFailed} = this.state;
     const crypto = require('crypto');
     const roll = function(key, text) {
     // create HMAC using server seed as key and client seed as message
@@ -399,9 +394,9 @@ class Main extends React.Component {
       return true;
     }
     else{
-      numberBetsVerFailed++;
-      this.state({numberBetsVerFailed:numberBetsVerFailed});
-      return false;
+      //numberBetsVerFailed++;
+      //this.state({numberBetsVerFailed:numberBetsVerFailed});
+      //return false;
     }   
   };
       let diceVerify = roll(serverSeed, `${clientSeed}|${nonce}`);
