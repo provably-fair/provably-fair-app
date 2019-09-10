@@ -361,11 +361,28 @@ class Main extends React.Component {
         });
         console.log('sorted betData',betData);
         this.setState({betData:betData});
+
+        let testNonce = 0;
+        betData.map((item)=>{
+          if(item.element.nonce == testNonce)
+          {
+            console.log('current nonce',item.element.nonce);
+            console.log('test nonce',testNonce);
+            testNonce++;
+            isNonceManipulated = false;
+          }
+          else
+          {
+            isNonceManipulated = true;
+          }
+        })
+       
         this.setState({numberBetsVerFailed:numberBetsVerFailed});
+        this.setState({isNonceManipulated:isNonceManipulated});
      }
   //    })
      console.log('unverified bets',numberBetsVerFailed);
-     this.setState({isNonceManipulated:isNonceManipulated});
+     //this.setState({isNonceManipulated:isNonceManipulated});
    })
   }
   
