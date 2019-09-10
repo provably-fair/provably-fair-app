@@ -326,9 +326,10 @@ class Main extends React.Component {
   /* Method for the User's Bet Data for the Bitvest Operator */
 
   getMyBetsBitvest = async () => {
-    let { betData, previousSeed, isNonceManipulated, numberBetsVerFailed } = this.state;
+    let { betData, previousSeed, numberBetsVerFailed, isNonceManipulated } = this.state;
     betData = [];
     numberBetsVerFailed = 0;
+    isNonceManipulated = false;
     const crypto = require('crypto');
     let bitvest = await axios.get('https://bitvest.io/update?games_only=1');
     console.log("bitvest value is : ", bitvest);
@@ -351,19 +352,50 @@ class Main extends React.Component {
         if(!isVerified) numberBetsVerFailed++;
         var element = {};
         element.id = item.id; element.game = item.game; element.roll = item.roll; element.side = item.side; element.target = item.target;
-        element.nonce = item.user_seed_nonce;  element.isVerified = isVerified;
+        element.nonce = item.user_seed_nonce;  element.isVerified = isVerified, element.timestamp = item.timestamp;
         console.log('element : ', element);
         betData.push({element:element});
         console.log('betData',betData);
+        betData = betData.sort(function(a,b){
+          return (a.element.timestamp - b.element.timestamp);
+        });
+        console.log('sorted betData',betData);
         this.setState({betData:betData});
         this.setState({numberBetsVerFailed:numberBetsVerFailed});
      }
   //    })
      console.log('unverified bets',numberBetsVerFailed);
+     this.setState({isNonceManipulated:isNonceManipulated});
    })
   }
+  
+  /*ifNonceManipulated = () => {
+    let {isNonceManipulated, betData} = this.state;
+    isNonceManipulated = false;
 
-  /* Method for Provably Fair Verification of bets for the Bitvest Operator */
+    betData.sort(function(a,b){
+      return (a.element.timestamp - b.element.timestamp);
+    });
+    console.log('sorted betData',betData);
+
+    let newBets = betData.length;
+    console.log('newBets',newBets);
+    let highestNonce = 0;
+    betData.map((item)=>{
+      if(item.element.nonce > highestNonce)
+      {
+        highestNonce = item.element.nonce;
+        console.log('current highest nonce',highestNonce);
+      }
+    })
+    isNonceManipulated = (highestNonce == (newBets-1)) ? false : true;
+    console.log('highestnonce',highestNonce);
+    this.setState({isNonceManipulated:isNonceManipulated});
+    this.setState({betData:betData});
+  }*/
+  
+  /*Method for Provably Fair Verification of bets for the Bitvest Operator */
+
 
   handleVerifyBetBitvest = (serverSeed, clientSeed, nonce, result) => {
     // bet made with seed pair (excluding current bet)
