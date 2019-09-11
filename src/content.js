@@ -87,6 +87,8 @@ class Main extends React.Component {
         user:'',
         apiKey:null,
         BetIdArray: [],
+        betDataById:[],
+        userSeedsData:[],
         BetId:null,
         Balance:null,
         Roll:null,
@@ -104,7 +106,7 @@ class Main extends React.Component {
 
     componentDidMount(){
       /* Type something here, it'll be executed after the App Component is loaded */
-      this.getAllBetsStake();
+      this.getAllUserSeedsStake();
     }
 
 
@@ -170,16 +172,15 @@ class Main extends React.Component {
 
     getAllBetsStake = () => {
 
-      let { betData, user } = this.state;
+      let { betDataById, user } = this.state;
+      betDataById=[];
 
       /* GraphQL query houseBetList (i.e. game, payout, amountMultiplier, payoutMultiplier, amount, currency, createdAt) for a User of Stake Operator */
 
-        let variables = {
-          name: "livingrock"
-        }
+        // let name = "livingrock";
 
         let query3 = `{
-          user(name: "Dan") {
+          user(name: "livingrock") {
             houseBetList(limit: 50, offset: 0) {
               id
               iid
@@ -206,7 +207,7 @@ class Main extends React.Component {
 
            /**Query is for looking up one bet**/
            
-            variables = {
+          let variables = {
             iid: houseBet.iid
           }
             
@@ -233,18 +234,21 @@ class Main extends React.Component {
           }`
 
            client.request(query7, variables).then((betIdData) => {
-             console.log('betIdDta', betIdData);
+             console.log('betIdData', betIdData);
+             betDataById.push(betIdData);
+             this.setState({betDataById:betDataById});
            })
-           betData.push(houseBet)
-           this.setState({betData:betData});
+         console.log('betDataById', betDataById);
+          
          })
        })
-        // console.log('betData', betData);
     }
 
     /* Method to get all types of User Seeds for Stake Operator */
 
     getAllUserSeedsStake = () => {
+
+      let {userSeedsData} = this.state;
 
       const name = "livingrock";
 
@@ -271,9 +275,12 @@ class Main extends React.Component {
 
        client.request(query6).then((userSeeds) => {
 
-         console.log('userSeeds', userSeeds);
-
+         console.log('userSeeds : ', userSeeds);
+         userSeedsData.push(userSeeds)
+         this.setState({userSeedsData:userSeedsData});
        })
+       console.log("userSeedsData : ", userSeedsData);
+       
     }
 
 
