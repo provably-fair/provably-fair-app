@@ -104,7 +104,7 @@ class Main extends React.Component {
 
     componentDidMount(){
       /* Type something here, it'll be executed after the App Component is loaded */
-      this.getAllBetsStake();
+      this.getAllData();
     }
 
 
@@ -124,6 +124,46 @@ class Main extends React.Component {
 
 
 /*****************************************************************************************************************************************************************/
+
+    /* Method to get all bet data of user bets for Stake Operator */
+
+    getAllData = () => {
+
+
+      /**this is for looking up all the betData of a user's bet**/
+      const variables = {
+        iid: "house:8691772588"
+      }
+
+      const query6 = `query betQuery($iid: String!) {
+            
+        bet(iid: $iid) {
+          id
+          iid
+          bet {
+            ... on CasinoBet {
+              game
+              payout
+              payoutMultiplier
+              createdAt
+              currency
+              user {
+                name
+              }
+            }
+          }
+        }
+      }`
+      
+       client.request(query6, variables).then((betData) => {
+
+         console.log('All Bet data', betData);
+
+       })
+    }
+
+
+
 
 
     /* Method for get all Bet Data for Stake Operator */
