@@ -21,7 +21,7 @@ import qs from 'querystring';
 
 const client = new GraphQLClient('https://api.stake.com/graphql', {
   headers: {
-    "x-access-token": 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI5MzI0NmMzMS1mY2RjLTRjZTctOWZiYi00NmE1MmM5MDFjNGIiLCJzY29wZXMiOlsiYmV0Il0sImlhdCI6MTU2NzE2MDU3MywiZXhwIjoxNTcyMzQ0NTczfQ.RPcBGcTKCY_WnewEo692DK3mZaSZ0K8Y_QOyLhqWZVE',
+    "x-access-token": 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI5MzI0NmMzMS1mY2RjLTRjZTctOWZiYi00NmE1MmM5MDFjNGIiLCJzY29wZXMiOlsiYmV0Il0sImlhdCI6MTU2NzA2MDkwMywiZXhwIjoxNTcyMjQ0OTAzfQ.5SLbHGZpuYU0WljtOGayOgj4DB_26cmd9xi_r2BZdfY',
   },
 })
 
@@ -34,27 +34,6 @@ const query1 = `query {
   }
 }`
 
-/* GraphQL query houseBetList (i.e. game, payout, amountMultiplier, payoutMultiplier, amount, currency, createdAt) for a User of Stake Operator */
-
-const query3 = `{
-  user(name: "livingrock") {
-    houseBetList(limit: 50, offset: 0) {
-      id
-      iid
-      bet {
-        ... on CasinoBet {
-          game
-          payout
-          amountMultiplier
-          payoutMultiplier
-          amount
-          currency
-          createdAt
-        }
-      }
-    }
-  }
-}`
 
 function sleeper(ms) {
   return function(x) {
@@ -63,26 +42,7 @@ function sleeper(ms) {
   };
 }
 
-/* GraphQl Client query to get new ServerSeed for Stake Operator */
 
-const query4 = `mutation RotateServerSeedMutation {
-  rotateServerSeed {
-    id
-    seedHash
-    nonce
-    user {
-      id
-      activeServerSeed {
-        id
-        seedHash
-        nonce
-        __typename
-      }
-      __typename
-    }
-    __typename
-  }
-}`
 
 /* GraphQl Client query to get new ServerSeed for Stake Operator */
 
@@ -132,10 +92,10 @@ class Main extends React.Component {
         Roll:null,
         nonceChecked:false,
         toggleState:false,
-        betAmount:0.0001,
+        betAmount:0.0000001,
         betPayout:2.0,
         betPlaced:false,
-        stake:false,
+        stake:true,
         numberBetsVerFailed:0,
         isNonceManipulated:false
       }
@@ -144,6 +104,7 @@ class Main extends React.Component {
 
     componentDidMount(){
       /* Type something here, it'll be executed after the App Component is loaded */
+      this.getAllBetsStake();
     }
 
 
@@ -171,34 +132,63 @@ class Main extends React.Component {
 
       let { betData, user } = this.state;
 
+      /* GraphQL query houseBetList (i.e. game, payout, amountMultiplier, payoutMultiplier, amount, currency, createdAt) for a User of Stake Operator */
+
+        let query3 = `{
+          user(name: "livingrock") {
+            houseBetList(limit: 50, offset: 0) {
+              id
+              iid
+              bet {
+                ... on CasinoBet {
+                  game
+                  payout
+                  amountMultiplier
+                  payoutMultiplier
+                  amount
+                  currency
+                  createdAt
+                }
+              }
+            }
+          }
+        }`
+
        client.request(query3).then((bet) => {
          bet.user.houseBetList.map((houseBet)=>{
 
            /**Query is for looking up one bet**/
+           
+           const variables = {
+            iid: "house:8691772588"
+          }
+            
+           let query7 = `query betQuery($iid: String!) {
+            
+            bet(iid: $iid) {
+              id
+              iid
+              bet {
+                ... on CasinoBet {
+                  id
+                  nonce
+                  game
+                  serverSeed {
+                    seed
+                    seedHash
+                  }
+                  clientSeed {
+                    seed
+                  }
+                }
+              }
+            }
+          }`
 
-           let betId = houseBet.iid.split('house:')[1].toString();
-          //  console.log('betId : ', betId);
-           let query7 = `query betQuery($betId: String) {
-             bet(betId: $betId) {
-               id
-               iid
-               bet {
-                 ... on CasinoBet {
-                   id
-                   nonce
-                   game
-                   serverSeed {
-                     seed
-                     seedHash
-                   }
-                   clientSeed {
-                     seed
-                   }
-                 }
-               }
-             }
-           }`
-           client.request(query7).then((betIdData) => {
+// Chirag Titiya, [10.09.19 15:57]
+// eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxODFiNmYyZi0xYWJmLTRiYzctOGJiZS01MGNkMTAxOWFiMzAiLCJzY29wZXMiOlsiYmV0Il0sImlhdCI6MTU2ODExMTIxMiwiZXhwIjoxNTczMjk1MjEyfQ.XkDkQfejGxE8xhtuIybgeyPoJSNih-sfGa0Ln1PO4sU
+
+           client.request(query7, variables).then((betIdData) => {
              console.log('betIdDta', betIdData);
            })
            betData.push(houseBet)
@@ -254,10 +244,31 @@ class Main extends React.Component {
 
     /* Method for getting a Server Seed Hash for the Stake Operator */
 
-    getServerSeedStake = () =>{
+    getServerSeedStake = () => {
+
+        /* GraphQl Client query to get new ServerSeed for Stake Operator */
+
+        const query4 = `mutation RotateServerSeedMutation {
+          rotateServerSeed {
+            id
+            seedHash
+            nonce
+            user {
+              id
+              activeServerSeed {
+                id
+                seedHash
+                nonce
+                __typename
+              }
+              __typename
+            }
+            __typename
+          }
+        }`
       client.request(query4).then((data) => {
         console.log(data.rotateServerSeed.seedHash)
-        this.setState({serverSeedHash:data.rotateServerSeed.seedHash})
+        this.setState({serverSeedHash:data.rotateServerSeed.seedHash})  
       })
     }
 
@@ -340,7 +351,7 @@ class Main extends React.Component {
 
   //       if(bet!='undefined' && previousSeed===bet.data.server_seed){
         console.log("verification eligible");
-  //       console.log("betDetails",bet.data);
+        // console.log("betDetails",bet.data);
         let isVerified = this.handleVerifyBetBitvest(item.server_hash,item.user_seed, item.user_seed_nonce, item.roll);
         var element = {};
         element.id = item.id; element.game = item.game; element.roll = item.roll; element.side = item.side; element.target = item.target;
@@ -641,14 +652,14 @@ class Main extends React.Component {
                           <div className="form-group">
                             <label className="form-control-label">Next Server Seed Hash</label>
                             <input className="form-control form-control-sm" type="text" value={serverSeedHash} placeholder="" onChange={(e)=>{this.setState({serverSeedHash:e.target.value })}}/>
-                            <button type="button" className="btn btn-secondary m-2"   onClick={this.getNewServerseedHashBitvest}> Request</button>
+                            <button type="button" className="btn btn-secondary m-2"   onClick={this.getServerSeedStake}> Request</button>
                           </div>
 
                           <div className="form-group">
                             <label className="form-control-label">Client Seed</label>
                             <input className="form-control form-control-sm" type="text" value={clientSeed} placeholder="CURRENT CLIENT SEED" onChange={(e)=>{this.setState({clientSeed:e.target.value})}}/>
                             <button type="button" className="btn btn-secondary m-2"   onClick={this.getClientSeed}> Generate</button>
-                            <button type="button" className="btn btn-secondary m-2"   onClick={stake?()=>this.submitClientSeedStake(clientSeed):''}> Submit</button>
+                            <button type="button" className="btn btn-secondary m-2"   onClick={()=>{stake && this.submitClientSeedStake(clientSeed)}}> Submit</button>
                           </div>
 
                           <div className="form-group" style={{display:toggleState?'block':'none'}}>
