@@ -185,9 +185,6 @@ class Main extends React.Component {
             }
           }`
 
-// Chirag Titiya, [10.09.19 15:57]
-// eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxODFiNmYyZi0xYWJmLTRiYzctOGJiZS01MGNkMTAxOWFiMzAiLCJzY29wZXMiOlsiYmV0Il0sImlhdCI6MTU2ODExMTIxMiwiZXhwIjoxNTczMjk1MjEyfQ.XkDkQfejGxE8xhtuIybgeyPoJSNih-sfGa0Ln1PO4sU
-
            client.request(query7, variables).then((betIdData) => {
              console.log('betIdDta', betIdData);
            })
@@ -337,54 +334,98 @@ class Main extends React.Component {
   /* Method for the User's Bet Data for the Bitvest Operator */
 
   getMyBetsBitvest = async () => {
-    let { betData, previousSeed, isNonceManipulated, numberBetsVerFailed } = this.state;
+    let { betData, previousSeed, numberBetsVerFailed, isNonceManipulated } = this.state;
     betData = [];
+    numberBetsVerFailed = 0;
+    isNonceManipulated = false;
     const crypto = require('crypto');
     let bitvest = await axios.get('https://bitvest.io/update?games_only=1');
     console.log("bitvest value is : ", bitvest);
 
-    bitvest.data.game.data.map((item)=>{
+    bitvest.data.game.data.map(async (item)=>{
   //    axios.get(`https://bitvest.io/results?query=${item.id}&game=dice&json=1`).then(sleeper(1000)).then((bet)=>{
   //     console.log("bet value is : ", bet);
-
+         
         // console.log('previousSeed:',previousSeed);
-
-  //       if(bet!='undefined' && previousSeed===bet.data.server_seed){
+       let hashingUnhashed = crypto.createHash('sha256').update(previousSeed).digest('hex');
+       console.log('hashing the unhashed',hashingUnhashed);
+       if(hashingUnhashed===item.server_hash){
         console.log("verification eligible");
-        // console.log("betDetails",bet.data);
-        let isVerified = this.handleVerifyBetBitvest(item.server_hash,item.user_seed, item.user_seed_nonce, item.roll);
+  //       console.log("betDetails",bet.data);
+        let bet = await axios.get(`https://bitvest.io/results?query=${item.id}&game=dice&json=1`).then(sleeper(1000));
+        console.log('bet details:',bet);
+        let serverSeed = bet.data.server_seed;
+        console.log('server seed:',serverSeed);
+        let isVerified = this.handleVerifyBetBitvest(serverSeed,item.user_seed, item.user_seed_nonce, item.roll);
+        if(!isVerified) numberBetsVerFailed++;
         var element = {};
         element.id = item.id; element.game = item.game; element.roll = item.roll; element.side = item.side; element.target = item.target;
-        element.nonce = item.user_seed_nonce;  element.isVerified = isVerified;
+        element.nonce = item.user_seed_nonce;  element.isVerified = isVerified, element.timestamp = item.timestamp;
         console.log('element : ', element);
         betData.push({element:element});
         console.log('betData',betData);
+        betData = betData.sort(function(a,b){
+          return (a.element.timestamp - b.element.timestamp);
+        });
+        console.log('sorted betData',betData);
         this.setState({betData:betData});
-  //     }
+
+        let testNonce = 0;
+        betData.map((item)=>{
+          if(item.element.nonce == testNonce)
+          {
+            console.log('current nonce',item.element.nonce);
+            console.log('test nonce',testNonce);
+            testNonce++;
+            isNonceManipulated = false;
+          }
+          else
+          {
+            isNonceManipulated = true;
+          }
+        })
+       
+        this.setState({numberBetsVerFailed:numberBetsVerFailed});
+        this.setState({isNonceManipulated:isNonceManipulated});
+     }
   //    })
-     let newBets = 0;
-     let highestNonce = 0;
-     betData.map((item)=>{
-       newBets++;
-       console.log('check nonce fair',isNonceManipulated);
-       if(item.element.nonce > highestNonce){
-         highestNonce = item.element.nonce;
-       }
-     })
-     isNonceManipulated = (highestNonce===(newBets)) ? false : true;
-     console.log('highestNonce ==>',highestNonce, 'newBets ==>', newBets);
-     
-     this.setState({isNonceManipulated:isNonceManipulated});
      console.log('unverified bets',numberBetsVerFailed);
+     //this.setState({isNonceManipulated:isNonceManipulated});
    })
   }
+  
+  /*ifNonceManipulated = () => {
+    let {isNonceManipulated, betData} = this.state;
+    isNonceManipulated = false;
 
-  /* Method for Provably Fair Verification of bets for the Bitvest Operator */
+    betData.sort(function(a,b){
+      return (a.element.timestamp - b.element.timestamp);
+    });
+    console.log('sorted betData',betData);
+
+    let newBets = betData.length;
+    console.log('newBets',newBets);
+    let highestNonce = 0;
+    betData.map((item)=>{
+      if(item.element.nonce > highestNonce)
+      {
+        highestNonce = item.element.nonce;
+        console.log('current highest nonce',highestNonce);
+      }
+    })
+    isNonceManipulated = (highestNonce == (newBets-1)) ? false : true;
+    console.log('highestnonce',highestNonce);
+    this.setState({isNonceManipulated:isNonceManipulated});
+    this.setState({betData:betData});
+  }*/
+  
+  /*Method for Provably Fair Verification of bets for the Bitvest Operator */
+
 
   handleVerifyBetBitvest = (serverSeed, clientSeed, nonce, result) => {
     // bet made with seed pair (excluding current bet)
     // crypto lib for hmac function
-    let {numberBetsVerFailed} = this.state;
+    //let {numberBetsVerFailed} = this.state;
     const crypto = require('crypto');
     const roll = function(key, text) {
     // create HMAC using server seed as key and client seed as message
@@ -410,9 +451,9 @@ class Main extends React.Component {
       return true;
     }
     else{
-      numberBetsVerFailed++;
-      this.state({numberBetsVerFailed:numberBetsVerFailed});
-      return false;
+      //numberBetsVerFailed++;
+      //this.state({numberBetsVerFailed:numberBetsVerFailed});
+      //return false;
     }   
   };
       let diceVerify = roll(serverSeed, `${clientSeed}|${nonce}`);
