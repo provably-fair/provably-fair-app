@@ -104,7 +104,7 @@ class Main extends React.Component {
 
     componentDidMount(){
       /* Type something here, it'll be executed after the App Component is loaded */
-      this.getAllData();
+      this.getAllBetsStake();
     }
 
 
@@ -174,8 +174,12 @@ class Main extends React.Component {
 
       /* GraphQL query houseBetList (i.e. game, payout, amountMultiplier, payoutMultiplier, amount, currency, createdAt) for a User of Stake Operator */
 
+        let variables = {
+          name: "livingrock"
+        }
+
         let query3 = `{
-          user(name: "livingrock") {
+          user(name: "Dan") {
             houseBetList(limit: 50, offset: 0) {
               id
               iid
@@ -193,14 +197,17 @@ class Main extends React.Component {
             }
           }
         }`
-
+        
        client.request(query3).then((bet) => {
+         
          bet.user.houseBetList.map((houseBet)=>{
+         console.log("houseBet : ", houseBet.iid);
+
 
            /**Query is for looking up one bet**/
            
-           const variables = {
-            iid: "house:8691772588"
+            variables = {
+            iid: houseBet.iid
           }
             
            let query7 = `query betQuery($iid: String!) {
