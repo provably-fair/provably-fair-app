@@ -109,7 +109,7 @@ class Main extends React.Component {
 
     componentDidMount(){
       /* Type something here, it'll be executed after the App Component is loaded */
-      this.getAllBetsStake();
+      this.processBetsStake();
     }
 
 
@@ -332,18 +332,18 @@ class Main extends React.Component {
      // this.processBetsStake();
     }
 
-    /*processBetsStake = async () => {
+    processBetsStake =  () => {
       let{betDataById, betDataEnriched, betData, previousClientSeedStake, previousServerSeedStake} = this.state;
       betData = [];
-      await this.getAllUserSeedsStake();
-      await this.getAllBetsStake();
-      betDataById.map(async (item) => {
+       this.getAllUserSeedsStake();
+       this.getAllBetsStake();
+      betDataById.map( (item) => {
         if((item.bet.bet.clientSeed.seed == previousClientSeedStake) && (item.bet.bet.serverSeed.seed == previousServerSeedStake))
         {
            console.log("verification eligible");
            var element = {};
-           console.log('new bet has come',bet.bet.iid);
-           betDataEnriched.map(async (innerItem) => {
+           console.log('new bet has come',item.bet.bet.iid);
+           betDataEnriched.map( (innerItem) => {
               if(innerItem.iid == item.bet.bet.iid)
               {
                 let isVerified = this.handleVerifyBetPrimeDice(item.bet.bet.serverSeed.seed,item.bet.bet.clientSeed.seed,item.bet.bet.nonce,innerItem.payout);
@@ -360,7 +360,7 @@ class Main extends React.Component {
       //organize data
       //check for nonce
     }
-    */
+    
 
 
       /* Method for Provably Fair Verification of bets for the PrimeDice Operator */
