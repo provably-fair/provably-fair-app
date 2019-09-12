@@ -106,7 +106,7 @@ class Main extends React.Component {
 
     componentDidMount(){
       /* Type something here, it'll be executed after the App Component is loaded */
-      this.getAllUserSeedsStake();
+      this.getAllBetsStake();
     }
 
 
@@ -200,9 +200,10 @@ class Main extends React.Component {
         }`
         
        client.request(query3).then((bet) => {
+        console.log("houseBetList : ", bet.user.houseBetList);
          
          bet.user.houseBetList.map((houseBet)=>{
-         console.log("houseBet : ", houseBet.iid);
+        //  console.log("houseBet : ", houseBet);
 
 
            /**Query is for looking up one bet**/
@@ -238,8 +239,7 @@ class Main extends React.Component {
              betDataById.push(betIdData);
              this.setState({betDataById:betDataById});
            })
-         console.log('betDataById', betDataById);
-          
+          console.log('betDataById', betDataById);
          })
        })
     }
@@ -276,10 +276,10 @@ class Main extends React.Component {
        client.request(query6).then((userSeeds) => {
 
          console.log('userSeeds : ', userSeeds);
-         userSeedsData.push(userSeeds)
-         this.setState({userSeedsData:userSeedsData});
+        //  userSeedsData.push(userSeeds)
+        //  this.setState({userSeedsData:userSeedsData});
        })
-       console.log("userSeedsData : ", userSeedsData);
+      //  console.log("userSeedsData : ", userSeedsData);
        
     }
 
