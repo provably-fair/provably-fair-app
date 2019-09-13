@@ -450,10 +450,10 @@ class Main extends React.Component {
           
           return lucky;
         };
-        let diceVerify = roll(serverSeedHash, `${clientSeed}-${nonce}`);
+        let diceVerify = roll(serverSeedHash, `${clientSeed}:${nonce}`);
         this.setState({diceVerify:diceVerify});
         console.log(diceVerify);
-        this.setState({nonce:0})
+        return diceVerify;
       }
 
 /*****************************************************************************************************************************************************************************************************/
