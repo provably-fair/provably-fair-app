@@ -394,17 +394,21 @@ class Main extends React.Component {
        
       betDataById.map( (item) => {
        console.log("item.bet.bet.clientSeed.seed", item.bet.bet.clientSeed.seed, "item.bet.bet.serverSeed.seed", item.bet.bet.serverSeed.seed);
-        if((item.bet.bet.clientSeed.seed == activeClientSeedStake) && (item.bet.bet.serverSeed.seed == previousServerSeedStake))
+        if((item.bet.bet.clientSeed.seed == activeClientSeedStake) && (item.bet.bet.serverSeed.seed == previousServerSeedStake)) 
         {
            console.log("verification eligible");
            var element = {};
-           console.log('new bet has come',item.bet.bet.iid);
+           console.log('new bet has come',item.bet.iid);
            betDataEnriched.map( (innerItem) => {
-              if(innerItem.iid == item.bet.bet.iid)
+             console.log("Inner Item :", innerItem);
+             
+              if(innerItem.iid == item.bet.iid)
               {
-                let isVerified = this.handleVerifyBetStake(item.bet.bet.serverSeed.seed,item.bet.bet.clientSeed.seed,item.bet.bet.nonce,innerItem.payout);
-                element.id = item.bet.bet.iid; element.game = innerItem.game; element.roll = innerItem.payout;
-                element.nonce = item.bet.bet.nonce; element.timestamp = innerItem.timestamp; element.isVerified = isVerified;
+                let isVerified = this.handleVerifyBetStake(item.bet.bet.serverSeed.seed,item.bet.bet.clientSeed.seed,item.bet.bet.nonce);
+                console.log("isVerified", isVerified);
+                
+                element.id = item.bet.iid; element.game = innerItem.bet.game; element.payout = innerItem.bet.payout;
+                element.nonce = item.bet.bet.nonce; element.isVerified = isVerified;
                 console.log('element : ', element);
                 betData.push({element:element});
                 this.setState({betData:betData});
@@ -423,7 +427,7 @@ class Main extends React.Component {
 
       /* Method for Provably Fair Verification of bets for the PrimeDice Operator */
 
-      handleVerifyBetStake = (serverSeedHash,clientSeed, nonce, result) => {
+      handleVerifyBetStake = (serverSeedHash,clientSeed, nonce) => {
         // bet made with seed pair (excluding current bet)
         // crypto lib for hmac function
         const crypto = require('crypto');
@@ -442,7 +446,9 @@ class Main extends React.Component {
           }
           lucky %= Math.pow(10, 4);
           lucky /= Math.pow(10, 2); 
-          return (lucky == result);
+          console.log("LUCKY : ", lucky);
+          
+          return lucky;
         };
         let diceVerify = roll(serverSeedHash, `${clientSeed}-${nonce}`);
         this.setState({diceVerify:diceVerify});
@@ -1122,7 +1128,19 @@ class Main extends React.Component {
                                 {betData.map((item,i)=>{
                                   return <tr>
                                   <td>
-                                  {item.element.iid}
+                                  {item.element.id}
+                                  </td>
+                                  <td>
+                                  {item.element.game}
+                                  </td>
+                                  <td>
+                                  {item.element.payout}
+                                  </td>
+                                  <td>
+                                  {item.element.nonce}
+                                  </td>
+                                  <td>
+                                  {item.element.isVerified}
                                   </td>
                                   </tr>
                                 })}
