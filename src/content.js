@@ -54,14 +54,7 @@ const query5 = `mutation ChangeClientSeedMutation($seed: String!) {
   }
 }`
 
-/** GraphQl Client query for unhashing a seed **/
 
-const query8 = `query serverSeedQuery($hash: String!) {
-  serverSeedByHash(hash: $hash) {
-    seed
-    seedHash
-  }
-}`
 
 class Main extends React.Component {
 
@@ -74,7 +67,7 @@ class Main extends React.Component {
         verification:false,
         operators:false,
         clientSeed:'',
-        serverSeedHash:'',
+        serverSeedHash:null,
         previousSeed:'',
         session_token:'',
         nonce:0,
@@ -94,6 +87,7 @@ class Main extends React.Component {
         Balance:null,
         Roll:null,
         previousClientSeedStake:'',
+        activeClientSeedStake:'',
         previousServerSeedStake:'',
         nonceChecked:false,
         toggleState:false,
@@ -109,7 +103,7 @@ class Main extends React.Component {
 
     componentDidMount(){
       /* Type something here, it'll be executed after the App Component is loaded */
-      this.processBetsStake();
+      // this.processBetsStake();
     }
 
 
@@ -127,6 +121,36 @@ class Main extends React.Component {
         this.setState({clientSeed:hash, nonce:0});
       }
 
+      handleRequest = () => {
+        let self = this;
+        let promise1 = new Promise((resolve, reject) => {
+          setTimeout(() => {
+            self.getServerSeedStake();
+          }, 300);
+        });
+
+        let promise2 = new Promise((resolve, reject) => {
+          setTimeout(() => {
+            self.getAllUserSeedsStake();
+          }, 1000);
+        });
+
+        // let promise3 = new Promise((resolve, reject) => {
+        //   setTimeout(() => {
+        //     this.getAllBetsStake();
+        //   }, 7000);
+        // });
+
+        // let promise4 = new Promise((resolve, reject) => {
+        //   setTimeout(() => {
+        //     this.processBetsStake();
+        //   }, 4000);
+        // });
+        
+        console.log(promise1,promise2);
+
+       
+      }
 
 /*****************************************************************************************************************************************************************/
 
@@ -205,6 +229,11 @@ class Main extends React.Component {
          betDataEnriched = bet.user.houseBetList;
          this.setState({betDataEnriched:betDataEnriched});
          console.log('bet data enriched',betDataEnriched);
+
+         //CHECK
+        //  chirag
+        // move this below into process function and try getting full data
+          
          bet.user.houseBetList.map((houseBet)=>{
         //  console.log("houseBet : ", houseBet);
 
@@ -237,12 +266,12 @@ class Main extends React.Component {
             }
           }`
 
-           client.request(query7, variables).then((betIdData) => {
-             console.log('betIdData', betIdData);
-             betDataById.push(betIdData);
+           client.request(query7, variables).then((betData) => {
+            //  console.log('betIdData', betIdData);
+             betDataById.push(betData);
              this.setState({betDataById:betDataById});
            })
-          console.log('betDataById', betDataById);
+          // console.log('betDataById', betDataById);
          })
        })
     }
@@ -251,13 +280,14 @@ class Main extends React.Component {
 
     getAllUserSeedsStake = () => {
       // should take user id as parameter 
-      let {userSeedsData, previousServerSeedStake, previousClientSeedStake, user} = this.state;
+      let {userSeedsData, previousServerSeedStake, previousClientSeedStake, activeClientSeedStake, user} = this.state;
 
       const name = "nardelli";
 
       /**this is for looking up a user**/
 
       const query6 = `query userSeeds($name: String) {
+
         user(name: $name) {
           id
           activeServerSeed {
@@ -279,16 +309,13 @@ class Main extends React.Component {
        client.request(query6).then((userSeeds) => {
 
          console.log('userSeeds : ', userSeeds);
-         userSeedsData.push(userSeeds)
-         previousClientSeedStake = userSeeds.user.previousClientSeed.seed;
-         previousServerSeedStake = userSeeds.user.previousServerSeed.seed;
-         this.setState({previousClientSeedStake:previousClientSeedStake});
-         this.setState({previousServerSeedStake:previousServerSeedStake});
-         this.setState({userSeedsData:userSeedsData});
+        //  userSeedsData.push(userSeeds)
+        console.log("userSeeds.user.previousClientSeed.seed : ", userSeeds.user.previousClientSeed.seed);
+         this.setState({previousClientSeedStake:userSeeds.user.previousClientSeed.seed, activeClientSeedStake:userSeeds.user.activeClientSeed.seed, previousServerSeedStake:userSeeds.user.previousServerSeed.seed});
+        // this.unhashServerSeedHashStake(userSeeds.user.previousServerSeed.seedHash);
+        //  this.setState({userSeedsData:userSeedsData});
        })
-       console.log("userSeedsData : ", userSeedsData);
-       console.log("previousClientSeedStake : ", previousClientSeedStake);
-       console.log("previousServerSeedStake : ", previousServerSeedStake);
+      //  console.log("userSeedsData : ", userSeedsData);
     }
 
 
@@ -300,6 +327,28 @@ class Main extends React.Component {
       }
       client.request(query5, variables).then(data => console.log(data))
     }
+
+    /* Method for submitting a client seed for the Stake Operator */
+
+   /* unhashServerSeedHashStake = (serverHash) => {
+      const variables = {
+        hash: serverHash
+      }
+      /** GraphQl Client query for unhashing a seed **/
+
+   /* const query = `query serverSeedQuery($hash: String!) {
+      serverSeedByHash(hash: $hash) {
+        seed
+        seedHash
+      }
+    }`
+      client.request(query, variables).then(data => {
+        console.log("Unhased Server Seed", data)
+        this.setState({previousServerSeedStake:data});
+      })
+    } /*
+
+    
 
     /* Method for getting a Server Seed Hash for the Stake Operator */
 
@@ -326,19 +375,25 @@ class Main extends React.Component {
           }
         }`
       client.request(query4).then((data) => {
-        console.log(data.rotateServerSeed.seedHash)
+        console.log("serverSeedHash",data.rotateServerSeed.seedHash)
         this.setState({serverSeedHash:data.rotateServerSeed.seedHash})  
       })
      // this.processBetsStake();
     }
 
     processBetsStake =  () => {
-      let{betDataById, betDataEnriched, betData, previousClientSeedStake, previousServerSeedStake} = this.state;
+      let{betDataById, betDataEnriched, betData, previousClientSeedStake, activeClientSeedStake, previousServerSeedStake} = this.state;
       betData = [];
-       this.getAllUserSeedsStake();
-       this.getAllBetsStake();
+
+
+       
+       console.log("betDataById", betDataById);
+       console.log("previousClientSeedStake", previousClientSeedStake, "previousServerSeedStake", previousServerSeedStake ,"activeClientSeedStake", activeClientSeedStake);
+       
+       
       betDataById.map( (item) => {
-        if((item.bet.bet.clientSeed.seed == previousClientSeedStake) && (item.bet.bet.serverSeed.seed == previousServerSeedStake))
+       console.log("item.bet.bet.clientSeed.seed", item.bet.bet.clientSeed.seed, "item.bet.bet.serverSeed.seed", item.bet.bet.serverSeed.seed);
+        if((item.bet.bet.clientSeed.seed == activeClientSeedStake) && (item.bet.bet.serverSeed.seed == previousServerSeedStake))
         {
            console.log("verification eligible");
            var element = {};
@@ -346,7 +401,8 @@ class Main extends React.Component {
            betDataEnriched.map( (innerItem) => {
               if(innerItem.iid == item.bet.bet.iid)
               {
-                let isVerified = this.handleVerifyBetPrimeDice(item.bet.bet.serverSeed.seed,item.bet.bet.clientSeed.seed,item.bet.bet.nonce,innerItem.payout);
+                let isVerified = this.handleVerifyBetStake(item.bet.bet.serverSeed.seed,item.bet.bet.clientSeed.seed,item.bet.bet.nonce,innerItem.payout);
+                element = {};
                 element.id = item.bet.bet.iid; element.game = innerItem.game; element.roll = innerItem.payout;
                 element.nonce = item.bet.bet.nonce; element.timestamp = innerItem.timestamp; element.isVerified = isVerified;
                 console.log('element : ', element);
@@ -803,6 +859,7 @@ class Main extends React.Component {
                                     <a className="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-1-tab" data-toggle="tab" href="#tabs-icons-text-1" role="tab" aria-controls="tabs-icons-text-1" aria-selected="true"><i className="fa fa-cloud-upload-96 mr-2"></i>Settings</a>
                                 </li>
                                 <li className="nav-item" onClick={()=>{
+                                  this.getAllBetsStake();
                                   this.setState({gettingStarted:false, settings:false, verification:true,  operators:false});
                                 }}>
                                     <a className="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-2-tab" data-toggle="tab" href="#tabs-icons-text-2" role="tab" aria-controls="tabs-icons-text-2" aria-selected="false"><i className="fa fa-bell-55 mr-2"></i>Verification</a>
@@ -817,7 +874,7 @@ class Main extends React.Component {
                           <div className="form-group">
                             <label className="form-control-label">Next Server Seed Hash</label>
                             <input className="form-control form-control-sm" type="text" value={serverSeedHash} placeholder="" onChange={(e)=>{this.setState({serverSeedHash:e.target.value })}}/>
-                            <button type="button" className="btn btn-secondary m-2"   onClick={this.getNewServerseedHashBitvest}> Request</button>
+                            <button type="button" className="btn btn-secondary m-2"   onClick={this.handleRequest}> Request</button>
                           </div>
 
                           <div className="form-group">
@@ -998,6 +1055,9 @@ class Main extends React.Component {
                             <span>Bets Failed</span>
                             <span  className="badge badge-md badge-circle badge-floating badge-danger border-white">{numberBetsVerFailed}</span>
                           </button>
+                          <div className="form-group">
+                            <button type="button" className="btn btn-secondary m-2"   onClick={this.processBetsStake}> Verify Recent Bets</button>
+                          </div>
                           <div className="Bitvest" style={{display:'block'}}>
                             <table className="table align-items-center table-flush table-hover">
                               <thead className="thead-light">
@@ -1069,9 +1129,7 @@ class Main extends React.Component {
                             <ul className="nav nav-pills nav-fill flex-md-row" id="tabs-icons-text" role="tablist">
                                 <li className="nav-item" onClick={()=>{
                                   this.setState({gettingStarted:false, settings:true,   verification:false, operators:false});
-
                                   this.getServerSeed(apiKey)
-
                                 }}>
                                     <a className="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-1-tab" data-toggle="tab" href="#tabs-icons-text-1" role="tab" aria-controls="tabs-icons-text-1" aria-selected="true"><i className="fa fa-cloud-upload-96 mr-2"></i>Settings</a>
                                 </li>
