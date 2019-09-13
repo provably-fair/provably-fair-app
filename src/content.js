@@ -21,7 +21,7 @@ import qs from 'querystring';
 
 const client = new GraphQLClient('https://api.stake.com/graphql', {
   headers: {
-    "x-access-token": 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJjZTJkZDA2Zi0xMzJjLTRiYTgtYTViZi05ZjRjMWYwYjZhM2IiLCJzY29wZXMiOlsiYmV0Il0sImlhdCI6MTU2ODIyNTQyNSwiZXhwIjoxNTczNDA5NDI1fQ.R3gmXi5zVpOWXPy5BBWckXU2Slta7qmFnrxFZKPfWOU',
+    "x-access-token": 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI5MzI0NmMzMS1mY2RjLTRjZTctOWZiYi00NmE1MmM5MDFjNGIiLCJzY29wZXMiOlsiYmV0Il0sImlhdCI6MTU2ODM1NjAwMCwiZXhwIjoxNTczNTQwMDAwfQ.aJhXBtveV3nnERykfP1tvU8E55dOHkDb8lhS6AojWiM',
   },
 })
 
@@ -96,7 +96,8 @@ class Main extends React.Component {
         betPlaced:false,
         stake:true,
         numberBetsVerFailed:0,
-        isNonceManipulated:false
+        isNonceManipulated:false,
+        viewRecentBetsStake:false
       }
     }
 
@@ -206,7 +207,7 @@ class Main extends React.Component {
       /* GraphQL query houseBetList (i.e. game, payout, amountMultiplier, payoutMultiplier, amount, currency, createdAt) for a User of Stake Operator */
 
         let query3 = `{
-          user(name: "nardelli") {
+          user(name: "livingrock") {
             houseBetList(limit: 50, offset: 0) {
               id
               iid
@@ -282,7 +283,7 @@ class Main extends React.Component {
       // should take user id as parameter 
       let {userSeedsData, previousServerSeedStake, previousClientSeedStake, activeClientSeedStake, user} = this.state;
 
-      const name = "nardelli";
+      const name = "livingrock";
 
       /**this is for looking up a user**/
 
@@ -402,15 +403,16 @@ class Main extends React.Component {
               if(innerItem.iid == item.bet.bet.iid)
               {
                 let isVerified = this.handleVerifyBetStake(item.bet.bet.serverSeed.seed,item.bet.bet.clientSeed.seed,item.bet.bet.nonce,innerItem.payout);
-                element = {};
                 element.id = item.bet.bet.iid; element.game = innerItem.game; element.roll = innerItem.payout;
                 element.nonce = item.bet.bet.nonce; element.timestamp = innerItem.timestamp; element.isVerified = isVerified;
                 console.log('element : ', element);
                 betData.push({element:element});
                 this.setState({betData:betData});
+                
               }
            })
-          
+          this.setState({viewRecentBetsStake:true})
+          console.log("betData : ",betData);
         }
       })
       //organize data
@@ -728,7 +730,7 @@ class Main extends React.Component {
 
     render() {
       const { gettingStarted, settings, verification, operators, clientSeed, serverSeedHash, nonce, betData, cryptoGames,primeDice, diceResult, diceVerify, verify, apiKey, enterAPI,
-      Balance, BetId, Roll, nonceChecked, toggleState, betAmount, betPayout, betPlaced, stake, isNonceManipulated, numberBetsVerFailed } = this.state;
+      Balance, BetId, Roll, nonceChecked, toggleState, betAmount, betPayout, betPlaced, stake, isNonceManipulated, numberBetsVerFailed, betDataById, betDataEnriched, viewRecentBetsStake } = this.state;
         return (
           <CookiesProvider>
             <Frame head={[<link type="text/css" rel="stylesheet" href={chrome.runtime.getURL("/static/css/content.css")} ></link>]}>
@@ -1058,7 +1060,7 @@ class Main extends React.Component {
                           <div className="form-group">
                             <button type="button" className="btn btn-secondary m-2"   onClick={this.processBetsStake}> Verify Recent Bets</button>
                           </div>
-                          <div className="Bitvest" style={{display:'block'}}>
+                          <div className="Bitvest" style={{display:'none'}}>
                             <table className="table align-items-center table-flush table-hover">
                               <thead className="thead-light">
                                 <tr>
@@ -1098,6 +1100,29 @@ class Main extends React.Component {
                                     ? <a href="#"  className="badge badge-pill badge-success">Success</a>
                                     : <a href="#"  className="badge badge-pill badge-danger">Failed</a>
                                   }
+                                  </td>
+                                  </tr>
+                                })}
+                              </tbody>
+                            </table>
+                          </div>
+                          <div className="Stake" style={{display:verification?'block':'none'}}>
+                            <table className="table align-items-center table-flush table-hover">
+                              <thead className="thead-light">
+                                <tr>
+                                  <th>Id</th>
+                                  <th>Game</th>
+                                  <th>Payout</th>
+                                  <th>Nonce</th>
+                                  <th>Result</th>
+                                </tr>
+                              </thead>
+
+                              <tbody>
+                                {betData.map((item,i)=>{
+                                  return <tr>
+                                  <td>
+                                  {item.element.iid}
                                   </td>
                                   </tr>
                                 })}
