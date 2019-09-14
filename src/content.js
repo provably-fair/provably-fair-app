@@ -218,7 +218,7 @@ class Main extends React.Component {
       betDataById=[];
       betDataEnriched = [];
 
-       let name = `\"${usernameStake}\"`;//usernameStake;
+       let name = `\"${usernameStake}\"`;
 
       /* GraphQL query houseBetList (i.e. game, payout, amountMultiplier, payoutMultiplier, amount, currency, createdAt) for a User of Stake Operator */
 
@@ -483,7 +483,7 @@ class Main extends React.Component {
         
           compute = compute*10001/100;
           compute = compute.toFixed(2);
-          //lucky /= Math.pow(10, 2); 
+          // compute = Math.round(compute * 100) / 100;
           console.log("LUCKY : ", compute);
           
           return compute;
@@ -821,7 +821,7 @@ class Main extends React.Component {
                             </svg>
                             <p><span style={{fontStyle:'bold'}}>Operator</span> is a CGF verified operator.</p>
                             <button className="btn btn-info mb-3" type="button" onClick={()=>{
-                              this.getSessionTokenBitvest()
+                              // this.getSessionTokenBitvest()
                               this.setState({gettingStarted:!gettingStarted, enterAPIStake:true})
                             }}>
                             Get Started Now
@@ -850,7 +850,7 @@ class Main extends React.Component {
                           <div className="nav-wrapper">
                             <ul className="nav nav-pills nav-fill flex-md-row" id="tabs-icons-text" role="tablist">
                                 <li className="nav-item show" onClick={()=>{
-                                  this.getServerSeed(apiKey);
+                                  //this.getServerSeed(apiKey);
                                   this.setState({gettingStarted:false, settings:true, verification:false,  operator:false});
                                 }}>
                                     <a className="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-1-tab" data-toggle="tab" href="#tabs-icons-text-1" role="tab" aria-controls="tabs-icons-text-1" aria-selected="true"><i className="fa fa-cloud-upload-96 mr-2"></i>Settings</a>
@@ -873,7 +873,8 @@ class Main extends React.Component {
                             <label className="form-control-label">Enter Your Username</label>
                             <input className="form-control form-control-sm" type="text" value={usernameStake} placeholder="Username" onChange={(e)=>{this.setState({usernameStake:e.target.value})}}/>
                             <button type="button" className="btn btn-secondary m-2" onClick={()=>{
-                              this.setState({gettingStarted:false, settings:true, enterAPIStake:false})
+                              this.handleRequest();
+                              this.setState({gettingStarted:false, settings:true, enterAPIStake:false});
                             }}> Submit</button>
                           </div>
 
