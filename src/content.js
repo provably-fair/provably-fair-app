@@ -17,13 +17,7 @@ import './assets/vendor/font-awesome/css/font-awesome.css';
 import qs from 'querystring';
 
 
-/* GraphQl Client object with x-access-token for Stake Operator */
 
-const client = new GraphQLClient('https://api.stake.com/graphql', {
-  headers: {
-    "x-access-token": 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI5MzI0NmMzMS1mY2RjLTRjZTctOWZiYi00NmE1MmM5MDFjNGIiLCJzY29wZXMiOlsiYmV0Il0sImlhdCI6MTU2ODM1NjAwMCwiZXhwIjoxNTczNTQwMDAwfQ.aJhXBtveV3nnERykfP1tvU8E55dOHkDb8lhS6AojWiM',
-  },
-})
 
 /* GraphQL query to get public chats of Stake Operator */
 
@@ -63,6 +57,7 @@ class Main extends React.Component {
       this.state = {
         gettingStarted:true,
         enterAPI:false,
+        enterAPIStake:false,
         settings:false,
         verification:false,
         operators:false,
@@ -79,6 +74,8 @@ class Main extends React.Component {
         diceVerify:0,
         user:'',
         apiKey:null,
+        apiKeyStake:null,
+        usernameStake:'',
         BetIdArray: [],
         betDataById:[],
         betDataEnriched: [],
@@ -155,9 +152,18 @@ class Main extends React.Component {
 
 /*****************************************************************************************************************************************************************/
 
+
     /* Method to get all bet data of user bets for Stake Operator */
 
     getAllData = () => {
+
+      /* GraphQl Client object with x-access-token for Stake Operator */
+
+      const client = new GraphQLClient('https://api.stake.com/graphql', {
+        headers: {
+          "x-access-token": this.state.apiKeyStake,
+        },
+      })
 
       
       /**this is for looking up all the betData of a user's bet**/
@@ -199,15 +205,27 @@ class Main extends React.Component {
     /* Method for get all Bet Data for Stake Operator */
 
     getAllBetsStake = () => {
+
+      /* GraphQl Client object with x-access-token for Stake Operator */
+
+      const client = new GraphQLClient('https://api.stake.com/graphql', {
+        headers: {
+          "x-access-token": this.state.apiKeyStake,
+        },
+      })
       //should take user name as parameter
-      let { betDataById, betDataEnriched, user } = this.state;
+      let { betDataById, betDataEnriched, usernameStake } = this.state;
       betDataById=[];
       betDataEnriched = [];
+
+      let variables ={
+        name : usernameStake
+      }
 
       /* GraphQL query houseBetList (i.e. game, payout, amountMultiplier, payoutMultiplier, amount, currency, createdAt) for a User of Stake Operator */
 
         let query3 = `{
-          user(name: "livingrock") {
+          user(name: $name) {
             houseBetList(limit: 50, offset: 0) {
               id
               iid
@@ -226,14 +244,10 @@ class Main extends React.Component {
           }
         }`
         
-         client.request(query3).then((bet) => {
+         client.request(query3,variables).then((bet) => {
          betDataEnriched = bet.user.houseBetList;
          this.setState({betDataEnriched:betDataEnriched});
          console.log('bet data enriched',betDataEnriched);
-
-         //CHECK
-        //  chirag
-        // move this below into process function and try getting full data
           
          bet.user.houseBetList.map((houseBet)=>{
         //  console.log("houseBet : ", houseBet);
@@ -280,10 +294,18 @@ class Main extends React.Component {
     /* Method to get all types of User Seeds for Stake Operator */
 
     getAllUserSeedsStake = () => {
-      // should take user id as parameter 
-      let {userSeedsData, previousServerSeedStake, previousClientSeedStake, activeClientSeedStake, user} = this.state;
 
-      const name = "livingrock";
+      /* GraphQl Client object with x-access-token for Stake Operator */
+
+      const client = new GraphQLClient('https://api.stake.com/graphql', {
+        headers: {
+          "x-access-token": this.state.apiKeyStake,
+        },
+      })
+      // should take user id as parameter 
+      let {userSeedsData, previousServerSeedStake, previousClientSeedStake, activeClientSeedStake, usernameStake} = this.state;
+
+      const name = usernameStake;
 
       /**this is for looking up a user**/
 
@@ -323,6 +345,14 @@ class Main extends React.Component {
     /* Method for submitting a client seed for the Stake Operator */
 
     submitClientSeedStake = (clientSeed) => {
+
+      /* GraphQl Client object with x-access-token for Stake Operator */
+
+      const client = new GraphQLClient('https://api.stake.com/graphql', {
+        headers: {
+          "x-access-token": this.state.apiKeyStake,
+        },
+      })
       const variables = {
         seed: clientSeed
       }
@@ -354,6 +384,14 @@ class Main extends React.Component {
     /* Method for getting a Server Seed Hash for the Stake Operator */
 
     getServerSeedStake = () => {
+
+      /* GraphQl Client object with x-access-token for Stake Operator */
+
+      const client = new GraphQLClient('https://api.stake.com/graphql', {
+        headers: {
+          "x-access-token": this.state.apiKeyStake,
+        },
+      })
 
         /* GraphQl Client query to get new ServerSeed for Stake Operator */
 
@@ -419,8 +457,6 @@ class Main extends React.Component {
           console.log("betData : ",betData);
         }
       })
-      //organize data
-      //check for nonce
     }
     
 
@@ -735,7 +771,7 @@ class Main extends React.Component {
 
 
     render() {
-      const { gettingStarted, settings, verification, operators, clientSeed, serverSeedHash, nonce, betData, cryptoGames,primeDice, diceResult, diceVerify, verify, apiKey, enterAPI,
+      const { gettingStarted, settings, verification, operators, clientSeed, serverSeedHash, nonce, betData, cryptoGames,primeDice, diceResult, diceVerify, verify, apiKey, apiKeyStake, usernameStake, enterAPI, enterAPIStake,
       Balance, BetId, Roll, nonceChecked, toggleState, betAmount, betPayout, betPlaced, stake, isNonceManipulated, numberBetsVerFailed, betDataById, betDataEnriched, viewRecentBetsStake } = this.state;
         return (
           <CookiesProvider>
@@ -781,7 +817,7 @@ class Main extends React.Component {
                             <p><span style={{fontStyle:'bold'}}>Operator</span> is a CGF verified operator.</p>
                             <button className="btn btn-info mb-3" type="button" onClick={()=>{
                               this.getSessionTokenBitvest()
-                              this.setState({gettingStarted:!gettingStarted, enterAPI:false})
+                              this.setState({gettingStarted:!gettingStarted, enterAPIStake:true})
                             }}>
                             Get Started Now
                             </button>
@@ -805,6 +841,56 @@ class Main extends React.Component {
                            </div>
 
 
+                           <div style={{display:enterAPIStake?'block':'none'}}>
+                          <div className="nav-wrapper">
+                            <ul className="nav nav-pills nav-fill flex-md-row" id="tabs-icons-text" role="tablist">
+                                <li className="nav-item show" onClick={()=>{
+                                  this.getServerSeed(apiKey);
+                                  this.setState({gettingStarted:false, settings:true, verification:false,  operator:false});
+                                }}>
+                                    <a className="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-1-tab" data-toggle="tab" href="#tabs-icons-text-1" role="tab" aria-controls="tabs-icons-text-1" aria-selected="true"><i className="fa fa-cloud-upload-96 mr-2"></i>Settings</a>
+                                </li>
+                                <li className="nav-item" onClick={()=>{
+                                  this.setState({gettingStarted:false, settings:false, verification:true,  operator:false});
+                                }}>
+                                    <a className="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-2-tab" data-toggle="tab" href="#tabs-icons-text-2" role="tab" aria-controls="tabs-icons-text-2" aria-selected="false"><i className="fa fa-bell-55 mr-2"></i>Verification</a>
+                                </li>
+                                <li className="nav-item" onClick={()=>{
+                                  this.setState({gettingStarted:false, settings:false, verification:false,  operators:true});
+                                }}>
+                                    <a className="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-3-tab" data-toggle="tab" href="#tabs-icons-text-3" role="tab" aria-controls="tabs-icons-text-3" aria-selected="false"><i className="fa fa-calendar-grid-58 mr-2"></i>Operators</a>
+                                </li>
+                            </ul>
+                          </div>
+                          <div className="form-group">
+                            <label className="form-control-label">Enter Your Bet Token</label>
+                            <input className="form-control form-control-sm" type="text" value={apiKeyStake} placeholder="Token" onChange={(e)=>{this.setState({apiKeyStake:e.target.value})}}/>
+                            <label className="form-control-label">Enter Your Username</label>
+                            <input className="form-control form-control-sm" type="text" value={usernameStake} placeholder="Username" onChange={(e)=>{this.setState({usernameStake:e.target.value})}}/>
+                            <button type="button" className="btn btn-secondary m-2" onClick={()=>{
+                              this.setState({gettingStarted:false, settings:true, enterAPIStake:false})
+                            }}> Submit</button>
+                          </div>
+
+
+                          <ul className="nav nav-pills nav-pills-circle ml-5 pl-3" id="tabs_2" role="tablist">
+                            <li className="nav-item">
+                              <a className="nav-link rounded-circle active" id="home-tab" data-toggle="tab" href="#tabs_2_1" role="tab" aria-controls="home" aria-selected="true">
+                                <span className="nav-link-icon d-block"></span>
+                              </a>
+                            </li>
+                            <li className="nav-item">
+                              <a className="nav-link" id="profile-tab" data-toggle="tab" href="#tabs_2_2" role="tab" aria-controls="profile" aria-selected="false">
+                                <span className="nav-link-icon d-block"></span>
+                              </a>
+                            </li>
+                            <li className="nav-item">
+                              <a className="nav-link" id="contact-tab" data-toggle="tab" href="#tabs_2_3" role="tab" aria-controls="contact" aria-selected="false">
+                                <span className="nav-link-icon d-block"></span>
+                              </a>
+                            </li>
+                          </ul>
+                          </div>
 
                           <div style={{display:enterAPI?'block':'none'}}>
                           <div className="nav-wrapper">
@@ -858,7 +944,7 @@ class Main extends React.Component {
                           </div>
 
 
-                          <div className="SettingsUI Bitvest Stake" style={{display:!verification?'block':'none'}}>
+                          <div className="SettingsUI Bitvest Stake" style={{display:settings?'block':'none'}}>
                           <div className="nav-wrapper">
                             <ul className="nav nav-pills nav-fill flex-md-row" id="tabs-icons-text" role="tablist">
                                 <li className="nav-item show" onClick={()=>{
