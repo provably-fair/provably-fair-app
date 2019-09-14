@@ -430,7 +430,7 @@ class Main extends React.Component {
        
       betDataById.map( (item) => {
        console.log("item.bet.bet.clientSeed.seed", item.bet.bet.clientSeed.seed, "item.bet.bet.serverSeed.seed", item.bet.bet.serverSeed.seed);
-        if((item.bet.bet.clientSeed.seed == activeClientSeedStake) && (item.bet.bet.serverSeed.seed == previousServerSeedStake)) 
+        if( ((item.bet.bet.clientSeed.seed == activeClientSeedStake) && (item.bet.bet.serverSeed.seed == previousServerSeedStake)) || ((item.bet.bet.clientSeed.seed == previousClientSeedStake) && (item.bet.bet.serverSeed.seed == previousServerSeedStake)) ) 
         {
            console.log("verification eligible");
            var element = {};
