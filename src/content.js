@@ -452,6 +452,9 @@ class Main extends React.Component {
               }
            })
           this.setState({viewRecentBetsStake:true})
+          betData.sort((a, b) => { 
+            return a.element.nonce - b.element.nonce ;
+          });
           console.log("betData : ",betData);
         }
       })
