@@ -218,7 +218,7 @@ class Main extends React.Component {
       betDataById=[];
       betDataEnriched = [];
 
-       let name = usernameStake;
+       let name = `\"${usernameStake}\"`;//usernameStake;
 
       /* GraphQL query houseBetList (i.e. game, payout, amountMultiplier, payoutMultiplier, amount, currency, createdAt) for a User of Stake Operator */
 
@@ -467,24 +467,31 @@ class Main extends React.Component {
         const crypto = require('crypto');
         const roll = function(key, text) {
         // create HMAC using server seed as key and client seed as message
-        const hash = crypto .createHmac('sha512', key) .update(text) .digest('hex');
+        const hash = crypto .createHmac('sha256', key) .update(text) .digest('hex');
+        console.log('result hash',hash);
+        
+        
         let index = 0;
-        let lucky = parseInt(hash.substring(index * 5, index * 5 + 5), 16);
-        // keep grabbing characters from the hash while greater than
-        while (lucky >= Math.pow(10, 6)) {
-          index++; lucky = parseInt(hash.substring(index * 5, index * 5 + 5), 16);
-        // if we reach the end of the hash, just default to highest number
-          if (index * 5 + 5 > 128) {
-            lucky = 9999; break;
-          }
-          }
-          lucky %= Math.pow(10, 4);
-          lucky /= Math.pow(10, 2); 
-          console.log("LUCKY : ", lucky);
+        let lucky = '';
+        let compute = 0;
+        while (index < 4){
+          lucky = parseInt(hash.substring(index * 2, index * 2 + 2), 16);
+          lucky = lucky/(Math.pow(256,index+1));
+          compute = compute + lucky;
+          index++;
+        }
+        
+          compute = compute*10001/100;
+          compute = compute.toFixed(2);
+          //lucky /= Math.pow(10, 2); 
+          console.log("LUCKY : ", compute);
           
-          return lucky;
+          return compute;
         };
-        let diceVerify = roll(serverSeedHash, `${clientSeed}:${nonce}`);
+
+        
+
+        let diceVerify = roll(serverSeedHash, `${clientSeed}:${nonce}:0`);
         this.setState({diceVerify:diceVerify});
         console.log(diceVerify);
         return diceVerify;
