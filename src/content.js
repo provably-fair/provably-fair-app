@@ -218,14 +218,12 @@ class Main extends React.Component {
       betDataById=[];
       betDataEnriched = [];
 
-      let variables ={
-        name : usernameStake
-      }
+       let name = usernameStake;
 
       /* GraphQL query houseBetList (i.e. game, payout, amountMultiplier, payoutMultiplier, amount, currency, createdAt) for a User of Stake Operator */
 
         let query3 = `{
-          user(name: $name) {
+          user(name: ${name}) {
             houseBetList(limit: 50, offset: 0) {
               id
               iid
@@ -244,7 +242,7 @@ class Main extends React.Component {
           }
         }`
         
-         client.request(query3,variables).then((bet) => {
+         client.request(query3).then((bet) => {
          betDataEnriched = bet.user.houseBetList;
          this.setState({betDataEnriched:betDataEnriched});
          console.log('bet data enriched',betDataEnriched);
