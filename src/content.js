@@ -485,10 +485,11 @@ class Main extends React.Component {
         }
         
           compute = compute*10001/100;
-          compute = compute.toFixed(2);
-          // compute = Math.round(compute * 100) / 100;
+          compute = compute.toString();
+          compute = compute.split('.');
+          compute[1] = compute[1].slice(0,2); 
+          compute = compute[0]+'.'+compute[1];
           console.log("LUCKY : ", compute);
-          
           return compute;
         };
 
