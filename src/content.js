@@ -159,7 +159,7 @@ class Main extends React.Component {
 
       /* GraphQl Client object with x-access-token for Stake Operator */
 
-      const client = new GraphQLClient('https://api.stake.com/graphql', {
+      const client = new GraphQLClient('https://api.primedice.com/graphql', {
         headers: {
           "x-access-token": this.state.apiKeyStake,
         },
@@ -208,7 +208,7 @@ class Main extends React.Component {
 
       /* GraphQl Client object with x-access-token for Stake Operator */
 
-      const client = new GraphQLClient('https://api.stake.com/graphql', {
+      const client = new GraphQLClient('https://api.primedice.com/graphql', {
         headers: {
           "x-access-token": this.state.apiKeyStake,
         },
@@ -295,7 +295,7 @@ class Main extends React.Component {
 
       /* GraphQl Client object with x-access-token for Stake Operator */
 
-      const client = new GraphQLClient('https://api.stake.com/graphql', {
+      const client = new GraphQLClient('https://api.primedice.com/graphql', {
         headers: {
           "x-access-token": this.state.apiKeyStake,
         },
@@ -346,7 +346,7 @@ class Main extends React.Component {
 
       /* GraphQl Client object with x-access-token for Stake Operator */
 
-      const client = new GraphQLClient('https://api.stake.com/graphql', {
+      const client = new GraphQLClient('https://api.primedice.com/graphql', {
         headers: {
           "x-access-token": this.state.apiKeyStake,
         },
@@ -385,7 +385,7 @@ class Main extends React.Component {
 
       /* GraphQl Client object with x-access-token for Stake Operator */
 
-      const client = new GraphQLClient('https://api.stake.com/graphql', {
+      const client = new GraphQLClient('https://api.primedice.com/graphql', {
         headers: {
           "x-access-token": this.state.apiKeyStake,
         },
@@ -440,7 +440,7 @@ class Main extends React.Component {
              
               if(innerItem.iid == item.bet.iid)
               {
-                let isVerified = this.handleVerifyBetStake(item.bet.bet.serverSeed.seed,item.bet.bet.clientSeed.seed,item.bet.bet.nonce);
+                let isVerified = this.handleVerifyBetPrimeDice(item.bet.bet.serverSeed.seed,item.bet.bet.clientSeed.seed,item.bet.bet.nonce);
                 console.log("isVerified", isVerified);
                 
                 element.id = item.bet.iid; element.game = innerItem.bet.game; element.payout = innerItem.bet.payout;
@@ -506,7 +506,7 @@ class Main extends React.Component {
 
   /* Method for Provably Fair Verification of bets for the PrimeDice Operator */
 
-  handleVerifyBetPrimeDice = (serverSeedHash,clientSeed, nonce, result) => {
+  handleVerifyBetPrimeDice = (serverSeedHash,clientSeed, nonce) => {
     // bet made with seed pair (excluding current bet)
     // crypto lib for hmac function
     const crypto = require('crypto');
@@ -525,12 +525,13 @@ class Main extends React.Component {
     }
     lucky %= Math.pow(10, 4);
     lucky /= Math.pow(10, 2); 
-    return (lucky == result);
+    return lucky;
   };
     let diceVerify = roll(serverSeedHash, `${clientSeed}-${nonce}`);
     this.setState({diceVerify:diceVerify});
     console.log(diceVerify);
     this.setState({nonce:0})
+    return diceVerify;
   }
 
 
