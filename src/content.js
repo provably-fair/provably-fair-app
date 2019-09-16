@@ -331,8 +331,16 @@ class Main extends React.Component {
 
          console.log('userSeeds : ', userSeeds);
         //  userSeedsData.push(userSeeds)
-        console.log("userSeeds.user.previousClientSeed.seed : ", userSeeds.user.previousClientSeed.seed);
-         this.setState({previousClientSeedStake:userSeeds.user.previousClientSeed.seed, activeClientSeedStake:userSeeds.user.activeClientSeed.seed, previousServerSeedStake:userSeeds.user.previousServerSeed.seed});
+        //console.log("userSeeds.user.previousClientSeed.seed : ", userSeeds.user.previousClientSeed.seed);
+         if(userSeeds.user.previousClientSeed != null)
+         {
+           this.setState({previousClientSeedStake:userSeeds.user.previousClientSeed.seed});
+         }
+         if(userSeeds.user.previousServerSeed != null)
+         {
+          this.setState({previousServerSeedStake:userSeeds.user.previousServerSeed.seed});
+         }
+         this.setState({activeClientSeedStake:userSeeds.user.activeClientSeed.seed});
         // this.unhashServerSeedHashStake(userSeeds.user.previousServerSeed.seedHash);
         //  this.setState({userSeedsData:userSeedsData});
        })
