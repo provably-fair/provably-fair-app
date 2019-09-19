@@ -159,7 +159,7 @@ class Main extends React.Component {
 
       /* GraphQl Client object with x-access-token for Stake Operator */
 
-      const client = new GraphQLClient('https://api.primedice.com/graphql', {
+      const client = new GraphQLClient('https://api.stake.com/graphql', {
         headers: {
           "x-access-token": this.state.apiKeyStake,
         },
@@ -208,7 +208,7 @@ class Main extends React.Component {
 
       /* GraphQl Client object with x-access-token for Stake Operator */
 
-      const client = new GraphQLClient('https://api.primedice.com/graphql', {
+      const client = new GraphQLClient('https://api.stake.com/graphql', {
         headers: {
           "x-access-token": this.state.apiKeyStake,
         },
@@ -295,7 +295,7 @@ class Main extends React.Component {
 
       /* GraphQl Client object with x-access-token for Stake Operator */
 
-      const client = new GraphQLClient('https://api.primedice.com/graphql', {
+      const client = new GraphQLClient('https://api.stake.com/graphql', {
         headers: {
           "x-access-token": this.state.apiKeyStake,
         },
@@ -354,7 +354,7 @@ class Main extends React.Component {
 
       /* GraphQl Client object with x-access-token for Stake Operator */
 
-      const client = new GraphQLClient('https://api.primedice.com/graphql', {
+      const client = new GraphQLClient('https://api.stake.com/graphql', {
         headers: {
           "x-access-token": this.state.apiKeyStake,
         },
@@ -393,7 +393,7 @@ class Main extends React.Component {
 
       /* GraphQl Client object with x-access-token for Stake Operator */
 
-      const client = new GraphQLClient('https://api.primedice.com/graphql', {
+      const client = new GraphQLClient('https://api.stake.com/graphql', {
         headers: {
           "x-access-token": this.state.apiKeyStake,
         },
@@ -448,7 +448,7 @@ class Main extends React.Component {
              
               if(innerItem.iid == item.bet.iid)
               {
-                let isVerified = this.handleVerifyBetPrimeDice(item.bet.bet.serverSeed.seed,item.bet.bet.clientSeed.seed,item.bet.bet.nonce);
+                let isVerified = this.handleVerifyBetForLimbo(item.bet.bet.serverSeed.seed,item.bet.bet.clientSeed.seed,item.bet.bet.nonce);
                 console.log("isVerified", isVerified);
                 
                 element.id = item.bet.iid; element.game = innerItem.bet.game; element.payout = innerItem.bet.payout;
@@ -510,6 +510,48 @@ class Main extends React.Component {
       }
 
 /*****************************************************************************************************************************************************************************************************/
+    
+handleVerifyBetForLimbo = (serverSeedHash,clientSeed, nonce) => {
+  // bet made with seed pair (excluding current bet)
+  // crypto lib for hmac function
+  const crypto = require('crypto');
+  const roll = function(key, text) {
+  // create HMAC using server seed as key and client seed as message
+  const hash = crypto .createHmac('sha256', key) .update(text) .digest('hex');
+  console.log('result hash',hash);
+  
+  
+  let index = 0;
+  let lucky = '';
+  let compute = 0;
+  while (index < 4){
+    lucky = parseInt(hash.substring(index * 2, index * 2 + 2), 16);
+    lucky = lucky/(Math.pow(256,index+1));
+    compute = compute + lucky;
+    index++;
+  }
+  
+    compute = compute*100000000;
+    compute = (100000000 / compute)*0.99;
+    compute = compute.toString();
+    compute = compute.split('.');
+    compute[1] = compute[1].slice(0,2); 
+    compute = compute[0]+'.'+compute[1];
+    console.log("LUCKY : ", compute);
+    return compute;
+  };
+
+  
+
+  let diceVerify = roll(serverSeedHash, `${clientSeed}:${nonce}:0`);
+  this.setState({diceVerify:diceVerify});
+  console.log(diceVerify);
+  return diceVerify;
+}
+
+/******************************************************************************************************************/
+
+
 
 
   /* Method for Provably Fair Verification of bets for the PrimeDice Operator */
