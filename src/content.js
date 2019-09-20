@@ -1101,13 +1101,13 @@ handleVerifyBetForLimbo = (serverSeedHash,clientSeed, nonce) => {
 
                           <div className="SettingsUI Bitvest Stake" style={{display:settings?'block':'none'}}>
                           <div className="form-group">
-                            <label className="form-control-label" data-toggle="tooltip" data-placement="top" title="This is the server seed that has been created by the casino. It is sent to you in advance of any bets being made to ensure the casino did not change or manipulate the outcome of any game results. It is hashed(encrypted) to prevent players from calculating the upcoming game results. Once you request a new server seed, the one that is currently in use will be unhashed(decrypted) and sent to the verification tab. All bets made using that server seed will be automatically verified. You will be notified if any bets did not pass verification.">Next Server Seed Hash </label>
+                            <label className="form-control-label" data-toggle="popover" data-placement="left" title="This is the server seed that has been created by the casino. It is sent to you in advance of any bets being made to ensure the casino did not change or manipulate the outcome of any game results. It is hashed(encrypted) to prevent players from calculating the upcoming game results. Once you request a new server seed, the one that is currently in use will be unhashed(decrypted) and sent to the verification tab. All bets made using that server seed will be automatically verified. You will be notified if any bets did not pass verification.">Next Server Seed Hash </label>
                             <input className="form-control form-control-sm" type="text" value={serverSeedHash} placeholder="" onChange={(e)=>{this.setState({serverSeedHash:e.target.value })}}/>
                             <button type="button" className="btn btn-secondary m-2"   onClick={this.handleRequest}> Request</button>
                           </div>
 
                           <div className="form-group">
-                            <label className="form-control-label">Client Seed</label>
+                            <label className="form-control-label" data-toggle="popover" data-color="default" data-placement="top" title="This is the client seed. Sometimes called the player seed. It is very important that you customize this after you request a new server seed. The server seed and client seed pre-filled by default. To ensure provable fairness, you must customize your own client seed. It will be used in combination with the server seed to generate thr game results.">Client Seed</label>
                             <input className="form-control form-control-sm" type="text" value={clientSeed} placeholder="CURRENT CLIENT SEED" onChange={(e)=>{this.setState({clientSeed:e.target.value})}}/>
                             <button type="button" className="btn btn-secondary m-2"   onClick={this.getClientSeed}> Generate</button>
                             <button type="button" className="btn btn-secondary m-2"   onClick={()=>{stake && this.submitClientSeedStake(clientSeed)}}> Submit</button>
@@ -1126,7 +1126,7 @@ handleVerifyBetForLimbo = (serverSeedHash,clientSeed, nonce) => {
                             </div>
                             <div className="form-group" style={{display:nonceChecked?'block':'none'}}>
                               <label className="form-control-label">Nonce</label>
-                              <input className="form-control form-control-sm" type="number" placeholder="" value={nonce}  onChange={(e)=>{this.setState({nonce:e.target.value})}}/>
+                              <input classNam e="form-control form-control-sm" type="number" placeholder="" value={nonce}  onChange={(e)=>{this.setState({nonce:e.target.value})}}/>
                             </div>
                             <button type="button" className="btn btn-secondary m-2" onClick={()=>{
                               this.setState({betPlaced:true, verification:false})
