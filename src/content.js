@@ -448,8 +448,24 @@ class Main extends React.Component {
              
               if(innerItem.iid == item.bet.iid)
               {
-                let isVerified = this.handleVerifyBetForLimbo(item.bet.bet.serverSeed.seed,item.bet.bet.clientSeed.seed,item.bet.bet.nonce);
-                console.log("isVerified", isVerified);
+                let isVerified;
+                var game = innerItem.bet.game;
+                switch(game){
+                  case 'dice' : { isVerified = this.handleVerifyBetStake(item.bet.bet.serverSeed.seed,item.bet.bet.clientSeed.seed,item.bet.bet.nonce);
+                    console.log("isVerified", isVerified);}
+                    break;
+
+                    case 'limbo' : { isVerified = this.handleVerifyBetForLimbo(item.bet.bet.serverSeed.seed,item.bet.bet.clientSeed.seed,item.bet.bet.nonce);
+                      console.log("isVerified", isVerified);}
+                      break;
+                      
+                      case 'roulette' : { isVerified = this.handleVerifyBetForRoulette(item.bet.bet.serverSeed.seed,item.bet.bet.clientSeed.seed,item.bet.bet.nonce);
+                        console.log("isVerified", isVerified);}
+                        break;
+
+                      default : isVerified = 0; 
+                     }
+               
                 
                 element.id = item.bet.iid; element.game = innerItem.bet.game; element.payout = innerItem.bet.payout;
                 element.nonce = item.bet.bet.nonce; element.isVerified = isVerified;
@@ -508,6 +524,45 @@ class Main extends React.Component {
         console.log(diceVerify);
         return diceVerify;
       }
+
+/*****************************************************************************************************************************************************************************************************/
+
+handleVerifyBetForRoulette = (serverSeedHash,clientSeed, nonce) => {
+  // bet made with seed pair (excluding current bet)
+  // crypto lib for hmac function
+  const crypto = require('crypto');
+  const roll = function(key, text) {
+  // create HMAC using server seed as key and client seed as message
+  const hash = crypto .createHmac('sha256', key) .update(text) .digest('hex');
+  console.log('result hash',hash);
+  
+  
+  let index = 0;
+  let lucky = '';
+  let compute = 0;
+  while (index < 4){
+    lucky = parseInt(hash.substring(index * 2, index * 2 + 2), 16);
+    lucky = lucky/(Math.pow(256,index+1));
+    compute = compute + lucky;
+    index++;
+  }
+  
+    compute = compute*37;
+    compute = compute.toString();
+    compute = compute.split('.');
+    //compute[1] = compute[1].slice(0,2); 
+    compute = compute[0];
+    console.log("LUCKY : ", compute);
+    return compute;
+  };
+
+  
+
+  let diceVerify = roll(serverSeedHash, `${clientSeed}:${nonce}:0`);
+  this.setState({diceVerify:diceVerify});
+  console.log(diceVerify);
+  return diceVerify;
+}
 
 /*****************************************************************************************************************************************************************************************************/
     
