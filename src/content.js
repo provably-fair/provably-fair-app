@@ -13,7 +13,7 @@ import converter from 'hex2dec';
 import cryptoGamesIcon from './assets/img/cryptogames.png';
 import "./content.css";
 import './assets/css/argon.css';
-import './assets/vendor/font-awesome/css/font-awesome.css';
+import './assets/vendor/font-awesome/css/font-awesome.min.css';
 import qs from 'querystring';
 
 
@@ -144,10 +144,10 @@ class Main extends React.Component {
         //     this.processBetsStake();
         //   }, 4000);
         // });
-        
+
         console.log(promise1,promise2);
 
-       
+
       }
 
 /*****************************************************************************************************************************************************************/
@@ -165,14 +165,14 @@ class Main extends React.Component {
         },
       })
 
-      
+
       /**this is for looking up all the betData of a user's bet**/
       const variables = {
         iid: "house:8691772588"
       }
 
       const query6 = `query betQuery($iid: String!) {
-            
+
         bet(iid: $iid) {
           id
           iid
@@ -190,11 +190,11 @@ class Main extends React.Component {
           }
         }
       }`
-      
+
        client.request(query6, variables).then((betData) => {
 
          console.log('All Bet data', betData);
-        
+
        })
     }
 
@@ -241,24 +241,24 @@ class Main extends React.Component {
             }
           }
         }`
-        
+
          client.request(query3).then((bet) => {
          betDataEnriched = bet.user.houseBetList;
          this.setState({betDataEnriched:betDataEnriched});
          console.log('bet data enriched',betDataEnriched);
-          
+
          bet.user.houseBetList.map((houseBet)=>{
         //  console.log("houseBet : ", houseBet);
 
 
            /**Query is for looking up one bet**/
-           
+
           let variables = {
             iid: houseBet.iid
           }
-            
+
            let query7 = `query betQuery($iid: String!) {
-            
+
             bet(iid: $iid) {
               id
               iid
@@ -300,7 +300,7 @@ class Main extends React.Component {
           "x-access-token": this.state.apiKeyStake,
         },
       })
-      // should take user id as parameter 
+      // should take user id as parameter
       let {userSeedsData, previousServerSeedStake, previousClientSeedStake, activeClientSeedStake, usernameStake} = this.state;
 
       const name = usernameStake;
@@ -385,7 +385,7 @@ class Main extends React.Component {
       })
     } /*
 
-    
+
 
     /* Method for getting a Server Seed Hash for the Stake Operator */
 
@@ -421,7 +421,7 @@ class Main extends React.Component {
         }`
       client.request(query4).then((data) => {
         console.log("serverSeedHash",data.rotateServerSeed.seedHash)
-        this.setState({serverSeedHash:data.rotateServerSeed.seedHash})  
+        this.setState({serverSeedHash:data.rotateServerSeed.seedHash})
       })
      // this.processBetsStake();
     }
@@ -431,21 +431,21 @@ class Main extends React.Component {
       betData = [];
 
 
-       
+
        console.log("betDataById", betDataById);
        console.log("previousClientSeedStake", previousClientSeedStake, "previousServerSeedStake", previousServerSeedStake ,"activeClientSeedStake", activeClientSeedStake);
-       
-       
+
+
       betDataById.map( (item) => {
        console.log("item.bet.bet.clientSeed.seed", item.bet.bet.clientSeed.seed, "item.bet.bet.serverSeed.seed", item.bet.bet.serverSeed.seed);
-        if( ((item.bet.bet.clientSeed.seed == activeClientSeedStake) && (item.bet.bet.serverSeed.seed == previousServerSeedStake)) || ((item.bet.bet.clientSeed.seed == previousClientSeedStake) && (item.bet.bet.serverSeed.seed == previousServerSeedStake)) ) 
+        if( ((item.bet.bet.clientSeed.seed == activeClientSeedStake) && (item.bet.bet.serverSeed.seed == previousServerSeedStake)) || ((item.bet.bet.clientSeed.seed == previousClientSeedStake) && (item.bet.bet.serverSeed.seed == previousServerSeedStake)) )
         {
            console.log("verification eligible");
            var element = {};
            console.log('new bet has come',item.bet.iid);
            betDataEnriched.map( (innerItem) => {
              console.log("Inner Item :", innerItem);
-             
+
               if(innerItem.iid == item.bet.iid)
               {
                 let isVerified;
@@ -458,32 +458,32 @@ class Main extends React.Component {
                     case 'limbo' : { isVerified = this.handleVerifyBetForLimbo(item.bet.bet.serverSeed.seed,item.bet.bet.clientSeed.seed,item.bet.bet.nonce);
                       console.log("isVerified", isVerified);}
                       break;
-                      
+
                       case 'roulette' : { isVerified = this.handleVerifyBetForRoulette(item.bet.bet.serverSeed.seed,item.bet.bet.clientSeed.seed,item.bet.bet.nonce);
                         console.log("isVerified", isVerified);}
                         break;
 
-                      default : isVerified = 0; 
+                      default : isVerified = 0;
                      }
-               
-                
+
+
                 element.id = item.bet.iid; element.game = innerItem.bet.game; element.payout = innerItem.bet.payout;
                 element.nonce = item.bet.bet.nonce; element.isVerified = isVerified;
                 console.log('element : ', element);
                 betData.push({element:element});
                 this.setState({betData:betData});
-                
+
               }
            })
           this.setState({viewRecentBetsStake:true})
-          betData.sort((a, b) => { 
+          betData.sort((a, b) => {
             return a.element.nonce - b.element.nonce ;
           });
           console.log("betData : ",betData);
         }
       })
     }
-    
+
 
 
       /* Method for Provably Fair Verification of bets for the PrimeDice Operator */
@@ -496,8 +496,8 @@ class Main extends React.Component {
         // create HMAC using server seed as key and client seed as message
         const hash = crypto .createHmac('sha256', key) .update(text) .digest('hex');
         console.log('result hash',hash);
-        
-        
+
+
         let index = 0;
         let lucky = '';
         let compute = 0;
@@ -507,17 +507,17 @@ class Main extends React.Component {
           compute = compute + lucky;
           index++;
         }
-        
+
           compute = compute*10001/100;
           compute = compute.toString();
           compute = compute.split('.');
-          compute[1] = compute[1].slice(0,2); 
+          compute[1] = compute[1].slice(0,2);
           compute = compute[0]+'.'+compute[1];
           console.log("LUCKY : ", compute);
           return compute;
         };
 
-        
+
 
         let diceVerify = roll(serverSeedHash, `${clientSeed}:${nonce}:0`);
         this.setState({diceVerify:diceVerify});
@@ -535,8 +535,8 @@ handleVerifyBetForRoulette = (serverSeedHash,clientSeed, nonce) => {
   // create HMAC using server seed as key and client seed as message
   const hash = crypto .createHmac('sha256', key) .update(text) .digest('hex');
   console.log('result hash',hash);
-  
-  
+
+
   let index = 0;
   let lucky = '';
   let compute = 0;
@@ -546,17 +546,17 @@ handleVerifyBetForRoulette = (serverSeedHash,clientSeed, nonce) => {
     compute = compute + lucky;
     index++;
   }
-  
+
     compute = compute*37;
     compute = compute.toString();
     compute = compute.split('.');
-    //compute[1] = compute[1].slice(0,2); 
+    //compute[1] = compute[1].slice(0,2);
     compute = compute[0];
     console.log("LUCKY : ", compute);
     return compute;
   };
 
-  
+
 
   let diceVerify = roll(serverSeedHash, `${clientSeed}:${nonce}:0`);
   this.setState({diceVerify:diceVerify});
@@ -565,7 +565,7 @@ handleVerifyBetForRoulette = (serverSeedHash,clientSeed, nonce) => {
 }
 
 /*****************************************************************************************************************************************************************************************************/
-    
+
 handleVerifyBetForLimbo = (serverSeedHash,clientSeed, nonce) => {
   // bet made with seed pair (excluding current bet)
   // crypto lib for hmac function
@@ -574,8 +574,8 @@ handleVerifyBetForLimbo = (serverSeedHash,clientSeed, nonce) => {
   // create HMAC using server seed as key and client seed as message
   const hash = crypto .createHmac('sha256', key) .update(text) .digest('hex');
   console.log('result hash',hash);
-  
-  
+
+
   let index = 0;
   let lucky = '';
   let compute = 0;
@@ -585,18 +585,18 @@ handleVerifyBetForLimbo = (serverSeedHash,clientSeed, nonce) => {
     compute = compute + lucky;
     index++;
   }
-  
+
     compute = compute*100000000;
     compute = (100000000 / compute)*0.99;
     compute = compute.toString();
     compute = compute.split('.');
-    compute[1] = compute[1].slice(0,2); 
+    compute[1] = compute[1].slice(0,2);
     compute = compute[0]+'.'+compute[1];
     console.log("LUCKY : ", compute);
     return compute;
   };
 
-  
+
 
   let diceVerify = roll(serverSeedHash, `${clientSeed}:${nonce}:0`);
   this.setState({diceVerify:diceVerify});
@@ -629,7 +629,7 @@ handleVerifyBetForLimbo = (serverSeedHash,clientSeed, nonce) => {
      }
     }
     lucky %= Math.pow(10, 4);
-    lucky /= Math.pow(10, 2); 
+    lucky /= Math.pow(10, 2);
     return lucky;
   };
     let diceVerify = roll(serverSeedHash, `${clientSeed}-${nonce}`);
@@ -684,7 +684,7 @@ handleVerifyBetForLimbo = (serverSeedHash,clientSeed, nonce) => {
     bitvest.data.game.data.map(async (item)=>{
   //    axios.get(`https://bitvest.io/results?query=${item.id}&game=dice&json=1`).then(sleeper(1000)).then((bet)=>{
   //     console.log("bet value is : ", bet);
-         
+
         // console.log('previousSeed:',previousSeed);
     //   let hashingUnhashed = crypto.createHash('sha256').update(previousSeed).digest('hex');
     //   console.log('hashing the unhashed',hashingUnhashed);
@@ -723,7 +723,7 @@ handleVerifyBetForLimbo = (serverSeedHash,clientSeed, nonce) => {
             isNonceManipulated = true;
           }
         })
-       
+
         this.setState({numberBetsVerFailed:numberBetsVerFailed});
         this.setState({isNonceManipulated:isNonceManipulated});
      }
@@ -732,7 +732,7 @@ handleVerifyBetForLimbo = (serverSeedHash,clientSeed, nonce) => {
      //this.setState({isNonceManipulated:isNonceManipulated});
    })
   }
-  
+
   /*ifNonceManipulated = () => {
     let {isNonceManipulated, betData} = this.state;
     isNonceManipulated = false;
@@ -757,7 +757,7 @@ handleVerifyBetForLimbo = (serverSeedHash,clientSeed, nonce) => {
     this.setState({isNonceManipulated:isNonceManipulated});
     this.setState({betData:betData});
   }*/
-  
+
   /*Method for Provably Fair Verification of bets for the Bitvest Operator */
 
 
@@ -793,12 +793,12 @@ handleVerifyBetForLimbo = (serverSeedHash,clientSeed, nonce) => {
       //numberBetsVerFailed++;
       //this.state({numberBetsVerFailed:numberBetsVerFailed});
       //return false;
-    }   
+    }
   };
       let diceVerify = roll(serverSeed, `${clientSeed}|${nonce}`);
       this.setState({diceVerify:diceVerify});
       console.log('diceVerify', diceVerify);
-      
+
       return diceVerify;
   }
 
@@ -898,7 +898,7 @@ handleVerifyBetForLimbo = (serverSeedHash,clientSeed, nonce) => {
                       // Render Children
                         return (
                            <div className={'my-extension text-center'}>
-                             
+
                             <div className="nav-wrapper">
                              <ul className="nav nav-pills nav-fill flex-md-row" id="tabs-icons-text" role="tablist">
                                  <li className="nav-item"
@@ -926,7 +926,7 @@ handleVerifyBetForLimbo = (serverSeedHash,clientSeed, nonce) => {
                               </ul>
                             </div>
                            <div style={{display:gettingStarted?'block':'none'}}>
-                           
+
                             <h4 className="text-center"><strong>CGF</strong></h4>
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 841.9 595.3">
                                 <g fill="#61DAFB">
@@ -970,63 +970,63 @@ handleVerifyBetForLimbo = (serverSeedHash,clientSeed, nonce) => {
                               A procedure that is carried out in sequential steps to solve a problem.
 
                              <h5 className="mt-3">Balance</h5>
-                              
+
                               The amount of money a player has in their wallet or account.
 
                              <h5 className="mt-3">Bust</h5>
-                              
+
                               The depletion of a player’s balance.
 
                              <h5 className="mt-3">Cryptography</h5>
-                              
+
                               The method of making information secure.
 
                              <h5 className="mt-3">Deterministic</h5>
-                              
+
                               An algorithm that when given a particular input, will always produce the same output.
 
                              <h5 className="mt-3">Hash</h5>
-                              
+
                               A cryptographic hash function takes any input, such as a file, image or text and transforms it into fixed-sized alphanumeric string called a ”hash”. This is a one-way process meaning, that when you are given a hash, there is no feasible way to know the original input that created it. The slightest change to the input will have a significant, human readable change to the hash. This deterministic feature is what makes hashing the perfect solution for verifying that two inputs are in fact, the same.
-                              
+
                              <h5 className="mt-3">House Edge</h5>
-                              
+
                               A percentage of each wager(usually only the winning bets apply) that an online casino keeps for itself. In a physical casino and some online games such as roulette, the house edge refers to the expectation of loses from the player due to the mathematical advantage the casino has over you based on each specific game’s design.
 
 
                              <h5 className="mt-3">Nonce</h5>
-                              
+
                               A nonce is a number added to the end of a seed and is only used once per seed. A nonce does not have to be secret or unpredictable, but it must be unique so iit can also be used as a counter.
 
                              <h5 className="mt-3">Provably Fair</h5>
-                              Is a term that describes how the results generated by an RNG were not manipulated by the casino. 
+                              Is a term that describes how the results generated by an RNG were not manipulated by the casino.
 
                              <h5 className="mt-3">Random Number Generator</h5>
-                              
+
                               Or RNG, is a device or algorithm that generates a sequence of numbers that has no set pattern.
 
                              <h5 className="mt-3">Result</h5>
-                              
+
                               The outcome generated by the RNG.
 
                              <h5 className="mt-3">Rigged</h5>
-                              
+
                               In an online casino’s chat room, you can find people using this term as a way to justify the money they just lost because of their conscious decision to gamble.
 
                              <h5 className="mt-3">Salt</h5>
-                              
+
                               A value that is attached to an input before hashing , that is unique to a specific user.
 
                              <h5 className="mt-3">Seed</h5>
-                              
-                              In a provably fair system, this is the data that is used by an RNG to generate the results of a game. The server seed is provided by the operator. The client seed is provided by the player so that the player is involved in the game’s outcome. 
+
+                              In a provably fair system, this is the data that is used by an RNG to generate the results of a game. The server seed is provided by the operator. The client seed is provided by the player so that the player is involved in the game’s outcome.
 
                              <h5 className="mt-3">SHA-256</h5>
-                              
-                              SHA is an acronym for “Secure Hash Algorithms”. The 256 just refers to the SHA-2 family of hash functions and is most commonly used by crypto gambling sites. These are military-grade cryptographic hash functions and they have been standardized by the U.S. National Institute of Standards and Technology (NIST). 
+
+                              SHA is an acronym for “Secure Hash Algorithms”. The 256 just refers to the SHA-2 family of hash functions and is most commonly used by crypto gambling sites. These are military-grade cryptographic hash functions and they have been standardized by the U.S. National Institute of Standards and Technology (NIST).
 
                              <h5 className="mt-3">Wager</h5>
-                              
+
                               The amount that a player risks per round.
 
                             </div>
@@ -1101,7 +1101,7 @@ handleVerifyBetForLimbo = (serverSeedHash,clientSeed, nonce) => {
 
                           <div className="SettingsUI Bitvest Stake" style={{display:settings?'block':'none'}}>
                           <div className="form-group">
-                            <label className="form-control-label">Next Server Seed Hash</label>
+                            <label className="form-control-label" data-toggle="tooltip" data-placement="top" title="This is the server seed that has been created by the casino. It is sent to you in advance of any bets being made to ensure the casino did not change or manipulate the outcome of any game results. It is hashed(encrypted) to prevent players from calculating the upcoming game results. Once you request a new server seed, the one that is currently in use will be unhashed(decrypted) and sent to the verification tab. All bets made using that server seed will be automatically verified. You will be notified if any bets did not pass verification.">Next Server Seed Hash </label>
                             <input className="form-control form-control-sm" type="text" value={serverSeedHash} placeholder="" onChange={(e)=>{this.setState({serverSeedHash:e.target.value })}}/>
                             <button type="button" className="btn btn-secondary m-2"   onClick={this.handleRequest}> Request</button>
                           </div>
