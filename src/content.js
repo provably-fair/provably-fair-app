@@ -887,7 +887,7 @@ handleVerifyBetForLimbo = (serverSeedHash,clientSeed, nonce) => {
 
     render() {
       const { gettingStarted, settings, verification, operators, clientSeed, serverSeedHash, nonce, betData, cryptoGames,primeDice, diceResult, diceVerify, verify, apiKey, apiKeyStake, usernameStake, enterAPI, enterAPIStake,
-      Balance, BetId, Roll, nonceChecked, toggleState, betAmount, betPayout, betPlaced, stake, isNonceManipulated, numberBetsVerFailed, betDataById, betDataEnriched, viewRecentBetsStake } = this.state;
+      Balance, BetId, Roll, nonceChecked, toggleState, betAmount, betPayout, betPlaced, stake, isNonceManipulated, numberBetsVerFailed, betDataById, betDataEnriched, viewRecentBetsStake, faqs } = this.state;
         return (
           <CookiesProvider>
             <Frame head={[<link type="text/css" rel="stylesheet" href={chrome.runtime.getURL("/static/css/content.css")} ></link>]}>
@@ -898,29 +898,35 @@ handleVerifyBetForLimbo = (serverSeedHash,clientSeed, nonce) => {
                       // Render Children
                         return (
                            <div className={'my-extension text-center'}>
-
-                           <div style={{display:gettingStarted?'block':'none'}}>
-                           <div className="nav-wrapper">
+                             
+                            <div className="nav-wrapper">
                              <ul className="nav nav-pills nav-fill flex-md-row" id="tabs-icons-text" role="tablist">
                                  <li className="nav-item"
                                  onClick={()=>{
-                                   this.getServerSeed(apiKey);
-                                   this.setState({gettingStarted:false, settings:true, verification:false,  operators:false});
+                                   this.setState({gettingStarted:false, settings:true, verification:false,  operators:false, faqs:false});
                                  }}>
                                      <a className="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-1-tab" data-toggle="tab" href="#tabs-icons-text-1" role="tab" aria-controls="tabs-icons-text-1" aria-selected="true"><i className="fa fa-cloud-upload-96 mr-2"></i>Settings</a>
                                  </li>
                                  <li className="nav-item" onClick={()=>{
-                                   this.setState({gettingStarted:false, settings:false, verification:true,  operators:false});
+                                   this.getAllBetsStake();
+                                   this.setState({gettingStarted:false, settings:false, verification:true,  operators:false, faqs:false});
                                  }}>
                                      <a className="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-2-tab" data-toggle="tab" href="#tabs-icons-text-2" role="tab" aria-controls="tabs-icons-text-2" aria-selected="false"><i className="fa fa-bell-55 mr-2"></i>Verification</a>
                                  </li>
                                  <li className="nav-item" onClick={()=>{
-                                   this.setState({gettingStarted:false, settings:false, verification:false,  operators:true});
+                                   this.setState({gettingStarted:false, settings:false, verification:false,  operators:true, faqs:false});
                                  }}>
                                      <a className="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-3-tab" data-toggle="tab" href="#tabs-icons-text-3" role="tab" aria-controls="tabs-icons-text-3" aria-selected="false"><i className="fa fa-calendar-grid-58 mr-2"></i>Operators</a>
                                  </li>
-                             </ul>
-                          </div>
+                                 <li className="nav-item" onClick={()=>{
+                                   this.setState({gettingStarted:false, settings:false, verification:false,  operators:false, faqs:true});
+                                 }}>
+                                     <a className="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-3-tab" data-toggle="tab" href="#tabs-icons-text-3" role="tab" aria-controls="tabs-icons-text-3" aria-selected="false"><i className="fa fa-calendar-grid-58 mr-2"></i>FAQs & Glossary</a>
+                                 </li>
+                              </ul>
+                            </div>
+                           <div style={{display:gettingStarted?'block':'none'}}>
+                           
                             <h4 className="text-center"><strong>CGF</strong></h4>
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 841.9 595.3">
                                 <g fill="#61DAFB">
@@ -955,28 +961,80 @@ handleVerifyBetForLimbo = (serverSeedHash,clientSeed, nonce) => {
                             </ul>
                            </div>
 
+                           <div style={{display:faqs?'block':'none'}}>
+                            <div>
+                             <h3>Glossary</h3>
+
+                              <h5>Algorithm</h5>
+
+                              A procedure that is carried out in sequential steps to solve a problem.
+
+                             <h5>Balance</h5>
+                              
+                              The amount of money a player has in their wallet or account.
+
+                             <h5>Bust</h5>
+                              
+                              The depletion of a player’s balance.
+
+                             <h5>Cryptography</h5>
+                              
+                              The method of making information secure.
+
+                             <h5>Deterministic</h5>
+                              
+                              An algorithm that when given a particular input, will always produce the same output.
+
+                             <h5>Hash</h5>
+                              
+                              A cryptographic hash function takes any input, such as a file, image or text and transforms it into fixed-sized alphanumeric string called a ”hash”. This is a one-way process meaning, that when you are given a hash, there is no feasible way to know the original input that created it. The slightest change to the input will have a significant, human readable change to the hash. This deterministic feature is what makes hashing the perfect solution for verifying that two inputs are in fact, the same.
+                              
+                             <h5>House Edge</h5>
+                              
+                              A percentage of each wager(usually only the winning bets apply) that an online casino keeps for itself. In a physical casino and some online games such as roulette, the house edge refers to the expectation of loses from the player due to the mathematical advantage the casino has over you based on each specific game’s design.
+
+
+                             <h5>Nonce</h5>
+                              
+                              A nonce is a number added to the end of a seed and is only used once per seed. A nonce does not have to be secret or unpredictable, but it must be unique so iit can also be used as a counter.
+
+                             <h5>Provably Fair</h5>
+                              Is a term that describes how the results generated by an RNG were not manipulated by the casino. 
+
+                             <h5>Random Number Generator</h5>
+                              
+                              Or RNG, is a device or algorithm that generates a sequence of numbers that has no set pattern.
+
+                             <h5>Result</h5>
+                              
+                              The outcome generated by the RNG.
+
+                             <h5>Rigged</h5>
+                              
+                              In an online casino’s chat room, you can find people using this term as a way to justify the money they just lost because of their conscious decision to gamble.
+
+                             <h5>Salt</h5>
+                              
+                              A value that is attached to an input before hashing , that is unique to a specific user.
+
+                             <h5>Seed</h5>
+                              
+                              In a provably fair system, this is the data that is used by an RNG to generate the results of a game. The server seed is provided by the operator. The client seed is provided by the player so that the player is involved in the game’s outcome. 
+
+                             <h5>SHA-256</h5>
+                              
+                              SHA is an acronym for “Secure Hash Algorithms”. The 256 just refers to the SHA-2 family of hash functions and is most commonly used by crypto gambling sites. These are military-grade cryptographic hash functions and they have been standardized by the U.S. National Institute of Standards and Technology (NIST). 
+
+                             <h5>Wager</h5>
+                              
+                              The amount that a player risks per round.
+
+                            </div>
+                          </div>
+
 
                            <div style={{display:enterAPIStake?'block':'none'}}>
-                          <div className="nav-wrapper">
-                            <ul className="nav nav-pills nav-fill flex-md-row" id="tabs-icons-text" role="tablist">
-                                <li className="nav-item show" onClick={()=>{
-                                  //this.getServerSeed(apiKey);
-                                  this.setState({gettingStarted:false, settings:true, verification:false,  operator:false});
-                                }}>
-                                    <a className="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-1-tab" data-toggle="tab" href="#tabs-icons-text-1" role="tab" aria-controls="tabs-icons-text-1" aria-selected="true"><i className="fa fa-cloud-upload-96 mr-2"></i>Settings</a>
-                                </li>
-                                <li className="nav-item" onClick={()=>{
-                                  this.setState({gettingStarted:false, settings:false, verification:true,  operator:false});
-                                }}>
-                                    <a className="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-2-tab" data-toggle="tab" href="#tabs-icons-text-2" role="tab" aria-controls="tabs-icons-text-2" aria-selected="false"><i className="fa fa-bell-55 mr-2"></i>Verification</a>
-                                </li>
-                                <li className="nav-item" onClick={()=>{
-                                  this.setState({gettingStarted:false, settings:false, verification:false,  operators:true});
-                                }}>
-                                    <a className="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-3-tab" data-toggle="tab" href="#tabs-icons-text-3" role="tab" aria-controls="tabs-icons-text-3" aria-selected="false"><i className="fa fa-calendar-grid-58 mr-2"></i>Operators</a>
-                                </li>
-                            </ul>
-                          </div>
+
                           <div className="form-group">
                             <label className="form-control-label">Enter Your Bet Token</label>
                             <input className="form-control form-control-sm" type="text" value={apiKeyStake} placeholder="Token" onChange={(e)=>{this.setState({apiKeyStake:e.target.value})}}/>
@@ -1009,26 +1067,7 @@ handleVerifyBetForLimbo = (serverSeedHash,clientSeed, nonce) => {
                           </div>
 
                           <div style={{display:enterAPI?'block':'none'}}>
-                          <div className="nav-wrapper">
-                            <ul className="nav nav-pills nav-fill flex-md-row" id="tabs-icons-text" role="tablist">
-                                <li className="nav-item show" onClick={()=>{
-                                  this.getServerSeed(apiKey);
-                                  this.setState({gettingStarted:false, settings:true, verification:false,  operator:false});
-                                }}>
-                                    <a className="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-1-tab" data-toggle="tab" href="#tabs-icons-text-1" role="tab" aria-controls="tabs-icons-text-1" aria-selected="true"><i className="fa fa-cloud-upload-96 mr-2"></i>Settings</a>
-                                </li>
-                                <li className="nav-item" onClick={()=>{
-                                  this.setState({gettingStarted:false, settings:false, verification:true,  operator:false});
-                                }}>
-                                    <a className="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-2-tab" data-toggle="tab" href="#tabs-icons-text-2" role="tab" aria-controls="tabs-icons-text-2" aria-selected="false"><i className="fa fa-bell-55 mr-2"></i>Verification</a>
-                                </li>
-                                <li className="nav-item" onClick={()=>{
-                                  this.setState({gettingStarted:false, settings:false, verification:false,  operators:true});
-                                }}>
-                                    <a className="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-3-tab" data-toggle="tab" href="#tabs-icons-text-3" role="tab" aria-controls="tabs-icons-text-3" aria-selected="false"><i className="fa fa-calendar-grid-58 mr-2"></i>Operators</a>
-                                </li>
-                            </ul>
-                          </div>
+
                           <div className="form-group">
                             <label className="form-control-label">Enter Your API Key</label>
                             <input className="form-control form-control-sm" type="text" value={apiKey} placeholder="API Key" onChange={(e)=>{this.setState({apiKey:e.target.value})}}/>
@@ -1061,26 +1100,6 @@ handleVerifyBetForLimbo = (serverSeedHash,clientSeed, nonce) => {
 
 
                           <div className="SettingsUI Bitvest Stake" style={{display:settings?'block':'none'}}>
-                          <div className="nav-wrapper">
-                            <ul className="nav nav-pills nav-fill flex-md-row" id="tabs-icons-text" role="tablist">
-                                <li className="nav-item show" onClick={()=>{
-                                  this.setState({gettingStarted:false, settings:true,  verification:false,  operators:false});
-                                }}>
-                                    <a className="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-1-tab" data-toggle="tab" href="#tabs-icons-text-1" role="tab" aria-controls="tabs-icons-text-1" aria-selected="true"><i className="fa fa-cloud-upload-96 mr-2"></i>Settings</a>
-                                </li>
-                                <li className="nav-item" onClick={()=>{
-                                  this.getAllBetsStake();
-                                  this.setState({gettingStarted:false, settings:false, verification:true,  operators:false});
-                                }}>
-                                    <a className="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-2-tab" data-toggle="tab" href="#tabs-icons-text-2" role="tab" aria-controls="tabs-icons-text-2" aria-selected="false"><i className="fa fa-bell-55 mr-2"></i>Verification</a>
-                                </li>
-                                <li className="nav-item" onClick={()=>{
-                                  this.setState({gettingStarted:false, settings:false, verification:false,  operators:true});
-                                }}>
-                                    <a className="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-3-tab" data-toggle="tab" href="#tabs-icons-text-3" role="tab" aria-controls="tabs-icons-text-3" aria-selected="false"><i className="fa fa-calendar-grid-58 mr-2"></i>Operators</a>
-                                </li>
-                            </ul>
-                          </div>
                           <div className="form-group">
                             <label className="form-control-label">Next Server Seed Hash</label>
                             <input className="form-control form-control-sm" type="text" value={serverSeedHash} placeholder="" onChange={(e)=>{this.setState({serverSeedHash:e.target.value })}}/>
@@ -1238,25 +1257,7 @@ handleVerifyBetForLimbo = (serverSeedHash,clientSeed, nonce) => {
                           </div>
 
                           <div className="VerificationUI-Stake" className="table-responsive" style={{display: verification?'block':'none', fontSize: '11px'}}>
-                          <div className="nav-wrapper">
-                            <ul className="nav nav-pills nav-fill flex-md-row" id="tabs-icons-text" role="tablist">
-                                <li className="nav-item" onClick={()=>{
-                                  this.setState({gettingStarted:false, settings:true, verification:false,  operators:false});
-                                }}>
-                                    <a className="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-1-tab" data-toggle="tab" href="#tabs-icons-text-1" role="tab" aria-controls="tabs-icons-text-1" aria-selected="true"><i className="fa fa-cloud-upload-96 mr-2"></i>Settings</a>
-                                </li>
-                                <li className="nav-item show" onClick={()=>{
-                                  this.setState({gettingStarted:false, settings:false, verification:true,  operators:false});
-                                }}>
-                                    <a className="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-2-tab" data-toggle="tab" href="#tabs-icons-text-2" role="tab" aria-controls="tabs-icons-text-2" aria-selected="false"><i className="fa fa-bell-55 mr-2"></i>Verification</a>
-                                </li>
-                                <li className="nav-item" onClick={()=>{
-                                  this.setState({gettingStarted:false, settings:false, verification:false,  operators:true});
-                                }}>
-                                    <a className="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-3-tab" data-toggle="tab" href="#tabs-icons-text-3" role="tab" aria-controls="tabs-icons-text-3" aria-selected="false"><i className="fa fa-calendar-grid-58 mr-2"></i>Operators</a>
-                                </li>
-                            </ul>
-                          </div>
+
                           <button type="button"  className="btn btn-primary">
                             <span>Nounce Manipulated</span>
                             <span  className={"badge badge-md badge-circle badge-floating badge-danger border-white"}>{isNonceManipulated?"Yes":"No"}</span>
@@ -1438,27 +1439,7 @@ handleVerifyBetForLimbo = (serverSeedHash,clientSeed, nonce) => {
 
 
                           <div className="Operators-UI table-responsive" style={{display:!verification&&operators?'block':'none'}}>
-                          <div className="nav-wrapper">
-                            <ul className="nav nav-pills nav-fill flex-md-row" id="tabs-icons-text" role="tablist">
-                                <li className="nav-item" onClick={()=>{
-                                  this.setState({gettingStarted:false, settings:true,   verification:false, operators:false});
-                                  this.getServerSeed(apiKey)
 
-                                }}>
-                                    <a className="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-1-tab" data-toggle="tab" href="#tabs-icons-text-1" role="tab" aria-controls="tabs-icons-text-1" aria-selected="true"><i className="fa fa-cloud-upload-96 mr-2"></i>Settings</a>
-                                </li>
-                                <li className="nav-item" onClick={()=>{
-                                  this.setState({gettingStarted:false, settings:false, verification:true,  operators:false});
-                                }}>
-                                    <a className="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-2-tab" data-toggle="tab" href="#tabs-icons-text-2" role="tab" aria-controls="tabs-icons-text-2" aria-selected="false"><i className="fa fa-bell-55 mr-2"></i>Verification</a>
-                                </li>
-                                <li className="nav-item show" onClick={()=>{
-                                  this.setState({gettingStarted:false, settings:false, verification:false,  operators:true});
-                                }}>
-                                    <a className="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-3-tab" data-toggle="tab" href="#tabs-icons-text-3" role="tab" aria-controls="tabs-icons-text-3" aria-selected="false"><i className="fa fa-calendar-grid-58 mr-2"></i>Operators</a>
-                                </li>
-                            </ul>
-                          </div>
                             <div className="operators-icons">
                               <div className="m-3" onClick={()=>{
                                 this.setState({operators:false, primeDice:false, verification:true,  cryptoGames:true})
