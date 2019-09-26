@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import createHmac from 'create-hmac';
 import logo from './logo.svg';
 import './App.css';
+import './assets/css/argon.css';
+
 
 
 
@@ -9,10 +11,10 @@ class App extends Component {
     constructor(){
       super();
       this.state = {
-        client_seed: '',
-        server_seed: '',
+        client_seed: '2a48af2551f0e5cbfcb110268a85d3e9',
+        server_seed: '3bd0bab047b7e8cd06c408c9fa299bdcfbfabf601f8368a4f945a72743d08a1f',
         server_hash: '',
-        nonce: null,
+        nonce: 1,
         games: [
             {name: 'Plinko'},
             {name: 'Mines'},
@@ -26,7 +28,7 @@ class App extends Component {
             {name: 'Dice'}
         ],
         numMines: 1,
-        active_game: 'Chartbet',
+        active_game: 'chartbet',
         MAX_ROLL: 10001,
         MAX_ROULETTE: 37,
         MAX_CHARTBET: 1000000
@@ -39,9 +41,8 @@ class App extends Component {
        * @returns {string} The hex representation of the SHA256 hash
        */
       sha256 = (data) => {
-          let md = crypto.md.sha256.create();
-          md.update(data);
-          return md.digest().toHex();
+          let md = crypto.createHash('sha256').update(data).digest('hex');
+          return md;
       };
       /**
        * Returns the HMAC SHA256 hash of the arguments
@@ -211,7 +212,8 @@ class App extends Component {
       }
 
       handleRoullete = () =>{
-        const { active_game, MAX_ROULETTE } = this.state;
+        let { active_game, MAX_ROULETTE } = this.state;
+        active_game = 'Roulette';
         let res = this.result(active_game);
         let resolve = Math.floor(this.bytes_to_number(this.bytes(8)) * MAX_ROULETTE);
         console.log("result", res, "resolve", resolve);
@@ -234,8 +236,8 @@ class App extends Component {
         <header className="App-header">
           <img src={logo} className="App-logo" alt="logo" />
 
-          <button className="btn-primary" onClick={()=>this.handleRoullete()}>--Roullete--</button>
-          <button className="btn-primary" onClick={()=>this.handleChartbet()}>--Chartbet--</button>
+          <button className="btn btn-primary" onClick={()=>this.handleRoullete()}>--Roullete--</button>
+          <button className="btn btn-primary" onClick={()=>this.handleChartbet()}>--Chartbet--</button>
 
         </header>
         <p className="App-intro">
