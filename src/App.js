@@ -81,7 +81,7 @@ class App extends Component {
           let result = '';
           let round = 0;
           while(result.length < length) {
-              result += this.hmac_sha256(this.server_seed, `${this.client_seed}:${this.nonce||0}:${round++}`);
+              result += this.hmac_sha256(this.state.server_seed, `${this.state.client_seed}:${this.state.nonce||0}:${round++}`);
           }
           if(result.length > length) {
               result = result.substring(0, length);
@@ -173,7 +173,7 @@ class App extends Component {
               return cards[Math.floor(num * 52)];
           });
           return nums;
-      };
+      }; 
       /**
        * Takes a hex string and converts it into a base10 string with exactly 3 digits
        * @param {string} item - A hex string
@@ -214,8 +214,8 @@ class App extends Component {
       handleRoullete = () =>{
         let { active_game, MAX_ROULETTE } = this.state;
         active_game = 'Roulette';
-        let res = this.result(active_game);
         let resolve = Math.floor(this.bytes_to_number(this.bytes(8)) * MAX_ROULETTE);
+        let res = this.result(resolve);
         console.log("result", res, "resolve", resolve);
       }
 
