@@ -27,7 +27,7 @@ class App extends Component {
             {name: 'Baccarat'},
             {name: 'Dice'}
         ],
-        numMines: 1,
+        numMines: 10,
         active_game: 'chartbet',
         MAX_ROLL: 10001,
         MAX_ROULETTE: 37,
@@ -235,12 +235,63 @@ class App extends Component {
         //   return parseInt(x,16);
         // });
 
-        for (const [index, value] of this.bytes_to_num_array(this.bytes(160)).entries()){
+        for(const [index, value] of this.bytes_to_num_array(this.bytes(160)).entries()){
           let direction = Math.floor(value*2)?'right':'left';
           console.log("direction", direction);
           }
       }
 
+    handleBaccarat = () => {
+      let nums = [];
+      for(const [index, value] of this.bytes_to_num_array(this.bytes(48)).entries()){
+        nums.push(value);
+        // let direction = Math.floor(value*2)?'right':'left';
+        // console.log("direction", direction);
+        }
+      nums = this.nums_to_card_array(nums);
+      console.log("nums : ", nums);
+
+    }
+
+    handleHilo = () => {
+      let nums = [];
+      for(const [index, value] of this.bytes_to_num_array(this.bytes(448)).entries()){
+        nums.push(value);
+        // let direction = Math.floor(value*2)?'right':'left';
+        // console.log("direction", direction);
+        }
+      nums = this.nums_to_card_array(nums);
+      console.log("nums : ", nums);
+
+      // nums_to_card_array(bytes_to_num_array(bytes(448)))[i]
+    }
+
+    handleBlackjack = () => {
+      let nums = [];
+      for(const [index, value] of this.bytes_to_num_array(this.bytes(448)).entries()){
+        nums.push(value);
+        // let direction = Math.floor(value*2)?'right':'left';
+        // console.log("direction", direction);
+        }
+      nums = this.nums_to_card_array(nums);
+      console.log("nums : ", nums);
+
+      // nums_to_card_array(bytes_to_num_array(bytes(448)))[i]
+    }
+
+    handleMines = () => {
+      let res = this.result('Mines').slice(0,this.state.numMines);
+      console.log("Mines : ", res);
+    }
+
+    handleDiamondPoker = () => {
+      let nums = [];
+       nums.push(this.bytes_to_num_array(this.bytes(80)).map((x)=>{
+        return Math.floor(x*7)
+      }));
+      console.log("Diamond Poker : ", nums);
+
+    }
 
   render() {
 
@@ -253,6 +304,12 @@ class App extends Component {
 
           <button className="btn btn-primary" onClick={()=>this.handleRoullete()}>Roullete</button>
           <button className="btn btn-primary" onClick={()=>this.handlePlinko()}>Plinko</button>
+          <button className="btn btn-primary" onClick={()=>this.handleBaccarat()}>Baccarat</button>
+          <button className="btn btn-primary" onClick={()=>this.handleHilo()}>Hilo</button>
+          <button className="btn btn-primary" onClick={()=>this.handleBlackjack()}>Blackjack</button>
+          <button className="btn btn-primary" onClick={()=>this.handleMines()}>Mines</button>
+          <button className="btn btn-primary" onClick={()=>this.handleDiamondPoker()}>Diamond Poker</button>
+
 
         </header>
         <p className="App-intro">
