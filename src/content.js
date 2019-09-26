@@ -466,8 +466,8 @@ class Main extends React.Component {
                       default : isVerified = 0;
                      }
 
-
-                element.id = item.bet.iid; element.game = innerItem.bet.game; element.payout = innerItem.bet.payout;
+                     console.log("item.bet.iid.split('house:')" , item.bet.iid.split('house:'));
+                element.id = item.bet.iid.split('house:'); element.game = innerItem.bet.game; element.payout = innerItem.bet.payout;
                 element.nonce = item.bet.bet.nonce; element.isVerified = isVerified;
                 console.log('element : ', element);
                 betData.push({element:element});
@@ -1211,7 +1211,7 @@ handleVerifyBetForLimbo = (serverSeedHash,clientSeed, nonce) => {
                                 {betData.map((item,i)=>{
                                   return <tr>
                                   <td>
-                                  {item.element.id.split("house:")[0]}
+                                  {item.element.id}
                                   </td>
                                   <td>
                                   {item.element.game}
