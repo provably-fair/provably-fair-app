@@ -11,10 +11,10 @@ class App extends Component {
     constructor(){
       super();
       this.state = {
-        client_seed: '2a48af2551f0e5cbfcb110268a85d3e9',
-        server_seed: '3bd0bab047b7e8cd06c408c9fa299bdcfbfabf601f8368a4f945a72743d08a1f',
+        client_seed: '9a6cd25df142fb3f3428943dfe89bc59-99',
+        server_seed: '91510311a789927ac94c5a1e5d8e5f62d42986e3e9e78fd5a9276964d1f11fef',
         server_hash: '',
-        nonce: 1,
+        nonce: 17,
         games: [
             {name: 'Plinko'},
             {name: 'Mines'},
@@ -173,7 +173,7 @@ class App extends Component {
               return cards[Math.floor(num * 52)];
           });
           return nums;
-      }; 
+      };
       /**
        * Takes a hex string and converts it into a base10 string with exactly 3 digits
        * @param {string} item - A hex string
@@ -226,6 +226,23 @@ class App extends Component {
         console.log("result", res, "resolve", resolve);
       }
 
+      handlePlinko = () => {
+        let { numMines } = this.state;
+        let res = this.result('Mines').slice(0,numMines);
+        // this.leading_zeroes(this.bytes_to_hex_array(this.bytes(64)));
+        // this.leading_zeroes(this.bytes_to_hex_array(this.bytes(128, 64)));
+        // this.leading_zeroes(this.bytes_to_hex_array(this.bytes(160, 32)));
+
+        // let resolve = this.bytes_to_hex_array(this.bytes(8)).map((x) =>  {
+        //   return parseInt(x,16);
+        // });
+
+        for (const [index, value] of this.bytes_to_num_array(this.bytes(160)).entries()){
+          let direction = Math.floor(value*2)?'right':'left';
+          console.log("direction", direction);
+          }
+      }
+
 
   render() {
 
@@ -236,8 +253,8 @@ class App extends Component {
         <header className="App-header">
           <img src={logo} className="App-logo" alt="logo" />
 
-          <button className="btn btn-primary" onClick={()=>this.handleRoullete()}>--Roullete--</button>
-          <button className="btn btn-primary" onClick={()=>this.handleChartbet()}>--Chartbet--</button>
+          <button className="btn btn-primary" onClick={()=>this.handleRoullete()}>Roullete</button>
+          <button className="btn btn-primary" onClick={()=>this.handlePlinko()}>Plinko</button>
 
         </header>
         <p className="App-intro">
