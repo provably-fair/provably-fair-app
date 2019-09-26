@@ -13,7 +13,6 @@ import converter from 'hex2dec';
 import cryptoGamesIcon from './assets/img/cryptogames.png';
 import "./content.css";
 import './assets/css/argon.css';
-import './assets/vendor/font-awesome/css/font-awesome.min.css';
 import qs from 'querystring';
 
 
@@ -928,14 +927,9 @@ handleVerifyBetForLimbo = (serverSeedHash,clientSeed, nonce) => {
                             </div>
                            <div style={{display:gettingStarted?'block':'none'}}>
 
-                            <h6 className="text-center"><strong>Crypto Games Foundation Verification Tool</strong></h6>
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 841.9 595.3">
-                                <g fill="#61DAFB">
-                                    <path d="M666.3 296.5c0-32.5-40.7-63.3-103.1-82.4 14.4-63.6 8-114.2-20.2-130.4-6.5-3.8-14.1-5.6-22.4-5.6v22.3c4.6 0 8.3.9 11.4 2.6 13.6 7.8 19.5 37.5 14.9 75.7-1.1 9.4-2.9 19.3-5.1 29.4-19.6-4.8-41-8.5-63.5-10.9-13.5-18.5-27.5-35.3-41.6-50 32.6-30.3 63.2-46.9 84-46.9V78c-27.5 0-63.5 19.6-99.9 53.6-36.4-33.8-72.4-53.2-99.9-53.2v22.3c20.7 0 51.4 16.5 84 46.6-14 14.7-28 31.4-41.3 49.9-22.6 2.4-44 6.1-63.6 11-2.3-10-4-19.7-5.2-29-4.7-38.2 1.1-67.9 14.6-75.8 3-1.8 6.9-2.6 11.5-2.6V78.5c-8.4 0-16 1.8-22.6 5.6-28.1 16.2-34.4 66.7-19.9 130.1-62.2 19.2-102.7 49.9-102.7 82.3 0 32.5 40.7 63.3 103.1 82.4-14.4 63.6-8 114.2 20.2 130.4 6.5 3.8 14.1 5.6 22.5 5.6 27.5 0 63.5-19.6 99.9-53.6 36.4 33.8 72.4 53.2 99.9 53.2 8.4 0 16-1.8 22.6-5.6 28.1-16.2 34.4-66.7 19.9-130.1 62-19.1 102.5-49.9 102.5-82.3zm-130.2-66.7c-3.7 12.9-8.3 26.2-13.5 39.5-4.1-8-8.4-16-13.1-24-4.6-8-9.5-15.8-14.4-23.4 14.2 2.1 27.9 4.7 41 7.9zm-45.8 106.5c-7.8 13.5-15.8 26.3-24.1 38.2-14.9 1.3-30 2-45.2 2-15.1 0-30.2-.7-45-1.9-8.3-11.9-16.4-24.6-24.2-38-7.6-13.1-14.5-26.4-20.8-39.8 6.2-13.4 13.2-26.8 20.7-39.9 7.8-13.5 15.8-26.3 24.1-38.2 14.9-1.3 30-2 45.2-2 15.1 0 30.2.7 45 1.9 8.3 11.9 16.4 24.6 24.2 38 7.6 13.1 14.5 26.4 20.8 39.8-6.3 13.4-13.2 26.8-20.7 39.9zm32.3-13c5.4 13.4 10 26.8 13.8 39.8-13.1 3.2-26.9 5.9-41.2 8 4.9-7.7 9.8-15.6 14.4-23.7 4.6-8 8.9-16.1 13-24.1zM421.2 430c-9.3-9.6-18.6-20.3-27.8-32 9 .4 18.2.7 27.5.7 9.4 0 18.7-.2 27.8-.7-9 11.7-18.3 22.4-27.5 32zm-74.4-58.9c-14.2-2.1-27.9-4.7-41-7.9 3.7-12.9 8.3-26.2 13.5-39.5 4.1 8 8.4 16 13.1 24 4.7 8 9.5 15.8 14.4 23.4zM420.7 163c9.3 9.6 18.6 20.3 27.8 32-9-.4-18.2-.7-27.5-.7-9.4 0-18.7.2-27.8.7 9-11.7 18.3-22.4 27.5-32zm-74 58.9c-4.9 7.7-9.8 15.6-14.4 23.7-4.6 8-8.9 16-13 24-5.4-13.4-10-26.8-13.8-39.8 13.1-3.1 26.9-5.8 41.2-7.9zm-90.5 125.2c-35.4-15.1-58.3-34.9-58.3-50.6 0-15.7 22.9-35.6 58.3-50.6 8.6-3.7 18-7 27.7-10.1 5.7 19.6 13.2 40 22.5 60.9-9.2 20.8-16.6 41.1-22.2 60.6-9.9-3.1-19.3-6.5-28-10.2zM310 490c-13.6-7.8-19.5-37.5-14.9-75.7 1.1-9.4 2.9-19.3 5.1-29.4 19.6 4.8 41 8.5 63.5 10.9 13.5 18.5 27.5 35.3 41.6 50-32.6 30.3-63.2 46.9-84 46.9-4.5-.1-8.3-1-11.3-2.7zm237.2-76.2c4.7 38.2-1.1 67.9-14.6 75.8-3 1.8-6.9 2.6-11.5 2.6-20.7 0-51.4-16.5-84-46.6 14-14.7 28-31.4 41.3-49.9 22.6-2.4 44-6.1 63.6-11 2.3 10.1 4.1 19.8 5.2 29.1zm38.5-66.7c-8.6 3.7-18 7-27.7 10.1-5.7-19.6-13.2-40-22.5-60.9 9.2-20.8 16.6-41.1 22.2-60.6 9.9 3.1 19.3 6.5 28.1 10.2 35.4 15.1 58.3 34.9 58.3 50.6-.1 15.7-23 35.6-58.4 50.6zM320.8 78.4z"/>
-                                    <circle cx="420.9" cy="296.5" r="45.7"/>
-                                    <path d="M520.5 78.1z"/>
-                                </g>
-                            </svg>
+                            <h6 className="text-center"><strong>Crypto Gambling Foundation Verifier</strong></h6>
+                            <img src="https://pbs.twimg.com/profile_images/906057204578390016/-icT77rY_400x400.jpg" />
+
                             <p><span style={{fontStyle:'bold'}}>Operator</span> is a CGF verified operator.</p>
                             <button className="btn btn-info mb-3" type="button" onClick={()=>{
                               // this.getSessionTokenBitvest()
@@ -1007,8 +1001,8 @@ handleVerifyBetForLimbo = (serverSeedHash,clientSeed, nonce) => {
                               In a provably fair system, this is the data that is used by an RNG to generate the results of a game. The server seed is provided by the operator. The client seed is provided by the player so that the player is involved in the game’s outcome.
 
                              <h5 className="mt-3">SHA-256</h5>
+                             SHA is an acronym for “Secure Hash Algorithms”. The 256 just refers to the SHA-2 family of hash functions and is most commonly used by crypto gambling sites. These are military-grade cryptographic hash functions and they have been standardized by the U.S. National Institute of Standards and Technology (NIST).
 
-                              SHA is an acronym for “Secure Hash Algorithms”. The 256 just refers to the SHA-2 family of hash functions and is most commonly used by crypto gambling sites. These are military-grade cryptographic hash functions and they have been standardized by the U.S. National Institute of Standards and Technology (NIST).
 
                              <h5 className="mt-3">Wager</h5>
 
@@ -1022,6 +1016,11 @@ handleVerifyBetForLimbo = (serverSeedHash,clientSeed, nonce) => {
 
                           <div className="form-group">
                             <label className="form-control-label">Enter Your Bet Token</label>
+                            <img src="https://camo.githubusercontent.com/184f5fe3162ac51bdc0c89207d568c691d053aea/68747470733a2f2f662e636c6f75642e6769746875622e636f6d2f6173736574732f353331393931362f323437373339332f36303565656639362d623037302d313165332d383134612d3637613132383166303665312e706e67" style={{ width: '10%'}} data-toggle="popover" data-placement="left" title='Instructions for using extension on Stake and PrimeDice:
+                                1. Open website then click "settings" from the dropdown menu at the top of the screen.
+                                2. Click "Tokens"
+                                3. Click "Reveal" then copy the token.
+                                4. Enter the token and your username into the extension, then click submit.'/>
                             <input className="form-control form-control-sm" type="text" value={apiKeyStake} placeholder="Token" onChange={(e)=>{this.setState({apiKeyStake:e.target.value})}}/>
                             <label className="form-control-label">Enter Your Username</label>
                             <input className="form-control form-control-sm" type="text" value={usernameStake} placeholder="Username" onChange={(e)=>{this.setState({usernameStake:e.target.value})}}/>
@@ -1054,13 +1053,17 @@ handleVerifyBetForLimbo = (serverSeedHash,clientSeed, nonce) => {
 
                           <div className="SettingsUI Bitvest Stake" style={{display:settings?'block':'none'}}>
                           <div className="form-group">
-                            <label className="form-control-label" data-toggle="popover" data-placement="left" title="This is the server seed that has been created by the casino. It is sent to you in advance of any bets being made to ensure the casino did not change or manipulate the outcome of any game results. It is hashed(encrypted) to prevent players from calculating the upcoming game results. Once you request a new server seed, the one that is currently in use will be unhashed(decrypted) and sent to the verification tab. All bets made using that server seed will be automatically verified. You will be notified if any bets did not pass verification.">Next Server Seed Hash </label>
+                            <label className="form-control-label">Next Server Seed Hash </label>
+                            <img src="https://camo.githubusercontent.com/184f5fe3162ac51bdc0c89207d568c691d053aea/68747470733a2f2f662e636c6f75642e6769746875622e636f6d2f6173736574732f353331393931362f323437373339332f36303565656639362d623037302d313165332d383134612d3637613132383166303665312e706e67" style={{ width: '10%'}}
+                            data-toggle="popover" data-placement="left" title="This is the server seed that has been created by the casino. It is sent to you in advance of any bets being made to ensure the casino did not change or manipulate the outcome of any game results. It is hashed(encrypted) to prevent players from calculating the upcoming game results. Once you request a new server seed, the one that is currently in use will be unhashed(decrypted) and sent to the verification tab. All bets made using that server seed will be automatically verified. You will be notified if any bets did not pass verification."/>
                             <input className="form-control form-control-sm" type="text" value={serverSeedHash} placeholder="" onChange={(e)=>{this.setState({serverSeedHash:e.target.value })}}/>
                             <button type="button" className="btn btn-secondary m-2"   onClick={this.handleRequest}> Request</button>
                           </div>
 
                           <div className="form-group">
-                            <label className="form-control-label" data-toggle="popover" data-color="default" data-placement="top" title="This is the client seed. Sometimes called the player seed. It is very important that you customize this after you request a new server seed. The server seed and client seed pre-filled by default. To ensure provable fairness, you must customize your own client seed. It will be used in combination with the server seed to generate thr game results.">Client Seed</label>
+                            <label className="form-control-label">Client Seed</label>
+                            <img src="https://camo.githubusercontent.com/184f5fe3162ac51bdc0c89207d568c691d053aea/68747470733a2f2f662e636c6f75642e6769746875622e636f6d2f6173736574732f353331393931362f323437373339332f36303565656639362d623037302d313165332d383134612d3637613132383166303665312e706e67" style={{ width: '10%'}} data-toggle="popover" data-placement="left" title="This is the client seed. Sometimes called the player seed. It is very important that you customize this after you request a new server seed. The server seed and client seed pre-filled by default. To ensure provable fairness, you must customize your own client seed. It will be used in combination with the server seed to generate thr game results."/>
+
                             <input className="form-control form-control-sm" type="text" value={clientSeed} placeholder="CURRENT CLIENT SEED" onChange={(e)=>{this.setState({clientSeed:e.target.value})}}/>
                             <button type="button" className="btn btn-secondary m-2"   onClick={this.getClientSeed}> Generate</button>
                             <button type="button" className="btn btn-secondary m-2"   onClick={()=>{stake && this.submitClientSeedStake(clientSeed)}}> Submit</button>
@@ -1179,14 +1182,14 @@ handleVerifyBetForLimbo = (serverSeedHash,clientSeed, nonce) => {
 
                           <div className="VerificationUI-Stake" className="table-responsive" style={{display: verification?'block':'none', fontSize: '11px'}}>
 
-                          <button type="button"  className="btn btn-primary">
+                          <span className="alert alert-success p-2">
                             <span>Nonce</span>
                             <span  className={"badge badge-md badge-circle badge-floating badge-danger border-white"}>{isNonceManipulated?"Fail":"Ok"}</span>
-                          </button>
-                          <button type="button"  className="btn btn-primary">
+                          </span>
+                          <span className="alert alert-danger p-2">
                             <span>Bets Fail</span>
                             <span  className="badge badge-md badge-circle badge-floating badge-danger border-white">{numberBetsVerFailed}</span>
-                          </button>
+                          </span>
                           <div className="form-group">
                             <button type="button" className="btn btn-secondary m-2"   onClick={this.processBetsStake}> Verify Recent Bets</button>
                           </div>
@@ -1208,7 +1211,7 @@ handleVerifyBetForLimbo = (serverSeedHash,clientSeed, nonce) => {
                                 {betData.map((item,i)=>{
                                   return <tr>
                                   <td>
-                                  {item.element.id}
+                                  {item.element.id.split("house:")[0]}
                                   </td>
                                   <td>
                                   {item.element.game}
@@ -1333,7 +1336,7 @@ handleVerifyBetForLimbo = (serverSeedHash,clientSeed, nonce) => {
                               }}>
                                 <svg xmlns="http://www.w3.org/2000/svg" width="66.95" height="33.47"><title>Stake</title> <path d="M4.34,9.62c0-4.48,2.85-7,8.1-7,3.79,0,4.46,2.47,4.47,3.36,0,1.73-2.44,3.56-2.44,3.56s.14,1.07,2.23,1.06,4.13-1.39,4.12-4.85c0-4-4.18-5.78-8.29-5.77C9.09,0,0,.5,0,9.56c0,8,15.2,8.75,15.22,13.91,0,5.59-6.26,7.1-8.37,7.11a2.72,2.72,0,0,1-3-2.35c0-4.53,4.49-5.79,4.49-5.79a1.89,1.89,0,0,0-2-1.84c-4.5,0-6.29,3.89-6.28,7.66,0,3.21,2.29,5.22,5.71,5.21,6.56,0,14-3.22,13.92-10.33C19.67,16.49,4.36,14.76,4.34,9.62Z" fill="currentColor"></path><path d="M66.83,27.42c-.06-.12-.2-.09-.4.07A8.8,8.8,0,0,1,60,29.86c-7.26,0-8.51-11.94-8.51-11.94s5.52-4.13,6.39-5.79-1.89-2-1.89-2-3.86,4.71-6.61,6.09c.3-2,2.32-6.71,2.45-9.39s-3.23-2-3.77-1.78c0,1.18-3,11.81-4,17.66-.63,1-1.54,2.18-2.35,2.18-.47,0-.64-.87-.65-2.12,0-1.73,1-4.51,1-6.19,0-1.17-.54-1.24-1-1.24l-.75,0c-1.19,0-.8-1-1.86-1-3.26,0-7.41,3.57-7.59,9a9.36,9.36,0,0,1-3.43,1.65c-.82,0-1-.77-1-1.43,0-1.15,1.88-8,1.88-8s2.38-.61,3.42-.81c.79-.15,1-.21,1.32-.59s.91-1.17,1.39-1.87,0-1.26-.89-1.25a31,31,0,0,0-4.31.74S30.65,5.16,30.65,5s-.18-.2-.43-.2A8.7,8.7,0,0,0,28,5.37a3.8,3.8,0,0,0-2,2.15c-.17.57-1.3,5-1.3,5s-6,2.09-6.87,2.4a.13.13,0,0,0-.09.12s.7,2.7,2.11,2.69a19,19,0,0,0,4-1.22s-1.53,6.1-1.53,8.12c0,1.3.62,2.83,3.16,2.82a10,10,0,0,0,5.6-2.07,3.28,3.28,0,0,0,3.15,2,6.46,6.46,0,0,0,4.28-2.08,2.89,2.89,0,0,0,2.61,2.05c.9,0,1.84-1,2.53-2a4.06,4.06,0,0,0,0,.62c.28,2.52,4,1,4.22.69.13-1.83,0-5.56.78-7.86C49.63,26.72,53.3,32,59.89,32c3.69,0,5.58-1.08,6.37-1.95A2.73,2.73,0,0,0,66.83,27.42ZM35.19,24.84c-3.16,0,1-8.2,3.67-8.21C38.86,17.68,38.8,24.82,35.19,24.84Z" fill="currentColor"></path><path d="M60.89,27.35a7.58,7.58,0,0,0,5.48-2.5c.52-.8-.61-2-1-2a5.12,5.12,0,0,1-4,1.91c-2.5,0-1.93-2.73-1.93-2.73s4.8.62,6.73-2.83a4.65,4.65,0,0,0,.39-3.29,3.85,3.85,0,0,0-3.87-1.69c-2.72.23-6.16,3.08-6.92,6.5C55.24,23.48,56.38,27.37,60.89,27.35Zm3-11.51c.45,0,.41.72.29,1.49-.17,1.05-1.61,3.72-4.36,3.62C60.05,19.4,62.1,15.9,63.94,15.84Z" fill="currentColor"></path></svg>
                               </div>
-                            <div className="m-3" style={{cursor:'pointer'}} onClick={()=>{ 
+                            <div className="m-3" style={{cursor:'pointer'}} onClick={()=>{
                               this.setState({operators:false, primeDice:true, stake:false, bitvest:false})
                             }}>
                               <svg width="144.95" height="50" viewBox="0 0 1896 327"><title>Prime Dice</title><path d="M1750 263a74 74 0 0 1-23 17q-13 6-31 6t-31-6a63 63 0 0 1-23-14 66 66 0 0 1-15-24 86 86 0 0 1-5-29 74 74 0 0 1 6-29 72 72 0 0 1 15-23 71 71 0 0 1 23-16 80 80 0 0 1 61 0 71 71 0 0 1 23 17l-22 22a43 43 0 0 0-14-11 41 41 0 0 0-18-4 38 38 0 0 0-17 4 37 37 0 0 0-12 10 39 39 0 0 0-7 13 56 56 0 0 0-3 16 53 53 0 0 0 3 16 42 42 0 0 0 7 14 36 36 0 0 0 29 14 44 44 0 0 0 19-4 42 42 0 0 0 14-11l21 22zm-489-103a69 69 0 0 0-14 23 76 76 0 0 0-5 28 87 87 0 0 0 5 30 66 66 0 0 0 37 39 77 77 0 0 0 30 6q16 0 28-4a88 88 0 0 0 19-7 57 57 0 0 0 11-9l-19-21a41 41 0 0 1-8 5 73 73 0 0 1-13 5 71 71 0 0 1-18 1 42 42 0 0 1-13-2 39 39 0 0 1-12-7 35 35 0 0 1-9-10 28 28 0 0 1-4-14h103v-5a118 118 0 0 0-4-29 74 74 0 0 0-11-25 59 59 0 0 0-21-18q-13-7-32-7c-19 0-37 7-50 21zm80 28a29 29 0 0 1 2 10h-67a26 26 0 0 1 2-10 30 30 0 0 1 7-10 35 35 0 0 1 11-7 39 39 0 0 1 15-3 34 34 0 0 1 14 3 31 31 0 0 1 10 7 30 30 0 0 1 6 10zm459-43a67 67 0 0 0-22 15 69 69 0 0 0-14 23 76 76 0 0 0-6 28 87 87 0 0 0 6 30 66 66 0 0 0 37 39 77 77 0 0 0 30 6q16 0 28-4a88 88 0 0 0 19-7 57 57 0 0 0 11-9l-19-21a42 42 0 0 1-9 5 73 73 0 0 1-12 5 71 71 0 0 1-18 1 42 42 0 0 1-13-2 40 40 0 0 1-13-7 35 35 0 0 1-8-10 28 28 0 0 1-4-14h103v-5a118 118 0 0 0-4-29 74 74 0 0 0-11-25 59 59 0 0 0-21-18q-13-7-32-7a70 70 0 0 0-28 6zm58 43a29 29 0 0 1 2 10h-67a26 26 0 0 1 2-10 30 30 0 0 1 7-10 36 36 0 0 1 11-7 38 38 0 0 1 15-3 34 34 0 0 1 14 3 31 31 0 0 1 10 7 30 30 0 0 1 6 10zm-446-22a73 73 0 0 0-12 21q-5 12-5 28 0 17 6 30a70 70 0 0 0 13 23 57 57 0 0 0 20 13 55 55 0 0 0 22 5 53 53 0 0 0 14-2 60 60 0 0 0 11-4 47 47 0 0 0 9-6 69 69 0 0 0 7-6v13h34V86h-34v61l-7-2a39 39 0 0 0-7-2c-25-6-54 3-71 23zm73 7a28 28 0 0 1 12 5v42a45 45 0 0 1-2 13 36 36 0 0 1-6 11 29 29 0 0 1-10 9 31 31 0 0 1-15 3q-16 0-25-12t-9-29a52 52 0 0 1 3-16 46 46 0 0 1 6-14c12-14 28-17 46-12zM669 86v196h36v-73h29c16 0 32-5 44-14a56 56 0 0 0 15-20c8-14 8-32 3-47a53 53 0 0 0-10-20 70 70 0 0 0-54-22zm36 92v-60h26q13 0 22 8c12 11 12 32 1 44q-9 8-23 8zm121-34h33l1 17a67 67 0 0 1 6-6 51 51 0 0 1 42-13v33a31 31 0 0 0-4-1 55 55 0 0 0-9 0 39 39 0 0 0-13 2 32 32 0 0 0-11 7 33 33 0 0 0-10 24v74h-35V144zm109-58h37v36h-37V86zm1 58h34v137h-34V144zm66 0h33l1 16c12-13 22-19 40-19q27 0 41 20 11-11 22-15t25-5q26 0 40 15t14 42v83h-34v-83q0-13-7-20t-18-7a30 30 0 0 0-23 10 34 34 0 0 0-6 12 45 45 0 0 0-3 14v74h-34v-83q0-13-7-20c-11-12-31-8-41 3a35 35 0 0 0-6 12 45 45 0 0 0-2 14v74h-35V144zm559-58h37v36h-37V86zm2 58h34v137h-34z"></path><rect width="417" height="41" x="53" y="285" rx="8" ry="8"></rect><path d="M62 259l128-1a9 9 0 0 0 6-2 12 12 0 0 0 3-4 13 13 0 0 0 1-5 10 10 0 0 0-3-7L17 68a10 10 0 0 0-7-3 10 10 0 0 0-7 2 9 9 0 0 0-3 4 13 13 0 0 0 0 6l51 174c1 6 5 8 11 8zm399 0l-128-1a9 9 0 0 1-6-2 12 12 0 0 1-3-4 13 13 0 0 1-1-5 10 10 0 0 1 3-7L506 68a10 10 0 0 1 7-3 10 10 0 0 1 7 2 9 9 0 0 1 3 4 14 14 0 0 1 0 6l-51 174c-1 6-5 8-11 8zm-75-141L272 4a15 15 0 0 0-22 0L136 118a15 15 0 0 0 0 22l114 114c6 6 17 6 23 0l113-114a15 15 0 0 0 0-22zm-193 30a19 19 0 1 1 19-19 19 19 0 0 1-19 19zm68 68a19 19 0 1 1 19-19 19 19 0 0 1-19 19zm0-68a19 19 0 1 1 19-19 19 19 0 0 1-19 19zm0-68a19 19 0 1 1 19-19 19 19 0 0 1-19 19zm68 68a19 19 0 1 1 19-19 19 19 0 0 1-19 19z"></path></svg>
