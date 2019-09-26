@@ -12,9 +12,9 @@ class App extends Component {
       super();
       this.state = {
         client_seed: '9a6cd25df142fb3f3428943dfe89bc59-99',
-        server_seed: '91510311a789927ac94c5a1e5d8e5f62d42986e3e9e78fd5a9276964d1f11fef',
+        server_seed: '57f1e9feaa40b5fd320a89ad28190d6a2f80a3c6a79bfa5c734338a5379a574c',
         server_hash: '',
-        nonce: 17,
+        nonce: 2,
         games: [
             {name: 'Plinko'},
             {name: 'Mines'},
@@ -227,8 +227,6 @@ class App extends Component {
       }
 
       handlePlinko = () => {
-        let { numMines } = this.state;
-        let res = this.result('Mines').slice(0,numMines);
         // this.leading_zeroes(this.bytes_to_hex_array(this.bytes(64)));
         // this.leading_zeroes(this.bytes_to_hex_array(this.bytes(128, 64)));
         // this.leading_zeroes(this.bytes_to_hex_array(this.bytes(160, 32)));
