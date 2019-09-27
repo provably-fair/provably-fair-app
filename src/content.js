@@ -380,7 +380,9 @@ class Main extends React.Component {
         return nums;
     }
 
-  handleBaccarat = () => {
+  handleBaccarat = (server_seed, client_seed, nonce) => {
+    this.setState({server_seed:server_seed, client_seed:client_seed, nonce:nonce});
+
     let nums = [];
     for(const [index, value] of this.bytes_to_num_array(this.bytes(48)).entries()){
       nums.push(value);
@@ -390,7 +392,9 @@ class Main extends React.Component {
 
   }
 
-  handleHilo = () => {
+  handleHilo = (server_seed, client_seed, nonce) => {
+    this.setState({server_seed:server_seed, client_seed:client_seed, nonce:nonce});
+
     let nums = [];
     for(const [index, value] of this.bytes_to_num_array(this.bytes(448)).entries()){
       nums.push(value);
@@ -400,7 +404,9 @@ class Main extends React.Component {
 
   }
 
-  handleBlackjack = () => {
+  handleBlackjack = (server_seed, client_seed, nonce) => {
+    this.setState({server_seed:server_seed, client_seed:client_seed, nonce:nonce});
+
     let nums = [];
     for(const [index, value] of this.bytes_to_num_array(this.bytes(448)).entries()){
       nums.push(value);
@@ -410,12 +416,16 @@ class Main extends React.Component {
 
   }
 
-  handleMines = () => {
+  handleMines = (server_seed, client_seed, nonce) => {
+    this.setState({server_seed:server_seed, client_seed:client_seed, nonce:nonce});
+
     let res = this.result('Mines').slice(0,this.state.numMines);
     console.log("Mines : ", res);
   }
 
-  handleDiamondPoker = () => {
+  handleDiamondPoker = (server_seed, client_seed, nonce) => {
+    this.setState({server_seed:server_seed, client_seed:client_seed, nonce:nonce});
+
     let nums = [];
      nums.push(this.bytes_to_num_array(this.bytes(80)).map((x)=>{
       return Math.floor(x*7)
@@ -722,20 +732,40 @@ class Main extends React.Component {
                 var game = innerItem.bet.game;
                 switch(game){
                   case 'dice' : { isVerified = this.handleVerifyBetStake(item.bet.bet.serverSeed.seed,item.bet.bet.clientSeed.seed,item.bet.bet.nonce);
-                    console.log("isVerified", isVerified);}
-                    break;
+                  console.log("isVerified", isVerified);}
+                  break;
 
                   case 'limbo' : { isVerified = this.handleVerifyBetForLimbo(item.bet.bet.serverSeed.seed,item.bet.bet.clientSeed.seed,item.bet.bet.nonce);
-                    console.log("isVerified", isVerified);}
-                    break;
+                  console.log("isVerified", isVerified);}
+                  break;
 
                   case 'roulette' : { isVerified = this.handleVerifyBetForRoulette(item.bet.bet.serverSeed.seed,item.bet.bet.clientSeed.seed,item.bet.bet.nonce);
-                    console.log("isVerified", isVerified);}
-                    break;
+                  console.log("isVerified", isVerified);}
+                  break;
 
                   case 'plinko' : { isVerified = this.handlePlinko(item.bet.bet.serverSeed.seed,item.bet.bet.clientSeed.seed,item.bet.bet.nonce);
-                    console.log("isVerified", isVerified);}
-                    break;
+                  console.log("isVerified", isVerified);}
+                  break;
+
+                  case 'baccarat' : { isVerified = this.handleBaccarat(item.bet.bet.serverSeed.seed,item.bet.bet.clientSeed.seed,item.bet.bet.nonce);
+                  console.log("isVerified", isVerified);}
+                  break;
+
+                  case 'hilo' : { isVerified = this.handleHilo(item.bet.bet.serverSeed.seed,item.bet.bet.clientSeed.seed,item.bet.bet.nonce);
+                  console.log("isVerified", isVerified);}
+                  break;
+
+                  case 'blackjack' : { isVerified = this.handleBlackjack(item.bet.bet.serverSeed.seed,item.bet.bet.clientSeed.seed,item.bet.bet.nonce);
+                  console.log("isVerified", isVerified);}
+                  break;
+
+                  case 'mines' : { isVerified = this.handleMines(item.bet.bet.serverSeed.seed,item.bet.bet.clientSeed.seed,item.bet.bet.nonce);
+                  console.log("isVerified", isVerified);}
+                  break;
+
+                  case 'diamond poker' : { isVerified = this.handleDiamondPoker(item.bet.bet.serverSeed.seed,item.bet.bet.clientSeed.seed,item.bet.bet.nonce);
+                  console.log("isVerified", isVerified);}
+                  break;
 
                   default : isVerified = 0;
                      }
@@ -1541,7 +1571,8 @@ handleVerifyBetForLimbo = (serverSeedHash,clientSeed, nonce) => {
                                   {item.element.nonce}
                                   </td>
                                   <td>
-                                  {item.element.game==='plinko'?<img src="https://camo.githubusercontent.com/184f5fe3162ac51bdc0c89207d568c691d053aea/68747470733a2f2f662e636c6f75642e6769746875622e636f6d2f6173736574732f353331393931362f323437373339332f36303565656639362d623037302d313165332d383134612d3637613132383166303665312e706e67" style={{ width: '60%'}} data-toggle="popover" data-placement="left" title={item.element.isVerified}/>
+                                  {(item.element.game==='plinko' || item.element.game==='baccarat' || item.element.game==='hilo' || item.element.game==='blackjack' || item.element.game==='mines' || item.element.game==='diamond poker')
+                                  ?<img src="https://camo.githubusercontent.com/184f5fe3162ac51bdc0c89207d568c691d053aea/68747470733a2f2f662e636c6f75642e6769746875622e636f6d2f6173736574732f353331393931362f323437373339332f36303565656639362d623037302d313165332d383134612d3637613132383166303665312e706e67" style={{ width: '60%'}} data-toggle="popover" data-placement="left" title={item.element.isVerified}/>
                                   :item.element.isVerified}
                                   </td>
                                   </tr>
