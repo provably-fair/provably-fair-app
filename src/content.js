@@ -369,7 +369,7 @@ class Main extends React.Component {
     }
 
     handlePlinko = (server_seed, client_seed, nonce) => {
-      // this.setState({server_seed:server_seed, client_seed:client_seed, nonce:client_seed});
+      this.setState({server_seed:server_seed, client_seed:client_seed, nonce:nonce});
       let nums = [];
 
       for(const [index, value] of this.bytes_to_num_array(this.bytes(160)).entries()){
@@ -1541,7 +1541,8 @@ handleVerifyBetForLimbo = (serverSeedHash,clientSeed, nonce) => {
                                   {item.element.nonce}
                                   </td>
                                   <td>
-                                  {item.element.isVerified}
+                                  {item.element.game==='plinko'?<img src="https://camo.githubusercontent.com/184f5fe3162ac51bdc0c89207d568c691d053aea/68747470733a2f2f662e636c6f75642e6769746875622e636f6d2f6173736574732f353331393931362f323437373339332f36303565656639362d623037302d313165332d383134612d3637613132383166303665312e706e67" style={{ width: '60%'}} data-toggle="popover" data-placement="left" title={item.element.isVerified}/>
+                                  :item.element.isVerified}
                                   </td>
                                   </tr>
                                 })}
@@ -1625,13 +1626,13 @@ handleVerifyBetForLimbo = (serverSeedHash,clientSeed, nonce) => {
 
 
                           </div>
-                          <button className="btn btn-primary" onClick={()=>this.handleRoullete()}>Roullete</button>
+                        {/*  <button className="btn btn-primary" onClick={()=>this.handleRoullete()}>Roullete</button>
                           <button className="btn btn-primary" onClick={()=>this.handlePlinko()}>Plinko</button>
                           <button className="btn btn-primary" onClick={()=>this.handleBaccarat()}>Baccarat</button>
                           <button className="btn btn-primary" onClick={()=>this.handleHilo()}>Hilo</button>
                           <button className="btn btn-primary" onClick={()=>this.handleBlackjack()}>Blackjack</button>
                           <button className="btn btn-primary" onClick={()=>this.handleMines()}>Mines</button>
-                          <button className="btn btn-primary" onClick={()=>this.handleDiamondPoker()}>Diamond Poker</button>
+                          <button className="btn btn-primary" onClick={()=>this.handleDiamondPoker()}>Diamond Poker</button>*/}
                         </div>
                         )
                     }
