@@ -110,7 +110,7 @@ class Main extends React.Component {
             {name: 'Baccarat'},
             {name: 'Dice'}
         ],
-        numMines: 10,
+        numMines: 1,
         active_game: 'chartbet',
         MAX_ROLL: 10001,
         MAX_ROULETTE: 37,
@@ -763,7 +763,7 @@ class Main extends React.Component {
                   console.log("isVerified", isVerified);}
                   break;
 
-                  case 'diamond poker' : { isVerified = this.handleDiamondPoker(item.bet.bet.serverSeed.seed,item.bet.bet.clientSeed.seed,item.bet.bet.nonce);
+                  case 'diamondPoker' : { isVerified = this.handleDiamondPoker(item.bet.bet.serverSeed.seed,item.bet.bet.clientSeed.seed,item.bet.bet.nonce);
                   console.log("isVerified", isVerified);}
                   break;
 
@@ -1571,7 +1571,7 @@ handleVerifyBetForLimbo = (serverSeedHash,clientSeed, nonce) => {
                                   {item.element.nonce}
                                   </td>
                                   <td>
-                                  {(item.element.game==='plinko' || item.element.game==='baccarat' || item.element.game==='hilo' || item.element.game==='blackjack' || item.element.game==='mines' || item.element.game==='diamond poker')
+                                  {(item.element.game==='plinko' || item.element.game==='baccarat' || item.element.game==='hilo' || item.element.game==='blackjack' || item.element.game==='mines' || item.element.game==='diamondPoker')
                                   ?<img src="https://camo.githubusercontent.com/184f5fe3162ac51bdc0c89207d568c691d053aea/68747470733a2f2f662e636c6f75642e6769746875622e636f6d2f6173736574732f353331393931362f323437373339332f36303565656639362d623037302d313165332d383134612d3637613132383166303665312e706e67" style={{ width: '60%'}} data-toggle="popover" data-placement="left" title={item.element.isVerified}/>
                                   :item.element.isVerified}
                                   </td>
