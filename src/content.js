@@ -64,7 +64,6 @@ class Main extends React.Component {
         serverSeedHash:null,
         previousSeed:'',
         session_token:'',
-        nonce:0,
         betData:[],
         cryptoGames:false,
         stake:true,
@@ -98,7 +97,7 @@ class Main extends React.Component {
         client_seed: '9a6cd25df142fb3f3428943dfe89bc59-99',
         server_seed: '57f1e9feaa40b5fd320a89ad28190d6a2f80a3c6a79bfa5c734338a5379a574c',
         server_hash: '',
-        nonce: 2,
+        nonce: 0,
         games: [
             {name: 'Plinko'},
             {name: 'Mines'},
@@ -124,7 +123,6 @@ class Main extends React.Component {
       /* Type something here, it'll be executed after the App Component is loaded */
       // this.processBetsStake();
       setTimeout(()=>{
-        this.getAllBetsStake();
         console.log('Every second'); }, 1000);
     }
 
@@ -370,27 +368,22 @@ class Main extends React.Component {
       console.log("result", res, "resolve", resolve);
     }
 
-    handlePlinko = () => {
-      // this.leading_zeroes(this.bytes_to_hex_array(this.bytes(64)));
-      // this.leading_zeroes(this.bytes_to_hex_array(this.bytes(128, 64)));
-      // this.leading_zeroes(this.bytes_to_hex_array(this.bytes(160, 32)));
-
-      // let resolve = this.bytes_to_hex_array(this.bytes(8)).map((x) =>  {
-      //   return parseInt(x,16);
-      // });
+    handlePlinko = (server_seed, client_seed, nonce) => {
+      // this.setState({server_seed:server_seed, client_seed:client_seed, nonce:client_seed});
+      let nums = [];
 
       for(const [index, value] of this.bytes_to_num_array(this.bytes(160)).entries()){
         let direction = Math.floor(value*2)?'right':'left';
-        console.log("direction", direction);
+        nums.push(direction);
         }
+        console.log("Plinko -- ", nums);
+        return nums;
     }
 
   handleBaccarat = () => {
     let nums = [];
     for(const [index, value] of this.bytes_to_num_array(this.bytes(48)).entries()){
       nums.push(value);
-      // let direction = Math.floor(value*2)?'right':'left';
-      // console.log("direction", direction);
       }
     nums = this.nums_to_card_array(nums);
     console.log("nums : ", nums);
@@ -401,26 +394,20 @@ class Main extends React.Component {
     let nums = [];
     for(const [index, value] of this.bytes_to_num_array(this.bytes(448)).entries()){
       nums.push(value);
-      // let direction = Math.floor(value*2)?'right':'left';
-      // console.log("direction", direction);
       }
     nums = this.nums_to_card_array(nums);
     console.log("nums : ", nums);
 
-    // nums_to_card_array(bytes_to_num_array(bytes(448)))[i]
   }
 
   handleBlackjack = () => {
     let nums = [];
     for(const [index, value] of this.bytes_to_num_array(this.bytes(448)).entries()){
       nums.push(value);
-      // let direction = Math.floor(value*2)?'right':'left';
-      // console.log("direction", direction);
       }
     nums = this.nums_to_card_array(nums);
     console.log("nums : ", nums);
 
-    // nums_to_card_array(bytes_to_num_array(bytes(448)))[i]
   }
 
   handleMines = () => {
@@ -738,15 +725,19 @@ class Main extends React.Component {
                     console.log("isVerified", isVerified);}
                     break;
 
-                    case 'limbo' : { isVerified = this.handleVerifyBetForLimbo(item.bet.bet.serverSeed.seed,item.bet.bet.clientSeed.seed,item.bet.bet.nonce);
-                      console.log("isVerified", isVerified);}
-                      break;
+                  case 'limbo' : { isVerified = this.handleVerifyBetForLimbo(item.bet.bet.serverSeed.seed,item.bet.bet.clientSeed.seed,item.bet.bet.nonce);
+                    console.log("isVerified", isVerified);}
+                    break;
 
-                      case 'roulette' : { isVerified = this.handleVerifyBetForRoulette(item.bet.bet.serverSeed.seed,item.bet.bet.clientSeed.seed,item.bet.bet.nonce);
-                        console.log("isVerified", isVerified);}
-                        break;
+                  case 'roulette' : { isVerified = this.handleVerifyBetForRoulette(item.bet.bet.serverSeed.seed,item.bet.bet.clientSeed.seed,item.bet.bet.nonce);
+                    console.log("isVerified", isVerified);}
+                    break;
 
-                      default : isVerified = 0;
+                  case 'plinko' : { isVerified = this.handlePlinko(item.bet.bet.serverSeed.seed,item.bet.bet.clientSeed.seed,item.bet.bet.nonce);
+                    console.log("isVerified", isVerified);}
+                    break;
+
+                  default : isVerified = 0;
                      }
 
                      console.log("item.bet.iid.split('house:')" , item.bet.iid.split('house:'));
@@ -1191,6 +1182,7 @@ handleVerifyBetForLimbo = (serverSeedHash,clientSeed, nonce) => {
                                      <a className="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-1-tab" data-toggle="tab" href="#tabs-icons-text-1" role="tab" aria-controls="tabs-icons-text-1" aria-selected="true">Settings</a>
                                  </li>
                                  <li className="nav-item" onClick={()=>{
+                                   this.getAllBetsStake();
                                    this.setState({gettingStarted:false, settings:false, verification:true,  operators:false, faqs:false});
                                  }}>
                                      <a className="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-2-tab" data-toggle="tab" href="#tabs-icons-text-2" role="tab" aria-controls="tabs-icons-text-2" aria-selected="false">Verification</a>
@@ -1572,7 +1564,7 @@ handleVerifyBetForLimbo = (serverSeedHash,clientSeed, nonce) => {
                                 <li className="nav-item show" onClick={()=>{
                                   this.setState({gettingStarted:false, settings:false, verification:true,  operators:false});
                                 }}>
-                                    <a className="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-2-tab" data-toggle="tab" href="#tabs-icons-text-2" role="tab" aria-controls="tabs-icons-text-2" aria-selected="false"><i className="fa fa-bell-55 mr-2"></i>Verification</a>
+                                    <a className="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-2-tab" data-toggle="tab" href="#tabs-icons-text-2" role="tab" aria-controls="tabs-icons-text-2" aria-selected="false"><i className="fa fa-bell-55 mr-2"></i>Veri-----fication</a>
                                 </li>
                                 <li className="nav-item" onClick={()=>{
                                   this.setState({gettingStarted:false, settings:false, verification:false,  operators:true});
