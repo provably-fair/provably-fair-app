@@ -102,6 +102,9 @@ class Main extends React.Component {
     componentDidMount(){
       /* Type something here, it'll be executed after the App Component is loaded */
       // this.processBetsStake();
+      setTimeout(()=>{
+        this.getAllBetsStake();
+        console.log('Every second'); }, 1000);
     }
 
 
@@ -149,6 +152,8 @@ class Main extends React.Component {
 
 
       }
+
+
 
 /*****************************************************************************************************************************************************************/
 
@@ -215,8 +220,7 @@ class Main extends React.Component {
       })
       //should take user name as parameter
       let { betDataById, betDataEnriched, usernameStake } = this.state;
-      betDataById=[];
-      betDataEnriched = [];
+      // betDataEnriched = [];
 
        let name = `\"${usernameStake}\"`;
 
@@ -908,7 +912,6 @@ handleVerifyBetForLimbo = (serverSeedHash,clientSeed, nonce) => {
                                      <a className="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-1-tab" data-toggle="tab" href="#tabs-icons-text-1" role="tab" aria-controls="tabs-icons-text-1" aria-selected="true">Settings</a>
                                  </li>
                                  <li className="nav-item" onClick={()=>{
-                                   this.getAllBetsStake();
                                    this.setState({gettingStarted:false, settings:false, verification:true,  operators:false, faqs:false});
                                  }}>
                                      <a className="nav-link mb-sm-3 mb-md-0" id="tabs-icons-text-2-tab" data-toggle="tab" href="#tabs-icons-text-2" role="tab" aria-controls="tabs-icons-text-2" aria-selected="false">Verification</a>

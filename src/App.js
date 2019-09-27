@@ -310,7 +310,6 @@ class App extends Component {
           <button className="btn btn-primary" onClick={()=>this.handleMines()}>Mines</button>
           <button className="btn btn-primary" onClick={()=>this.handleDiamondPoker()}>Diamond Poker</button>
 
-
         </header>
         <p className="App-intro">
         </p>
