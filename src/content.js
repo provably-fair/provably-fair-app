@@ -90,6 +90,7 @@ class Main extends React.Component {
         nonceChecked:false,
         toggleState:false,
         showAlert:false,
+        popupResult:'',
         betAmount:0.0000001,
         betPayout:2.0,
         betPlaced:false,
@@ -170,10 +171,15 @@ class Main extends React.Component {
         // });
 
         console.log(promise1,promise2);
-
-
       }
 
+      hideAlertConfirm = () => {
+        this.setState({showAlert:false})
+      }
+
+      hideAlertCancel = () => {
+        this.setState({showAlert:false})
+      }
 
 
 /*****************************************************************************************************************************************************************/
@@ -309,10 +315,10 @@ class Main extends React.Component {
      * @returns {string[]} - The array of cards
      */
     nums_to_card_array = (nums) => {
-        const cards = ['&spades;2', '&hearts;2', '&diams;2', '&clubs;2', '&spades;3', '&hearts;3', '&diams;3', '&clubs;3', '&spades;4', '&hearts;4', '&diams;4', '&clubs;4',
-        '&spades;5', '&hearts;5', '&diams;5', '&clubs;5', '&spades;6', '&hearts;6', '&diams;6', '&clubs;6', '&spades;7', '&hearts;7', '&diams;7', '&clubs;7', '&spades;8', '&hearts;8',
-        '&diams;8', '&clubs;8', '&spades;9', '&hearts;9', '&diams;9', '&clubs;9', '&spades;10', '&hearts;10', '&diams;10', '&clubs;10', '&spades;J', '&hearts;J', '&diams;J', '&clubs;J',
-        '&spades;Q', '&hearts;Q', '&diams;Q', '&clubs;Q', '&spades;K', '&hearts;K', '&diams;K', '&clubs;K', '&spades;A', '&hearts;A', '&diams;A', '&clubs;A'];
+        const cards = ['spades_2', 'hearts_2', 'diams_2', 'clubs_2', 'spades_3', 'hearts_3', 'diams_3', 'clubs_3', 'spades_4', 'hearts_4', 'diams_4', 'clubs_4',
+        'spades_5', 'hearts_5', 'diams_5', 'clubs_5', 'spades_6', 'hearts_6', 'diams_6', 'clubs_6', 'spades_7', 'hearts_7', 'diams_7', 'clubs_7', 'spades_8', 'hearts_8',
+        'diams_8', 'clubs_8', 'spades_9', 'hearts_9', 'diams_9', 'clubs_9', 'spades_10', 'hearts_10', 'diams_10', 'clubs_10', 'spades_J', 'hearts_J', 'diams_J', 'clubs_J',
+        'spades_Q', 'hearts_Q', 'diams_Q', 'clubs_Q', 'spades_K', 'hearts_K', 'diams_K', 'clubs_K', 'spades_A', 'hearts_A', 'diams_A', 'clubs_A'];
         nums = nums.map((num) => {
             return cards[Math.floor(num * 52)];
         });
@@ -789,7 +795,6 @@ class Main extends React.Component {
             return a.element.nonce - b.element.nonce ;
           });
           console.log("betData : ",betData);
-          this.setState({showAlert:true});
         }
       })
     }
@@ -1197,7 +1202,7 @@ handleVerifyBetForLimbo = (serverSeedHash,clientSeed, nonce) => {
 
     render() {
       const { gettingStarted, settings, verification, operators, clientSeed, serverSeedHash, nonce, betData, cryptoGames, primeDice, stake, bitvest, diceResult, diceVerify, verify, apiKey, apiKeyStake, usernameStake, enterAPI, enterAPIStake,
-      Balance, BetId, Roll, nonceChecked, toggleState, betAmount, betPayout, betPlaced, isNonceManipulated, numberBetsVerFailed, betDataById, betDataEnriched, viewRecentBetsStake, faqs, showAlert } = this.state;
+      Balance, BetId, Roll, nonceChecked, toggleState, betAmount, betPayout, betPlaced, isNonceManipulated, numberBetsVerFailed, betDataById, betDataEnriched, viewRecentBetsStake, faqs, showAlert, popupResult } = this.state;
         return (
           <CookiesProvider>
             <Frame head={[<link type="text/css" rel="stylesheet" href={chrome.runtime.getURL("/static/css/content.css")} ></link>]}>
@@ -1208,19 +1213,7 @@ handleVerifyBetForLimbo = (serverSeedHash,clientSeed, nonce) => {
                       // Render Children
                         return (
                            <div className={'my-extension text-center'}>
-                           {/*showAlert &&
-                             <SweetAlert
-                                 warning
-                                 showCancel
-                                 confirmBtnText="Ok"
-                                 confirmBtnBsStyle="info"
-                                 cancelBtnBsStyle="default"
-                                 title="Bet Results"
-                                 onConfirm={this.hideAlertAcceptCollateralConfirm}
-                                 onCancel={this.hideAlertAcceptCollateralCancel}
-                             >
-                                 I'm an Alert!!
-                             </SweetAlert>*/}
+
                             <div className="nav-wrapper">
                              <ul className="nav nav-pills nav-fill flex-md-row" id="tabs-icons-text" role="tablist">
                                  <li className="nav-item"
@@ -1590,8 +1583,22 @@ handleVerifyBetForLimbo = (serverSeedHash,clientSeed, nonce) => {
                                   </td>
                                   <td>
                                   {(item.element.game==='plinko' || item.element.game==='baccarat' || item.element.game==='hilo' || item.element.game==='blackjack' || item.element.game==='mines' || item.element.game==='diamondPoker')
-                                  ?<img src="https://camo.githubusercontent.com/184f5fe3162ac51bdc0c89207d568c691d053aea/68747470733a2f2f662e636c6f75642e6769746875622e636f6d2f6173736574732f353331393931362f323437373339332f36303565656639362d623037302d313165332d383134612d3637613132383166303665312e706e67" style={{ width: '60%'}} data-toggle="popover" data-placement="left" title={item.element.isVerified}/>
+                                  ?<button className="btn btn-info" style={{ width: '60%'}} onClick = {()=>{
+                                    this.setState({showAlert:true, popupResult:item.element.isVerified});
+                                  }} title="Results"/>
                                   :item.element.isVerified}
+
+                                  {showAlert &&
+                                    <SweetAlert
+                                        info
+                                        confirmBtnText="Ok"
+                                        confirmBtnBsStyle="info"
+                                        title="Bet Results"
+                                        onConfirm={this.hideAlertConfirm}
+                                        onCancel={this.hideAlertCancel}
+                                    >
+                                        <p style={{fontSize: 'x-small'}}>{popupResult}</p>
+                                    </SweetAlert>}
                                   </td>
                                   </tr>
                                 })}
