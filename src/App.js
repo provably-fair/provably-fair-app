@@ -1,4 +1,4 @@
-import React from 'react';
+import React ,{Components} from 'react';
 import ReactDOM from 'react-dom';
 import Frame, { FrameContextConsumer }from 'react-frame-component';
 import SweetAlert from 'react-bootstrap-sweetalert';
@@ -13,61 +13,6 @@ import cryptoGamesIcon from './assets/img/cryptogames.png';
 import "./content.css";
 import './assets/css/argon.css';
 import qs from 'querystring';
-import clubs_2 from './assets/img/cards-png/2_of_clubs.png';
-import clubs_3 from './assets/img/cards-png/3_of_clubs.png';
-import clubs_4 from './assets/img/cards-png/4_of_clubs.png';
-import clubs_5 from './assets/img/cards-png/5_of_clubs.png';
-import clubs_6 from './assets/img/cards-png/6_of_clubs.png';
-import clubs_7 from './assets/img/cards-png/7_of_clubs.png';
-import clubs_8 from './assets/img/cards-png/8_of_clubs.png';
-import clubs_9 from './assets/img/cards-png/9_of_clubs.png';
-import clubs_10 from './assets/img/cards-png/10_of_clubs.png';
-import clubs_J from './assets/img/cards-png/jack_of_clubs.png';
-import clubs_Q from './assets/img/cards-png/queen_of_clubs.png';
-import clubs_K from './assets/img/cards-png/king_of_clubs.png';
-import clubs_A from './assets/img/cards-png/ace_of_clubs.png';
-
-import diams_2 from './assets/img/cards-png/2_of_diamonds.png';
-import diams_3 from './assets/img/cards-png/3_of_diamonds.png';
-import diams_4 from './assets/img/cards-png/4_of_diamonds.png';
-import diams_5 from './assets/img/cards-png/5_of_diamonds.png';
-import diams_6 from './assets/img/cards-png/6_of_diamonds.png';
-import diams_7 from './assets/img/cards-png/7_of_diamonds.png';
-import diams_8 from './assets/img/cards-png/8_of_diamonds.png';
-import diams_9 from './assets/img/cards-png/9_of_diamonds.png';
-import diams_10 from './assets/img/cards-png/10_of_diamonds.png';
-import diams_J from './assets/img/cards-png/jack_of_diamonds.png';
-import diams_Q from './assets/img/cards-png/queen_of_diamonds.png';
-import diams_K from './assets/img/cards-png/king_of_diamonds.png';
-import diams_A from './assets/img/cards-png/ace_of_diamonds.png';
-
-import hearts_2 from './assets/img/cards-png/2_of_hearts.png';
-import hearts_3 from './assets/img/cards-png/3_of_hearts.png';
-import hearts_4 from './assets/img/cards-png/4_of_hearts.png';
-import hearts_5 from './assets/img/cards-png/5_of_hearts.png';
-import hearts_6 from './assets/img/cards-png/6_of_hearts.png';
-import hearts_7 from './assets/img/cards-png/7_of_hearts.png';
-import hearts_8 from './assets/img/cards-png/8_of_hearts.png';
-import hearts_9 from './assets/img/cards-png/9_of_hearts.png';
-import hearts_10 from './assets/img/cards-png/10_of_hearts.png';
-import hearts_J from './assets/img/cards-png/jack_of_hearts.png';
-import hearts_Q from './assets/img/cards-png/queen_of_hearts.png';
-import hearts_K from './assets/img/cards-png/king_of_hearts.png';
-import hearts_A from './assets/img/cards-png/ace_of_hearts.png';
-
-import spades_2 from './assets/img/cards-png/2_of_spades.png';
-import spades_3 from './assets/img/cards-png/3_of_spades.png';
-import spades_4 from './assets/img/cards-png/4_of_spades.png';
-import spades_5 from './assets/img/cards-png/5_of_spades.png';
-import spades_6 from './assets/img/cards-png/6_of_spades.png';
-import spades_7 from './assets/img/cards-png/7_of_spades.png';
-import spades_8 from './assets/img/cards-png/8_of_spades.png';
-import spades_9 from './assets/img/cards-png/9_of_spades.png';
-import spades_10 from './assets/img/cards-png/10_of_spades.png';
-import spades_J from './assets/img/cards-png/jack_of_spades.png';
-import spades_Q from './assets/img/cards-png/queen_of_spades.png';
-import spades_K from './assets/img/cards-png/king_of_spades.png';
-import spades_A from './assets/img/cards-png/ace_of_spades.png';
 
 
 /* GraphQL query to get public chats of Stake Operator */
@@ -366,10 +311,63 @@ class App extends React.Component {
      * @returns {string[]} - The array of cards
      */
     nums_to_card_array = (nums) => {
-        const cards = ['spades_2', 'hearts_2', 'diams_2', 'clubs_2', 'spades_3', 'hearts_3', 'diams_3', 'clubs_3', 'spades_4', 'hearts_4', 'diams_4', 'clubs_4',
-        'spades_5', 'hearts_5', 'diams_5', 'clubs_5', 'spades_6', 'hearts_6', 'diams_6', 'clubs_6', 'spades_7', 'hearts_7', 'diams_7', 'clubs_7', 'spades_8', 'hearts_8',
-        'diams_8', 'clubs_8', 'spades_9', 'hearts_9', 'diams_9', 'clubs_9', 'spades_10', 'hearts_10', 'diams_10', 'clubs_10', 'spades_J', 'hearts_J', 'diams_J', 'clubs_J',
-        'spades_Q', 'hearts_Q', 'diams_Q', 'clubs_Q', 'spades_K', 'hearts_K', 'diams_K', 'clubs_K', 'spades_A', 'hearts_A', 'diams_A', 'clubs_A'];
+        const cards = [
+           '3_of_clubs',
+           '2_of_clubs',
+           '4_of_clubs',
+           '5_of_clubs',
+           '6_of_clubs',
+           '7_of_clubs',
+           '8_of_clubs',
+           '9_of_clubs',
+           '10_of_clubs',
+           'jack_of_clubs',
+           'queen_of_clubs',
+           'king_of_clubs',
+           'ace_of_clubs',
+
+           '2_of_diamonds',
+           '3_of_diamonds',
+           '4_of_diamonds',
+           '5_of_diamonds',
+           '6_of_diamonds',
+           '7_of_diamonds',
+           '8_of_diamonds',
+           '9_of_diamonds',
+           '10_of_diamonds',
+           'jack_of_diamonds',
+           'queen_of_diamonds',
+           'king_of_diamonds',
+           'ace_of_diamonds',
+
+           '2_of_hearts',
+           '3_of_hearts',
+           '4_of_hearts',
+           '5_of_hearts',
+           '6_of_hearts',
+           '7_of_hearts',
+           '8_of_hearts',
+           '9_of_hearts',
+           '10_of_hearts',
+           'jack_of_hearts',
+           'queen_of_hearts',
+           'king_of_hearts',
+           'ace_of_hearts',
+
+           '2_of_spades',
+           '3_of_spades',
+           '4_of_spades',
+           '5_of_spades',
+           '6_of_spades',
+           '7_of_spades',
+           '8_of_spades',
+           '9_of_spades',
+           '10_of_spades',
+           'jack_of_spades',
+           'queen_of_spades',
+           'king_of_spades',
+           'ace_of_spades',
+      ];
         nums = nums.map((num) => {
             return cards[Math.floor(num * 52)];
         });
@@ -544,8 +542,8 @@ class App extends React.Component {
 
 
 
-
     /* Method for get all Bet Data for Stake Operator */
+
 
     getAllBetsStake = () => {
 
@@ -1641,8 +1639,7 @@ handleVerifyBetForLimbo = (serverSeedHash,clientSeed, nonce) => {
                    onCancel={this.hideAlertCancel}
                >
                     {popupResult.map((item, i)=>{
-                      console.log("item : ", i ," : ",item);
-                      return <img src={clubs_2} style={{width:"10%"}}/>;
+                      return <img src={require('./assets/img/cards-png/' + item +'.png')} style={{width:"10%"}}/>;
                     })}
                    <p style={{fontSize: 'x-small'}}>{popupResult}</p>
                </SweetAlert>}
