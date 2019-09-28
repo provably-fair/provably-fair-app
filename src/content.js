@@ -315,10 +315,63 @@ class Main extends React.Component {
      * @returns {string[]} - The array of cards
      */
     nums_to_card_array = (nums) => {
-        const cards = ['spades_2', 'hearts_2', 'diams_2', 'clubs_2', 'spades_3', 'hearts_3', 'diams_3', 'clubs_3', 'spades_4', 'hearts_4', 'diams_4', 'clubs_4',
-        'spades_5', 'hearts_5', 'diams_5', 'clubs_5', 'spades_6', 'hearts_6', 'diams_6', 'clubs_6', 'spades_7', 'hearts_7', 'diams_7', 'clubs_7', 'spades_8', 'hearts_8',
-        'diams_8', 'clubs_8', 'spades_9', 'hearts_9', 'diams_9', 'clubs_9', 'spades_10', 'hearts_10', 'diams_10', 'clubs_10', 'spades_J', 'hearts_J', 'diams_J', 'clubs_J',
-        'spades_Q', 'hearts_Q', 'diams_Q', 'clubs_Q', 'spades_K', 'hearts_K', 'diams_K', 'clubs_K', 'spades_A', 'hearts_A', 'diams_A', 'clubs_A'];
+      const cards = [
+         '3_of_clubs',
+         '2_of_clubs',
+         '4_of_clubs',
+         '5_of_clubs',
+         '6_of_clubs',
+         '7_of_clubs',
+         '8_of_clubs',
+         '9_of_clubs',
+         '10_of_clubs',
+         'jack_of_clubs',
+         'queen_of_clubs',
+         'king_of_clubs',
+         'ace_of_clubs',
+
+         '2_of_diamonds',
+         '3_of_diamonds',
+         '4_of_diamonds',
+         '5_of_diamonds',
+         '6_of_diamonds',
+         '7_of_diamonds',
+         '8_of_diamonds',
+         '9_of_diamonds',
+         '10_of_diamonds',
+         'jack_of_diamonds',
+         'queen_of_diamonds',
+         'king_of_diamonds',
+         'ace_of_diamonds',
+
+         '2_of_hearts',
+         '3_of_hearts',
+         '4_of_hearts',
+         '5_of_hearts',
+         '6_of_hearts',
+         '7_of_hearts',
+         '8_of_hearts',
+         '9_of_hearts',
+         '10_of_hearts',
+         'jack_of_hearts',
+         'queen_of_hearts',
+         'king_of_hearts',
+         'ace_of_hearts',
+
+         '2_of_spades',
+         '3_of_spades',
+         '4_of_spades',
+         '5_of_spades',
+         '6_of_spades',
+         '7_of_spades',
+         '8_of_spades',
+         '9_of_spades',
+         '10_of_spades',
+         'jack_of_spades',
+         'queen_of_spades',
+         'king_of_spades',
+         'ace_of_spades',
+    ];
         nums = nums.map((num) => {
             return cards[Math.floor(num * 52)];
         });
@@ -1583,9 +1636,9 @@ handleVerifyBetForLimbo = (serverSeedHash,clientSeed, nonce) => {
                                   </td>
                                   <td>
                                   {(item.element.game==='plinko' || item.element.game==='baccarat' || item.element.game==='hilo' || item.element.game==='blackjack' || item.element.game==='mines' || item.element.game==='diamondPoker')
-                                  ?<button className="btn btn-info" style={{ width: '60%'}} onClick = {()=>{
+                                  ?<button className="btn btn-info" onClick = {()=>{
                                     this.setState({showAlert:true, popupResult:item.element.isVerified});
-                                  }} title="Results"/>
+                                  }} title="Results"> Result </button>
                                    :item.element.isVerified}
 
                                   {showAlert &&
@@ -1597,7 +1650,10 @@ handleVerifyBetForLimbo = (serverSeedHash,clientSeed, nonce) => {
                                         onConfirm={this.hideAlertConfirm}
                                         onCancel={this.hideAlertCancel}
                                     >
-                                        <p style={{fontSize: 'x-small'}}>{popupResult}</p>
+                                    {popupResult.map((item, i)=>{
+                                      return <img src={require('./assets/img/cards-png/' + item +'.png')} style={{width:"10%"}}/>;
+                                    })}
+                                    <p style={{fontSize: 'x-small'}}>{popupResult}</p>
                                     </SweetAlert>}
                                   </td>
                                   </tr>
