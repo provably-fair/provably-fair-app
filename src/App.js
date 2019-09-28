@@ -13,8 +13,61 @@ import cryptoGamesIcon from './assets/img/cryptogames.png';
 import "./content.css";
 import './assets/css/argon.css';
 import qs from 'querystring';
+import clubs_2 from './assets/img/cards-png/2_of_clubs.png';
+import clubs_3 from './assets/img/cards-png/3_of_clubs.png';
+import clubs_4 from './assets/img/cards-png/4_of_clubs.png';
+import clubs_5 from './assets/img/cards-png/5_of_clubs.png';
+import clubs_6 from './assets/img/cards-png/6_of_clubs.png';
+import clubs_7 from './assets/img/cards-png/7_of_clubs.png';
+import clubs_8 from './assets/img/cards-png/8_of_clubs.png';
+import clubs_9 from './assets/img/cards-png/9_of_clubs.png';
+import clubs_10 from './assets/img/cards-png/10_of_clubs.png';
+import clubs_J from './assets/img/cards-png/jack_of_clubs.png';
+import clubs_Q from './assets/img/cards-png/queen_of_clubs.png';
+import clubs_K from './assets/img/cards-png/king_of_clubs.png';
+import clubs_A from './assets/img/cards-png/ace_of_clubs.png';
 
+import diams_2 from './assets/img/cards-png/2_of_diamonds.png';
+import diams_3 from './assets/img/cards-png/3_of_diamonds.png';
+import diams_4 from './assets/img/cards-png/4_of_diamonds.png';
+import diams_5 from './assets/img/cards-png/5_of_diamonds.png';
+import diams_6 from './assets/img/cards-png/6_of_diamonds.png';
+import diams_7 from './assets/img/cards-png/7_of_diamonds.png';
+import diams_8 from './assets/img/cards-png/8_of_diamonds.png';
+import diams_9 from './assets/img/cards-png/9_of_diamonds.png';
+import diams_10 from './assets/img/cards-png/10_of_diamonds.png';
+import diams_J from './assets/img/cards-png/jack_of_diamonds.png';
+import diams_Q from './assets/img/cards-png/queen_of_diamonds.png';
+import diams_K from './assets/img/cards-png/king_of_diamonds.png';
+import diams_A from './assets/img/cards-png/ace_of_diamonds.png';
 
+import hearts_2 from './assets/img/cards-png/2_of_hearts.png';
+import hearts_3 from './assets/img/cards-png/3_of_hearts.png';
+import hearts_4 from './assets/img/cards-png/4_of_hearts.png';
+import hearts_5 from './assets/img/cards-png/5_of_hearts.png';
+import hearts_6 from './assets/img/cards-png/6_of_hearts.png';
+import hearts_7 from './assets/img/cards-png/7_of_hearts.png';
+import hearts_8 from './assets/img/cards-png/8_of_hearts.png';
+import hearts_9 from './assets/img/cards-png/9_of_hearts.png';
+import hearts_10 from './assets/img/cards-png/10_of_hearts.png';
+import hearts_J from './assets/img/cards-png/jack_of_hearts.png';
+import hearts_Q from './assets/img/cards-png/queen_of_hearts.png';
+import hearts_K from './assets/img/cards-png/king_of_hearts.png';
+import hearts_A from './assets/img/cards-png/ace_of_hearts.png';
+
+import spades_2 from './assets/img/cards-png/2_of_spades.png';
+import spades_3 from './assets/img/cards-png/3_of_spades.png';
+import spades_4 from './assets/img/cards-png/4_of_spades.png';
+import spades_5 from './assets/img/cards-png/5_of_spades.png';
+import spades_6 from './assets/img/cards-png/6_of_spades.png';
+import spades_7 from './assets/img/cards-png/7_of_spades.png';
+import spades_8 from './assets/img/cards-png/8_of_spades.png';
+import spades_9 from './assets/img/cards-png/9_of_spades.png';
+import spades_10 from './assets/img/cards-png/10_of_spades.png';
+import spades_J from './assets/img/cards-png/jack_of_spades.png';
+import spades_Q from './assets/img/cards-png/queen_of_spades.png';
+import spades_K from './assets/img/cards-png/king_of_spades.png';
+import spades_A from './assets/img/cards-png/ace_of_spades.png';
 
 
 /* GraphQL query to get public chats of Stake Operator */
@@ -1573,9 +1626,9 @@ handleVerifyBetForLimbo = (serverSeedHash,clientSeed, nonce) => {
              </td>
              <td>
              {(item.element.game==='plinko' || item.element.game==='baccarat' || item.element.game==='hilo' || item.element.game==='blackjack' || item.element.game==='mines' || item.element.game==='diamondPoker')
-             ?<button className="btn btn-info" style={{ width: '60%'}} onClick = {()=>{
+             ?<button className="btn btn-info" onClick = {()=>{
                this.setState({showAlert:true, popupResult:item.element.isVerified});
-             }} title="Results"/>
+             }} title="Results"> Result </button>
               :item.element.isVerified}
 
              {showAlert &&
@@ -1587,6 +1640,10 @@ handleVerifyBetForLimbo = (serverSeedHash,clientSeed, nonce) => {
                    onConfirm={this.hideAlertConfirm}
                    onCancel={this.hideAlertCancel}
                >
+                    {popupResult.map((item, i)=>{
+                      console.log("item : ", i ," : ",item);
+                      return <img src={clubs_2} style={{width:"10%"}}/>;
+                    })}
                    <p style={{fontSize: 'x-small'}}>{popupResult}</p>
                </SweetAlert>}
              </td>
