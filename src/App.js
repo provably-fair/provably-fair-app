@@ -1631,12 +1631,10 @@ handleVerifyBetForLimbo = (serverSeedHash,clientSeed, nonce) => {
 
              {showAlert &&
                <SweetAlert
-                   info
                    confirmBtnText="Ok"
                    confirmBtnBsStyle="info"
                    title="Bet Results"
                    onConfirm={this.hideAlertConfirm}
-                   onCancel={this.hideAlertCancel}
                >
                     {popupResult.map((item, i)=>{
                       return <img src={require('./assets/img/cards-png/' + item +'.png')} style={{width:"10%"}}/>;
