@@ -3,6 +3,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import Frame, { FrameContextConsumer }from 'react-frame-component';
+import SweetAlert from 'react-bootstrap-sweetalert';
 import { GraphQLClient } from 'graphql-request'
 import { CookiesProvider } from 'react-cookie';
 import Cookies from 'js-cookie';
@@ -88,6 +89,7 @@ class Main extends React.Component {
         previousServerSeedStake:'',
         nonceChecked:false,
         toggleState:false,
+        showAlert:false,
         betAmount:0.0000001,
         betPayout:2.0,
         betPlaced:false,
@@ -359,6 +361,7 @@ class Main extends React.Component {
       let resolve = Math.floor(this.bytes_to_number(this.bytes(8)) * MAX_ROULETTE);
       let res = this.result(resolve);
       console.log("result", res, "resolve", resolve);
+      return res;
     }
 
     handleChartbet = () =>{
@@ -389,7 +392,7 @@ class Main extends React.Component {
       }
     nums = this.nums_to_card_array(nums);
     console.log("nums : ", nums);
-
+    return nums;
   }
 
   handleHilo = (server_seed, client_seed, nonce) => {
@@ -401,7 +404,7 @@ class Main extends React.Component {
       }
     nums = this.nums_to_card_array(nums);
     console.log("nums : ", nums);
-
+    return nums;
   }
 
   handleBlackjack = (server_seed, client_seed, nonce) => {
@@ -413,6 +416,7 @@ class Main extends React.Component {
       }
     nums = this.nums_to_card_array(nums);
     console.log("nums : ", nums);
+    return nums;
 
   }
 
@@ -431,6 +435,7 @@ class Main extends React.Component {
       return Math.floor(x*7)
     }));
     console.log("Diamond Poker : ", nums);
+    return nums;
 
   }
 
@@ -784,6 +789,7 @@ class Main extends React.Component {
             return a.element.nonce - b.element.nonce ;
           });
           console.log("betData : ",betData);
+          this.setState({showAlert:true});
         }
       })
     }
@@ -1191,7 +1197,7 @@ handleVerifyBetForLimbo = (serverSeedHash,clientSeed, nonce) => {
 
     render() {
       const { gettingStarted, settings, verification, operators, clientSeed, serverSeedHash, nonce, betData, cryptoGames, primeDice, stake, bitvest, diceResult, diceVerify, verify, apiKey, apiKeyStake, usernameStake, enterAPI, enterAPIStake,
-      Balance, BetId, Roll, nonceChecked, toggleState, betAmount, betPayout, betPlaced, isNonceManipulated, numberBetsVerFailed, betDataById, betDataEnriched, viewRecentBetsStake, faqs } = this.state;
+      Balance, BetId, Roll, nonceChecked, toggleState, betAmount, betPayout, betPlaced, isNonceManipulated, numberBetsVerFailed, betDataById, betDataEnriched, viewRecentBetsStake, faqs, showAlert } = this.state;
         return (
           <CookiesProvider>
             <Frame head={[<link type="text/css" rel="stylesheet" href={chrome.runtime.getURL("/static/css/content.css")} ></link>]}>
@@ -1202,7 +1208,19 @@ handleVerifyBetForLimbo = (serverSeedHash,clientSeed, nonce) => {
                       // Render Children
                         return (
                            <div className={'my-extension text-center'}>
-
+                           {/*showAlert &&
+                             <SweetAlert
+                                 warning
+                                 showCancel
+                                 confirmBtnText="Ok"
+                                 confirmBtnBsStyle="info"
+                                 cancelBtnBsStyle="default"
+                                 title="Bet Results"
+                                 onConfirm={this.hideAlertAcceptCollateralConfirm}
+                                 onCancel={this.hideAlertAcceptCollateralCancel}
+                             >
+                                 I'm an Alert!!
+                             </SweetAlert>*/}
                             <div className="nav-wrapper">
                              <ul className="nav nav-pills nav-fill flex-md-row" id="tabs-icons-text" role="tablist">
                                  <li className="nav-item"
@@ -1657,6 +1675,7 @@ handleVerifyBetForLimbo = (serverSeedHash,clientSeed, nonce) => {
 
 
                           </div>
+
                         {/*  <button className="btn btn-primary" onClick={()=>this.handleRoullete()}>Roullete</button>
                           <button className="btn btn-primary" onClick={()=>this.handlePlinko()}>Plinko</button>
                           <button className="btn btn-primary" onClick={()=>this.handleBaccarat()}>Baccarat</button>
