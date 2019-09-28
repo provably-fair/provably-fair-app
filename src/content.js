@@ -1586,7 +1586,7 @@ handleVerifyBetForLimbo = (serverSeedHash,clientSeed, nonce) => {
                                   ?<button className="btn btn-info" style={{ width: '60%'}} onClick = {()=>{
                                     this.setState({showAlert:true, popupResult:item.element.isVerified});
                                   }} title="Results"/>
-                                  :item.element.isVerified}
+                                   :item.element.isVerified}
 
                                   {showAlert &&
                                     <SweetAlert
