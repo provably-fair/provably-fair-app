@@ -130,15 +130,19 @@ class App extends React.Component {
 
       /* Defining function to get unique values from an array */
      getUnique = (array) => {
-        var uniqueArray = [];
+        let uniqueArray = [];
 
-        // Loop through array values
-        for(let i=0; i < array.length; i++){
-            if(uniqueArray.indexOf(array[i]) === -1) {
-                uniqueArray.push(array[i]);
-            }
+        array.map((item) => {
+         for(let i=0; i < array.length; i++){
+           console.log("item.bet.iid == array[i].bet.iid", item.bet.iid, array[i].bet.iid);
+           if(item.bet.iid == array[i].bet.iid){
+             uniqueArray.push(item);
+             i++;
+           }
         }
-        return uniqueArray;
+      })
+
+      return uniqueArray
     }
 
       /* Method for generating Randomised Client Seed */
