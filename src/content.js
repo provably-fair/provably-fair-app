@@ -4,7 +4,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import Frame, { FrameContextConsumer }from 'react-frame-component';
 import SweetAlert from 'react-bootstrap-sweetalert';
-import { GraphQLClient } from 'graphql-request'
+import { GraphQLClient } from 'graphql-request';
 import { CookiesProvider } from 'react-cookie';
 import Cookies from 'js-cookie';
 import axios from 'axios';
@@ -1635,11 +1635,11 @@ handleVerifyBetForLimbo = (serverSeedHash,clientSeed, nonce) => {
                                   {item.element.nonce}
                                   </td>
                                   <td>
-                                  {(item.element.game==='plinko' || item.element.game==='baccarat' || item.element.game==='hilo' || item.element.game==='blackjack' || item.element.game==='mines' || item.element.game==='diamondPoker')
+                                  {(item.element.game==='baccarat' || item.element.game==='hilo' || item.element.game==='blackjack')
                                   ?<button className="btn btn-info" onClick = {()=>{
                                     this.setState({showAlert:true, popupResult:item.element.isVerified});
                                   }} title="Results"> Result </button>
-                                   :item.element.isVerified}
+                                 :<img src="https://www.freeiconspng.com/uploads/info-icon-5.png" style={{ width: '50%'}} data-toggle="popover" data-placement="left" title={item.element.isVerified} />}
 
                                   {showAlert &&
                                     <SweetAlert
