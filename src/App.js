@@ -121,29 +121,13 @@ class App extends React.Component {
     componentDidMount(){
       /* Type something here, it'll be executed after the App Component is loaded */
       // this.processBetsStake();
-
+      setTimeout(()=>{
+        console.log('Every second'); }, 1000);
     }
 
 
 /*****************************************************************************************************************************************************************/
       /** Generic Methods **/
-
-      /* Defining function to get unique values from an array */
-     getUnique = (array) => {
-        let uniqueArray = [];
-
-        array.map((item) => {
-         for(let i=0; i < array.length; i++){
-           console.log("item.bet.iid == array[i].bet.iid", item.bet.iid, array[i].bet.iid);
-           if(item.bet.iid == array[i].bet.iid){
-             uniqueArray.push(item);
-             i++;
-           }
-        }
-      })
-
-      return uniqueArray
-    }
 
       /* Method for generating Randomised Client Seed */
 
@@ -170,16 +154,11 @@ class App extends React.Component {
           }, 1000);
         });
 
-
-        setTimeout(()=>{
-          this.getAllBetsStake();
-          console.log('Every 3 second getAllBetsStake'); }, 3000);
-
-        let promise3 = new Promise((resolve, reject) => {
-          setTimeout(() => {
-            this.getAllBetsStake();
-          }, 7000);
-        });
+        // let promise3 = new Promise((resolve, reject) => {
+        //   setTimeout(() => {
+        //     this.getAllBetsStake();
+        //   }, 7000);
+        // });
 
         // let promise4 = new Promise((resolve, reject) => {
         //   setTimeout(() => {
@@ -187,7 +166,7 @@ class App extends React.Component {
         //   }, 4000);
         // });
 
-        console.log(promise1,promise2, promise3);
+        console.log(promise1,promise2);
       }
 
       hideAlertConfirm = () => {
@@ -796,9 +775,8 @@ class App extends React.Component {
        console.log("betDataById", betDataById);
        console.log("previousClientSeedStake", previousClientSeedStake, "previousServerSeedStake", previousServerSeedStake ,"activeClientSeedStake", activeClientSeedStake);
 
-       let uniqueBetDataById = this.getUnique(betDataById)
-       console.log("uniqueBetDataById", uniqueBetDataById);
-      uniqueBetDataById.map( (item) => {
+
+      betDataById.map( (item) => {
        console.log("item.bet.bet.clientSeed.seed", item.bet.bet.clientSeed.seed, "item.bet.bet.serverSeed.seed", item.bet.bet.serverSeed.seed);
         if( ((item.bet.bet.clientSeed.seed == activeClientSeedStake) && (item.bet.bet.serverSeed.seed == previousServerSeedStake)) || ((item.bet.bet.clientSeed.seed == previousClientSeedStake) && (item.bet.bet.serverSeed.seed == previousServerSeedStake)) )
         {
