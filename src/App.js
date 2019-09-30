@@ -93,9 +93,9 @@ class App extends React.Component {
         numberBetsVerFailed:0,
         isNonceManipulated:false,
         viewRecentBetsStake:false,
-        client_seed: '9a6cd25df142fb3f3428943dfe89bc59-99',
-        server_seed: '57f1e9feaa40b5fd320a89ad28190d6a2f80a3c6a79bfa5c734338a5379a574c',
-        server_hash: '',
+        client_seed: null,
+        server_seed: null,
+        server_hash: null,
         nonce: 0,
         games: [
             {name: 'Plinko'},
@@ -223,11 +223,11 @@ class App extends React.Component {
      * @param {number} num - If defined, the string is truncated to the last n=num characters
      * @returns {string} A hex string
      */
-    bytes = (length, num) => {
+    bytes = (server_seed, client_seed, nonce, length, num) => {
         let result = '';
         let round = 0;
         while(result.length < length) {
-            result += this.hmac_sha256(this.state.server_seed, `${this.state.client_seed}:${this.state.nonce||0}:${round++}`);
+            result += this.hmac_sha256(server_seed, `${client_seed}:${nonce||0}:${round++}`);
         }
         if(result.length > length) {
             result = result.substring(0, length);
@@ -393,36 +393,37 @@ class App extends React.Component {
      * @param {string} game - The game to return the result for
      * @returns The result for the game
      */
-    result = (game) => {
+    result = (game/*, server_seed, client_seed, nonce*/) => {
+      let {server_seed, client_seed, nonce} = this.state;
         switch(game) {
             case 'Dice':
-                return (Math.floor(this.bytes_to_number(this.bytes(8)) * this.state.MAX_ROLL) / 100).toFixed(2);
+                return (Math.floor(this.bytes_to_number(this.bytes(server_seed, client_seed, nonce, 8)) * this.state.MAX_ROLL) / 100).toFixed(2);
             case 'Roulette':
-                return Math.floor(this.bytes_to_number(this.bytes(8)) * this.state.MAX_ROULETTE);
+                return Math.floor(this.bytes_to_number(this.bytes(server_seed, client_seed, nonce, 8)) * this.state.MAX_ROULETTE);
             case 'Chartbet':
-                return (this.state.MAX_CHARTBET / (Math.floor(this.bytes_to_number(this.bytes(8)) * this.state.MAX_CHARTBET) + 1) * 0.98);
+                return (this.state.MAX_CHARTBET / (Math.floor(this.bytes_to_number(this.bytes(server_seed, client_seed, nonce, 8)) * this.state.MAX_CHARTBET) + 1) * 0.98);
             case 'Mines':
-                return this.nums_to_mine_array(this.bytes_to_num_array(this.bytes(196)));
+                return this.nums_to_mine_array(this.bytes_to_num_array(this.bytes(server_seed, client_seed, nonce, 196)));
             case 'Keno':
-                return this.nums_to_tile_array(this.bytes_to_num_array(this.bytes(80)));
+                return this.nums_to_tile_array(this.bytes_to_num_array(this.bytes(server_seed, client_seed, nonce, 80)));
             default:
                 return 'Unknown game';
         }
     }
 
-    handleRoullete = () =>{
+    handleRoullete = (server_seed, client_seed, nonce) =>{
       let { active_game, MAX_ROULETTE } = this.state;
       active_game = 'Roulette';
-      let resolve = Math.floor(this.bytes_to_number(this.bytes(8)) * MAX_ROULETTE);
+      let resolve = Math.floor(this.bytes_to_number(this.bytes(server_seed, client_seed, nonce, 8)) * MAX_ROULETTE);
       let res = this.result(resolve);
       console.log("result", res, "resolve", resolve);
       return res;
     }
 
-    handleChartbet = () =>{
+    handleChartbet = (server_seed, client_seed, nonce) =>{
       const { active_game, MAX_CHARTBET } = this.state;
       let res = this.result(active_game);
-      let resolve = MAX_CHARTBET / (Math.floor(this.bytes_to_number(this.bytes(8)) * MAX_CHARTBET) + 1) * 0.98;
+      let resolve = MAX_CHARTBET / (Math.floor(this.bytes_to_number(this.bytes(server_seed, client_seed, nonce, 8)) * MAX_CHARTBET) + 1) * 0.98;
       console.log("result", res, "resolve", resolve);
     }
 
@@ -430,10 +431,10 @@ class App extends React.Component {
       this.setState({server_seed:server_seed, client_seed:client_seed, nonce:nonce});
       let nums = [];
 
-      for(const [index, value] of this.bytes_to_num_array(this.bytes(160)).entries()){
+      this.bytes_to_num_array(this.bytes(server_seed, client_seed, nonce, 160)).map((value, index) => {
         let direction = Math.floor(value*2)?'right':'left';
         nums.push(direction);
-        }
+      })
         console.log("Plinko -- ", nums);
         return nums;
     }
@@ -442,7 +443,7 @@ class App extends React.Component {
     this.setState({server_seed:server_seed, client_seed:client_seed, nonce:nonce});
 
     let nums = [];
-    for(const [index, value] of this.bytes_to_num_array(this.bytes(48)).entries()){
+    for(const [index, value] of this.bytes_to_num_array(this.bytes(server_seed, client_seed, nonce, 48)).entries()){
       nums.push(value);
       }
     nums = this.nums_to_card_array(nums);
@@ -452,9 +453,26 @@ class App extends React.Component {
 
   handleHilo = (server_seed, client_seed, nonce) => {
     this.setState({server_seed:server_seed, client_seed:client_seed, nonce:nonce});
+    //
+    // let hex = [];
+    // hex.push(this.bytes_to_hex_array(this.bytes(server_seed, client_seed, nonce, 64)));
+    // hex.push(this.bytes_to_hex_array(this.bytes(server_seed, client_seed, nonce, 128, 64)));
+    // hex.push(this.bytes_to_hex_array(this.bytes(server_seed, client_seed, nonce, 192, 64)));
+    // hex.push(this.bytes_to_hex_array(this.bytes(server_seed, client_seed, nonce, 256, 64)));
+    // hex.push(this.bytes_to_hex_array(this.bytes(server_seed, client_seed, nonce, 320, 64)));
+    // hex.push(this.bytes_to_hex_array(this.bytes(server_seed, client_seed, nonce, 384, 64)));
+    // hex.push(this.bytes_to_hex_array(this.bytes(server_seed, client_seed, nonce, 448, 64)));
+    //
+    // console.log("hex array =", hex);
+    //
+    // let intArray = this.bytes_to_hex_array(this.bytes(server_seed, client_seed, nonce, 8)).map((x)=>{
+    //   return parseInt(x,16);
+    // })
+    //
+    // console.log("Int array =", intArray);
 
     let nums = [];
-    for(const [index, value] of this.bytes_to_num_array(this.bytes(448)).entries()){
+    for(const [index, value] of this.bytes_to_num_array(this.bytes(server_seed, client_seed, nonce, 448)).entries()){
       nums.push(value);
       }
     nums = this.nums_to_card_array(nums);
@@ -466,7 +484,7 @@ class App extends React.Component {
     this.setState({server_seed:server_seed, client_seed:client_seed, nonce:nonce});
 
     let nums = [];
-    for(const [index, value] of this.bytes_to_num_array(this.bytes(448)).entries()){
+    for(const [index, value] of this.bytes_to_num_array(this.bytes(server_seed, client_seed, nonce, 448)).entries()){
       nums.push(value);
       }
     nums = this.nums_to_card_array(nums);
@@ -486,7 +504,7 @@ class App extends React.Component {
     this.setState({server_seed:server_seed, client_seed:client_seed, nonce:nonce});
 
     let nums = [];
-     nums.push(this.bytes_to_num_array(this.bytes(80)).map((x)=>{
+     nums.push(this.bytes_to_num_array(this.bytes(server_seed, client_seed, nonce, 80)).map((x)=>{
       return Math.floor(x*7)
     }));
     console.log("Diamond Poker : ", nums);
@@ -789,7 +807,7 @@ class App extends React.Component {
               if(innerItem.iid == item.bet.iid)
               {
                 let isVerified;
-                var game = innerItem.bet.game;
+                const game = innerItem.bet.game;
                 switch(game){
                   case 'dice' : { isVerified = this.handleVerifyBetStake(item.bet.bet.serverSeed.seed,item.bet.bet.clientSeed.seed,item.bet.bet.nonce);
                   console.log("isVerified", isVerified);}
@@ -1724,14 +1742,6 @@ handleVerifyBetForLimbo = (serverSeedHash,clientSeed, nonce) => {
 
 
      </div>
-
-   {/*  <button className="btn btn-primary" onClick={()=>this.handleRoullete()}>Roullete</button>
-     <button className="btn btn-primary" onClick={()=>this.handlePlinko()}>Plinko</button>
-     <button className="btn btn-primary" onClick={()=>this.handleBaccarat()}>Baccarat</button>
-     <button className="btn btn-primary" onClick={()=>this.handleHilo()}>Hilo</button>
-     <button className="btn btn-primary" onClick={()=>this.handleBlackjack()}>Blackjack</button>
-     <button className="btn btn-primary" onClick={()=>this.handleMines()}>Mines</button>
-     <button className="btn btn-primary" onClick={()=>this.handleDiamondPoker()}>Diamond Poker</button>*/}
    </div>
     );
   }
