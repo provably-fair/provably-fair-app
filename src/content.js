@@ -1638,7 +1638,7 @@ handleVerifyBetForLimbo = (serverSeedHash,clientSeed, nonce) => {
                                   {(item.element.game==='baccarat' || item.element.game==='hilo' || item.element.game==='blackjack')
                                   ?<button className="btn btn-info" onClick = {()=>{
                                     this.setState({showAlert:true, popupResult:item.element.isVerified});
-                                  }} title="Results"> Result </button>
+                                  }} title="Results"></button>
                                  :<img src="https://www.freeiconspng.com/uploads/info-icon-5.png" style={{ width: '50%'}} data-toggle="popover" data-placement="left" title={item.element.isVerified} />}
 
                                   {showAlert &&
