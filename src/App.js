@@ -418,7 +418,7 @@ class App extends React.Component {
         }
     }
 
-    handleRoullete = (server_seed, client_seed, nonce) =>{
+    handleRoullete = (server_seed, client_seed, nonce) => {
       let { active_game, MAX_ROULETTE } = this.state;
       active_game = 'Roulette';
       let resolve = Math.floor(this.bytes_to_number(this.bytes(server_seed, client_seed, nonce, 8)) * MAX_ROULETTE);
@@ -427,7 +427,7 @@ class App extends React.Component {
       return res;
     }
 
-    handleChartbet = (server_seed, client_seed, nonce) =>{
+    handleChartbet = (server_seed, client_seed, nonce) => {
       const { active_game, MAX_CHARTBET } = this.state;
       let res = this.result(active_game);
       let resolve = MAX_CHARTBET / (Math.floor(this.bytes_to_number(this.bytes(server_seed, client_seed, nonce, 8)) * MAX_CHARTBET) + 1) * 0.98;
@@ -460,23 +460,6 @@ class App extends React.Component {
 
   handleHilo = (server_seed, client_seed, nonce) => {
     this.setState({server_seed:server_seed, client_seed:client_seed, nonce:nonce});
-    //
-    // let hex = [];
-    // hex.push(this.bytes_to_hex_array(this.bytes(server_seed, client_seed, nonce, 64)));
-    // hex.push(this.bytes_to_hex_array(this.bytes(server_seed, client_seed, nonce, 128, 64)));
-    // hex.push(this.bytes_to_hex_array(this.bytes(server_seed, client_seed, nonce, 192, 64)));
-    // hex.push(this.bytes_to_hex_array(this.bytes(server_seed, client_seed, nonce, 256, 64)));
-    // hex.push(this.bytes_to_hex_array(this.bytes(server_seed, client_seed, nonce, 320, 64)));
-    // hex.push(this.bytes_to_hex_array(this.bytes(server_seed, client_seed, nonce, 384, 64)));
-    // hex.push(this.bytes_to_hex_array(this.bytes(server_seed, client_seed, nonce, 448, 64)));
-    //
-    // console.log("hex array =", hex);
-    //
-    // let intArray = this.bytes_to_hex_array(this.bytes(server_seed, client_seed, nonce, 8)).map((x)=>{
-    //   return parseInt(x,16);
-    // })
-    //
-    // console.log("Int array =", intArray);
 
     let nums = [];
     for(const [index, value] of this.bytes_to_num_array(this.bytes(server_seed, client_seed, nonce, 448)).entries()){
@@ -519,9 +502,28 @@ class App extends React.Component {
       return GEMS[Math.floor(x * 7)];
     }));
     console.log("Diamond Poker : ", nums);
-
     return nums;
 
+  }
+
+  handleCrash = (server_seed, client_seed, nonce) => {
+
+    this.setState({server_seed:server_seed, client_seed:client_seed, nonce:nonce});
+
+    const hmac = createHmac('sha256', server_seed);
+
+    // blockHash is the hash of bitcoin block 584,500
+
+    hmac.update(client_seed);
+
+    const hex = hmac.digest('hex').substr(0, 8);
+    const int = parseInt(hex, 16);
+
+    // 0.01 will result in 1% house edge with a lowest crashpoint of 1
+
+    const crashpoint = Math.max(1, (2 ** 32 / (int + 1)) * (1 - 0.01))
+
+    return crashpoint;
   }
 
     /* Method to get all bet data of user bets for Stake Operator */
@@ -857,6 +859,10 @@ class App extends React.Component {
                   console.log("isVerified", isVerified);}
                   break;
 
+                  case 'crash' : { isVerified = this.handleCrash(item.bet.bet.serverSeed.seed,item.bet.bet.clientSeed.seed,item.bet.bet.nonce);
+                  console.log("isVerified", isVerified);}
+                  break;
+
                   default : isVerified = 0;
                      }
 
@@ -886,6 +892,7 @@ class App extends React.Component {
         // bet made with seed pair (excluding current bet)
         // crypto lib for hmac function
         const crypto = require('crypto');
+
         const roll = function(key, text) {
         // create HMAC using server seed as key and client seed as message
         const hash = crypto .createHmac('sha256', key) .update(text) .digest('hex');
