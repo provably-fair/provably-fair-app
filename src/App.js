@@ -116,14 +116,6 @@ class App extends React.Component {
     }
 
 
-    componentDidMount(){
-      /* Type something here, it'll be executed after the App Component is loaded */
-      // this.processBetsStake();
-      setTimeout(()=>{
-        console.log('Every second'); }, 1000);
-    }
-
-
 /*****************************************************************************************************************************************************************/
       /** Generic Methods **/
 
@@ -151,18 +143,6 @@ class App extends React.Component {
             self.getAllUserSeedsStake();
           }, 1000);
         });
-
-        // let promise3 = new Promise((resolve, reject) => {
-        //   setTimeout(() => {
-        //     this.getAllBetsStake();
-        //   }, 7000);
-        // });
-
-        // let promise4 = new Promise((resolve, reject) => {
-        //   setTimeout(() => {
-        //     this.processBetsStake();
-        //   }, 4000);
-        // });
 
         console.log(promise1,promise2);
       }
@@ -795,7 +775,6 @@ class App extends React.Component {
         console.log("serverSeedHash",data.rotateServerSeed.seedHash)
         this.setState({serverSeedHash:data.rotateServerSeed.seedHash})
       })
-     // this.processBetsStake();
     }
 
     processBetsStake =  () => {
@@ -1321,7 +1300,7 @@ handleVerifyBetForLimbo = (serverSeedHash,clientSeed, nonce) => {
       <div style={{display:gettingStarted?'block':'none'}}>
 
        <h6 className="text-center"><strong>Crypto Gambling Foundation Verifier</strong></h6>
-       <img src="https://pbs.twimg.com/profile_images/906057204578390016/-icT77rY_400x400.jpg"  style={{ width: '90%'}}/>
+       <img src={require("./images/CGFlogo.png")}  style={{ width: '75%'}}/>
 
        <p><span style={{fontStyle:'bold'}}>Operator</span> is a CGF verified operator.</p>
        <button className="btn btn-info mb-3" type="button" onClick={()=>{
@@ -1602,7 +1581,7 @@ handleVerifyBetForLimbo = (serverSeedHash,clientSeed, nonce) => {
 
          <tbody>
            {betData.map((item,i)=>{
-             return <tr>
+             return <tr key={i}>
              <td>
              {item.element.id}
              </td>
@@ -1664,7 +1643,7 @@ handleVerifyBetForLimbo = (serverSeedHash,clientSeed, nonce) => {
              ?<button className="btn btn-info" onClick = {()=>{
                this.setState({showAlert:true, popupResult:item.element.isVerified});
              }} title="Results"> </button>
-            :<img src="https://www.freeiconspng.com/uploads/info-icon-5.png" style={{ width: '10%'}} data-toggle="popover" data-placement="left" title={item.element.isVerified} />}
+            :<img src={require("./images/info-icon-5.png")} style={{ width: '50%'}} data-toggle="popover" data-placement="left" title={item.element.isVerified} />}
 
              {showAlert &&
                <SweetAlert
