@@ -1,6 +1,4 @@
-import React ,{Components} from 'react';
-import ReactDOM from 'react-dom';
-import Frame, { FrameContextConsumer }from 'react-frame-component';
+import React from 'react';
 import SweetAlert from 'react-bootstrap-sweetalert';
 import { GraphQLClient } from 'graphql-request';
 import { CookiesProvider } from 'react-cookie';
@@ -512,11 +510,16 @@ class App extends React.Component {
   handleDiamondPoker = (server_seed, client_seed, nonce) => {
     this.setState({server_seed:server_seed, client_seed:client_seed, nonce:nonce});
 
+    // Index of 0 to 6 : green to blue
+    const GEMS = [ 'green', 'purple', 'yellow', 'red', 'cyan', 'orange', 'blue' ];
+
+
     let nums = [];
      nums.push(this.bytes_to_num_array(this.bytes(server_seed, client_seed, nonce, 80)).map((x)=>{
-      return Math.floor(x*7)
+      return GEMS[Math.floor(x * 7)];
     }));
     console.log("Diamond Poker : ", nums);
+
     return nums;
 
   }
