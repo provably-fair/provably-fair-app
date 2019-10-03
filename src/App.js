@@ -1267,7 +1267,7 @@ handleVerifyBetForLimbo = (serverSeedHash,clientSeed, nonce) => {
 
     render() {
       const { gettingStarted, settings, verification, operators, clientSeed, serverSeedHash, nonce, betData, cryptoGames, primeDice, stake, bitvest, diceResult, diceVerify, verify, apiKey, apiKeyStake, usernameStake, enterAPI, enterAPIStake,
-      Balance, BetId, Roll, nonceChecked, toggleState, betAmount, betPayout, betPlaced, isNonceManipulated, numberBetsVerFailed, betDataById, betDataEnriched, viewRecentBetsStake, faqs, showAlert, popupResult } = this.state;
+      Balance, BetId, Roll, nonceChecked, toggleState, betAmount, betPayout, betPlaced, isNonceManipulated, numberBetsVerFailed, betDataById, betDataEnriched, viewRecentBetsStake, faqs, showAlert, popupResult, active_game } = this.state;
         return (
       <div className={'my-extension text-center'}>
 
@@ -1625,7 +1625,7 @@ handleVerifyBetForLimbo = (serverSeedHash,clientSeed, nonce) => {
 
          <tbody>
            {betData.map((item,i)=>{
-             return <tr>
+             return <tr key={i}>
              <td>
              {item.element.id}
              </td>
@@ -1639,11 +1639,13 @@ handleVerifyBetForLimbo = (serverSeedHash,clientSeed, nonce) => {
              {item.element.nonce}
              </td>
              <td>
-             {(item.element.game==='baccarat' || item.element.game==='hilo' || item.element.game==='blackjack')
+             {(item.element.game==='baccarat' || item.element.game==='hilo' || item.element.game==='blackjack' || item.element.game==='diamondPoker')
              ?<button className="btn btn-info" onClick = {()=>{
-               this.setState({showAlert:true, popupResult:item.element.isVerified});
+               this.setState({showAlert:true, active_game:item.element.game, popupResult:item.element.isVerified});
              }} title="Results"> </button>
-            :<img src={require("./images/info-icon-5.png")} style={{ width: '50%'}} data-toggle="popover" data-placement="left" title={item.element.isVerified} />}
+            :item.element.game==='plinko'?<img src={require("./images/info-icon-5.png")} style={{ width: '50%'}} data-toggle="popover" data-placement="left" title={item.element.isVerified} />
+            :item.element.isVerified
+            }
 
              {showAlert &&
                <SweetAlert
@@ -1652,10 +1654,14 @@ handleVerifyBetForLimbo = (serverSeedHash,clientSeed, nonce) => {
                    title="Bet Results"
                    onConfirm={this.hideAlertConfirm}
                >
-                    {popupResult.map((item, i)=>{
-                      return <img src={require('./assets/img/cards-png/' + item +'.png')} style={{width:"10%"}}/>;
-                    })}
-                   <p style={{fontSize: 'x-small'}}>{popupResult}</p>
+                    {active_game==='diamondPoker'?
+                      popupResult.map((item, i)=>{
+                        return <p style={{ fontSize: 'small'}}>{item+" "}</p>;
+                    })
+                  :
+                  popupResult.map((item, i)=>{
+                    return <img src={require('./assets/img/cards-png/' + item +'.png')} style={{width:"10%"}}/>;
+                })}
                </SweetAlert>}
              </td>
              </tr>
