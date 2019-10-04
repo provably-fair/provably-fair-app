@@ -1025,7 +1025,7 @@ class App extends React.Component {
                   default : isVerified = 0;
                      }
 
-                     console.log("item.bet.iid.split('house:')" , item.bet.iid.split('house:'));
+                     // console.log("item.bet.iid.split('house:')" , item.bet.iid.split('house:'));
                 element.id = item.bet.iid.split('house:'); element.game = innerItem.bet.game; element.payout = innerItem.bet.payout;
                 element.nonce = item.bet.bet.nonce; element.isVerified = isVerified;
                 console.log('element : ', element);
