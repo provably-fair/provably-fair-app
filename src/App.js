@@ -506,6 +506,182 @@ class App extends React.Component {
     return crashpoint;
   }
 
+  nums_to_pokercards_array = (nums) => {
+      let cards = [];
+      const pokercards = [
+        '3_of_clubs',
+        '2_of_clubs',
+        '4_of_clubs',
+        '5_of_clubs',
+        '6_of_clubs',
+        '7_of_clubs',
+        '8_of_clubs',
+        '9_of_clubs',
+        '10_of_clubs',
+        'jack_of_clubs',
+        'queen_of_clubs',
+        'king_of_clubs',
+        'ace_of_clubs',
+
+        '2_of_diamonds',
+        '3_of_diamonds',
+        '4_of_diamonds',
+        '5_of_diamonds',
+        '6_of_diamonds',
+        '7_of_diamonds',
+        '8_of_diamonds',
+        '9_of_diamonds',
+        '10_of_diamonds',
+        'jack_of_diamonds',
+        'queen_of_diamonds',
+        'king_of_diamonds',
+        'ace_of_diamonds',
+
+        '2_of_hearts',
+        '3_of_hearts',
+        '4_of_hearts',
+        '5_of_hearts',
+        '6_of_hearts',
+        '7_of_hearts',
+        '8_of_hearts',
+        '9_of_hearts',
+        '10_of_hearts',
+        'jack_of_hearts',
+        'queen_of_hearts',
+        'king_of_hearts',
+        'ace_of_hearts',
+
+        '2_of_spades',
+        '3_of_spades',
+        '4_of_spades',
+        '5_of_spades',
+        '6_of_spades',
+        '7_of_spades',
+        '8_of_spades',
+        '9_of_spades',
+        '10_of_spades',
+        'jack_of_spades',
+        'queen_of_spades',
+        'king_of_spades',
+        'ace_of_spades',
+   ];
+      for(let i = 0; i < 52; i++) {
+          cards.push(i);
+      }
+      let result = [];
+      for(let i = 0; i < nums.length; i++) {
+          result.push(pokercards[cards.splice(Math.floor((52-i)*nums[i]), 1)[0]]);
+      }
+      return result;
+  };
+
+  handleVideoPoker = (server_seed, client_seed, nonce) => {
+    this.setState({server_seed:server_seed, client_seed:client_seed, nonce:nonce});
+
+    let nums = [];
+    for(const [index, value] of this.bytes_to_num_array(this.bytes(224)).entries()){
+      nums.push(value);
+      }
+    nums = this.nums_to_pokercards_array(nums);
+    console.log("nums : ", nums);
+    return nums;
+  }
+
+  handleWheel = (server_seed, client_seed, nonce, segments, risk) => {
+        let { active_game } = this.state;
+        active_game = 'Wheel';
+        let resolve = Math.floor(this.bytes_to_number(this.bytes(server_seed, client_seed, nonce, 8)) * segments);
+        //let res = this.result(resolve);
+        //console.log("result", res, "resolve", resolve);
+        const PAYOUTS = {
+          '10': {
+            low: [ 1.5, 1.2, 1.2, 1.2, 0, 1.2, 1.2, 1.2, 1.2, 0 ],
+            medium: [ 0, 1.9, 0, 1.5, 0, 2, 0, 1.5, 0, 3 ],
+            high: [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 9.9 ]
+          },
+          '20': {
+            low: [
+              1.5, 1.2, 1.2, 1.2, 0, 1.2, 1.2, 1.2, 1.2, 0,
+              1.5, 1.2, 1.2, 1.2, 0, 1.2, 1.2, 1.2, 1.2, 0
+            ],
+            medium: [
+              1.5, 0, 2, 0, 2, 0, 2, 0, 1.5, 0,
+              3, 0, 1.8, 0, 2, 0, 2, 0, 2, 0
+            ],
+            high: [
+              0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+              0, 0, 0, 0, 0, 0, 0, 0, 0, 19.8
+            ]
+          },
+          '30': {
+            low: [
+              1.5, 1.2, 1.2, 1.2, 0, 1.2, 1.2, 1.2, 1.2, 0,
+              1.5, 1.2, 1.2, 1.2, 0, 1.2, 1.2, 1.2, 1.2, 0,
+              1.5, 1.2, 1.2, 1.2, 0, 1.2, 1.2, 1.2, 1.2, 0
+            ],
+            medium: [
+              1.5, 0, 1.5, 0, 2, 0, 1.5, 0, 2, 0,
+              2, 0, 1.5, 0, 3, 0, 1.5, 0, 2, 0,
+              2, 0, 1.7, 0, 4, 0, 1.5, 0, 2, 0
+            ],
+            high: [
+              0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+              0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+              0, 0, 0, 0, 0, 0, 0, 0, 0, 29.7
+            ]
+          },
+          '40': {
+            low: [
+              1.5, 1.2, 1.2, 1.2, 0, 1.2, 1.2, 1.2, 1.2, 0,
+              1.5, 1.2, 1.2, 1.2, 0, 1.2, 1.2, 1.2, 1.2, 0,
+              1.5, 1.2, 1.2, 1.2, 0, 1.2, 1.2, 1.2, 1.2, 0,
+              1.5, 1.2, 1.2, 1.2, 0, 1.2, 1.2, 1.2, 1.2, 0
+            ],
+            medium: [
+              2, 0, 3, 0, 2, 0, 1.5, 0, 3, 0,
+              1.5, 0, 1.5, 0, 2, 0, 1.5, 0, 3, 0,
+              1.5, 0, 2, 0, 2, 0, 1.6, 0, 2, 0,
+              1.5, 0, 3, 0, 1.5, 0, 2, 0, 1.5, 0
+            ],
+            high: [
+              0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+              0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+              0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+              0, 0, 0, 0, 0, 0, 0, 0, 0, 39.6
+            ]
+          },
+          '50': {
+            low: [
+              1.5, 1.2, 1.2, 1.2, 0, 1.2, 1.2, 1.2, 1.2, 0,
+              1.5, 1.2, 1.2, 1.2, 0, 1.2, 1.2, 1.2, 1.2, 0,
+              1.5, 1.2, 1.2, 1.2, 0, 1.2, 1.2, 1.2, 1.2, 0,
+              1.5, 1.2, 1.2, 1.2, 0, 1.2, 1.2, 1.2, 1.2, 0,
+              1.5, 1.2, 1.2, 1.2, 0, 1.2, 1.2, 1.2, 1.2, 0
+            ],
+            medium: [
+              2, 0, 1.5, 0, 2, 0, 1.5, 0, 3, 0,
+              1.5, 0, 1.5, 0, 2, 0, 1.5, 0, 3, 0,
+              1.5, 0, 2, 0, 1.5, 0, 2, 0, 2, 0,
+              1.5, 0, 3, 0, 1.5, 0, 2, 0, 1.5, 0,
+              1.5, 0, 5, 0, 1.5, 0, 2, 0, 1.5, 0
+            ],
+            high: [
+              0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+              0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+              0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+              0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+              0, 0, 0, 0, 0, 0, 0, 0, 0, 49.5
+            ]
+          }
+        };
+
+        // Game event translation
+        const spin = PAYOUTS[segments][risk][resolve];
+
+        return spin;
+      }
+
+
     /* Method to get all bet data of user bets for Stake Operator */
 
     getAllData = () => {
@@ -795,7 +971,7 @@ class App extends React.Component {
            var element = {};
            console.log('new bet has come',item.bet.iid);
            betDataEnriched.map( (innerItem) => {
-             console.log("Inner Item :", innerItem);
+             // console.log("Inner Item :", innerItem);
 
               if(innerItem.iid == item.bet.iid)
               {
@@ -839,6 +1015,10 @@ class App extends React.Component {
                   break;
 
                   case 'crash' : { isVerified = this.handleCrash(item.bet.bet.serverSeed.seed,item.bet.bet.clientSeed.seed,item.bet.bet.nonce);
+                  console.log("isVerified", isVerified);}
+                  break;
+
+                  case 'wheel' : { isVerified = this.handleWheel(item.bet.bet.serverSeed.seed,item.bet.bet.clientSeed.seed,item.bet.bet.nonce);
                   console.log("isVerified", isVerified);}
                   break;
 
