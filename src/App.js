@@ -744,8 +744,8 @@ class App extends React.Component {
       })
       //should take user name as parameter
       let { betDataById, betDataEnriched, usernameStake } = this.state;
-      // betDataEnriched = [];
-
+        betDataEnriched = [];
+        betDataById = [];
        let name = `\"${usernameStake}\"`;
 
       /* GraphQL query houseBetList (i.e. game, payout, amountMultiplier, payoutMultiplier, amount, currency, createdAt) for a User of Stake Operator */
