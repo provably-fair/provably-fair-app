@@ -1018,7 +1018,7 @@ class App extends React.Component {
                   console.log("isVerified", isVerified);}
                   break;
 
-                  case 'wheel' : { isVerified = this.handleWheel(item.bet.bet.serverSeed.seed,item.bet.bet.clientSeed.seed,item.bet.bet.nonce);
+                  case 'wheel' : { isVerified = this.handleWheel(item.bet.bet.serverSeed.seed,item.bet.bet.clientSeed.seed,item.bet.bet.nonce, 30, 'Medium');
                   console.log("isVerified", isVerified);}
                   break;
 
