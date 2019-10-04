@@ -963,7 +963,10 @@ class App extends React.Component {
        console.log("previousClientSeedStake", previousClientSeedStake, "previousServerSeedStake", previousServerSeedStake ,"activeClientSeedStake", activeClientSeedStake);
 
       betDataById.map( (item) => {
-       if(item.bet.bet.clientSeed!='undefined' || item.bet.bet.serverSeed!='undefined')
+       if(item.bet.bet.clientSeed==='undefined' || item.bet.bet.serverSeed==='undefined')
+        {
+          console.log("For Crash : ", item.bet.bet);
+        }
 
         if( ((item.bet.bet.clientSeed.seed == activeClientSeedStake) && (item.bet.bet.serverSeed.seed == previousServerSeedStake)) || ((item.bet.bet.clientSeed.seed == previousClientSeedStake) && (item.bet.bet.serverSeed.seed == previousServerSeedStake)) )
         {
