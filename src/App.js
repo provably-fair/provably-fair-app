@@ -1657,10 +1657,12 @@ handleVerifyBetForLimbo = (serverSeedHash,clientSeed, nonce) => {
                     {active_game==='diamondPoker'?
                       popupResult.map((item, i)=>{
                         return <p style={{ fontSize: 'small'}}>{item+" "}</p>;
+                        <img src={require('./images/diamonds/diamonds/1x/' + item +'.png')} style={{width:"10%"}}/>;
+
                     })
                   :
                   popupResult.map((item, i)=>{
-                    return <img src={require('./assets/img/cards-png/' + item +'.png')} style={{width:"10%"}}/>;
+                    return <img src={require('./images/cards-png/' + item +'.png')} style={{width:"10%"}}/>;
                 })}
                </SweetAlert>}
              </td>
