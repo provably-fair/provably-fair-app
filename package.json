@@ -3,8 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "engines": {
-   "node": "10.3.0"
- },
+    "node": "10.3.0"
+  },
   "dependencies": {
     "autoprefixer": "7.1.6",
     "axios": "^0.19.0",
@@ -37,6 +37,7 @@
     "jest": "20.0.4",
     "js-cookie": "^2.2.1",
     "js-sha512": "^0.8.0",
+    "lodash": "^4.17.15",
     "mnemonic": "^1.0.1",
     "object-assign": "4.1.1",
     "postcss-flexbugs-fixes": "3.2.0",
