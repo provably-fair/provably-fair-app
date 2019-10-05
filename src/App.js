@@ -1009,7 +1009,7 @@ class App extends React.Component {
                   console.log("isVerified", isVerified);}
                   break;
 
-                  case 'mines' : { isVerified = this.handleMines(item.bet.bet.serverSeed.seed,item.bet.bet.clientSeed.seed,item.bet.bet.nonce);
+                  case 'Mines' : { isVerified = this.handleMines(item.bet.bet.serverSeed.seed,item.bet.bet.clientSeed.seed,item.bet.bet.nonce);
                   console.log("isVerified", isVerified);}
                   break;
 
