@@ -972,7 +972,7 @@ class App extends React.Component {
        console.log("previousClientSeedStake", previousClientSeedStake, "previousServerSeedStake", previousServerSeedStake ,"activeClientSeedStake", activeClientSeedStake);
 
       betDataById.map( (item) => {
-       if(!!item.bet.bet){
+       if(!item.bet.bet){
           console.log("For Crash : ", item.bet);
         }
       else if( ((item.bet.bet.clientSeed.seed == activeClientSeedStake) && (item.bet.bet.serverSeed.seed == previousServerSeedStake)) || ((item.bet.bet.clientSeed.seed == previousClientSeedStake) && (item.bet.bet.serverSeed.seed == previousServerSeedStake)) )
@@ -1463,7 +1463,7 @@ handleVerifyBetForLimbo = (serverSeedHash,clientSeed, nonce) => {
       const { gettingStarted, settings, verification, operators, clientSeed, serverSeedHash, nonce, betData, cryptoGames, primeDice, stake, bitvest, diceResult, diceVerify, verify, apiKey, apiKeyStake, usernameStake, enterAPI, enterAPIStake,
       Balance, BetId, Roll, nonceChecked, toggleState, betAmount, betPayout, betPlaced, isNonceManipulated, numberBetsVerFailed, betDataById, betDataEnriched, viewRecentBetsStake, faqs, showAlert, popupResult, active_game } = this.state;
         return (
-      <div className={'my-extension text-center'} style={{width: '25%'}}>
+      <div className={'my-extension text-center'} style={{width: '30%'}}>
 
        <div className="nav-wrapper">
         <ul className="nav nav-pills nav-fill flex-md-row" id="tabs-icons-text" role="tablist">
