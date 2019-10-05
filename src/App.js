@@ -107,7 +107,7 @@ class App extends React.Component {
             {name: 'Baccarat'},
             {name: 'Dice'}
         ],
-        numMines: 1,
+        numMines: 3,
         active_game: 'chartbet',
         MAX_ROLL: 10001,
         MAX_ROULETTE: 37,
@@ -1633,11 +1633,11 @@ handleVerifyBetForLimbo = (serverSeedHash,clientSeed, nonce) => {
 
        <div className="custom-control custom-checkbox mb-3">
          <input className="custom-control-input" id="customCheck2" type="checkbox" checked={nonceChecked} onChange={(e)=>{this.setState({nonceChecked:e.target.checked})}}/>
-         <label className="custom-control-label" for="customCheck2">Add Nonce.</label>
+         <label className="custom-control-label" htmlFor="customCheck2">Add Nonce.</label>
        </div>
        <div className="form-group" style={{display:nonceChecked?'block':'none'}}>
          <label className="form-control-label">Nonce</label>
-         <input classNam e="form-control form-control-sm" type="number" placeholder="" value={nonce}  onChange={(e)=>{this.setState({nonce:e.target.value})}}/>
+         <input className="form-control form-control-sm" type="number" placeholder="" value={nonce}  onChange={(e)=>{this.setState({nonce:e.target.value})}}/>
        </div>
        <button type="button" className="btn btn-secondary m-2" onClick={()=>{
          this.setState({betPlaced:true, verification:false})
@@ -1708,7 +1708,7 @@ handleVerifyBetForLimbo = (serverSeedHash,clientSeed, nonce) => {
 
        <div className="custom-control custom-checkbox mb-3">
          <input className="custom-control-input" id="customCheck2" type="checkbox" checked={nonceChecked} onChange={(e)=>{this.setState({nonceChecked:e.target.checked})}}/>
-         <label className="custom-control-label" for="customCheck2">Add Nonce.</label>
+         <label className="custom-control-label" htmlFor="customCheck2">Add Nonce.</label>
        </div>
        <div className="form-group" style={{display:nonceChecked?'block':'none'}}>
          <label className="form-control-label">Nonce</label>
