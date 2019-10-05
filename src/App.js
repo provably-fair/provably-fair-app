@@ -380,8 +380,8 @@ class App extends React.Component {
      * @param {string} game - The game to return the result for
      * @returns The result for the game
      */
-    result = (game/*, server_seed, client_seed, nonce*/) => {
-      let {server_seed, client_seed, nonce} = this.state;
+    result = (game, server_seed, client_seed, nonce) => {
+      // let {server_seed, client_seed, nonce} = this.state;
         switch(game) {
             case 'Dice':
                 return (Math.floor(this.bytes_to_number(this.bytes(server_seed, client_seed, nonce, 8)) * this.state.MAX_ROLL) / 100).toFixed(2);
@@ -466,8 +466,15 @@ class App extends React.Component {
   handleMines = (server_seed, client_seed, nonce) => {
     this.setState({server_seed:server_seed, client_seed:client_seed, nonce:nonce});
 
-    let res = this.result('Mines').slice(0,this.state.numMines);
+    let res = this.result('Mines', server_seed, client_seed, nonce).slice(0,this.state.numMines);
     console.log("Mines : ", res);
+  }
+
+  handleKeno = (server_seed, client_seed, nonce) => {
+    this.setState({server_seed:server_seed, client_seed:client_seed, nonce:nonce});
+
+    let res = this.result('Keno', server_seed, client_seed, nonce).slice(0,this.state.numMines);
+    console.log("Keno : ", res);
   }
 
   handleDiamondPoker = (server_seed, client_seed, nonce) => {
@@ -1010,6 +1017,10 @@ class App extends React.Component {
                   break;
 
                   case 'Mines' : { isVerified = this.handleMines(item.bet.bet.serverSeed.seed,item.bet.bet.clientSeed.seed,item.bet.bet.nonce);
+                  console.log("isVerified", isVerified);}
+                  break;
+
+                  case 'Keno' : { isVerified = this.handleKeno(item.bet.bet.serverSeed.seed,item.bet.bet.clientSeed.seed,item.bet.bet.nonce);
                   console.log("isVerified", isVerified);}
                   break;
 
