@@ -685,6 +685,8 @@ class App extends React.Component {
         // Game event translation
         const spin = PAYOUTS[segments][risk][resolve];
 
+        console.log("WHEEL SPIN : ", spin);
+
         return spin;
       }
 
@@ -1032,7 +1034,7 @@ class App extends React.Component {
                   console.log("isVerified", isVerified);}
                   break;
 
-                  case 'wheel' : { isVerified = this.handleWheel(item.bet.bet.serverSeed.seed,item.bet.bet.clientSeed.seed,item.bet.bet.nonce, 30, 'Medium');
+                  case 'wheel' : { isVerified = this.handleWheel(item.bet.bet.serverSeed.seed,item.bet.bet.clientSeed.seed,item.bet.bet.nonce, '10', 'medium');
                   console.log("isVerified", isVerified);}
                   break;
 
