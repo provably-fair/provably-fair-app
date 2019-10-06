@@ -1833,7 +1833,7 @@ handleVerifyBetForLimbo = (serverSeedHash,clientSeed, nonce) => {
              {item.element.nonce}
              </td>
              <td>
-             {(item.element.game==='baccarat' || item.element.game==='hilo' || item.element.game==='blackjack' || item.element.game==='diamondPoker')
+             {(item.element.game==='baccarat' || item.element.game==='hilo' || item.element.game==='blackjack' || item.element.game==='diamondPoker' || item.element.game==='videoPoker')
              ?<button className="btn btn-info" onClick = {()=>{
                this.setState({showAlert:true, active_game:item.element.game, popupResult:item.element.isVerified});
              }} title="Results"> </button>
