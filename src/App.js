@@ -265,6 +265,7 @@ class App extends React.Component {
         for(let i = 0; i < nums.length; i++) {
             result.push(mines.splice(Math.floor((25-i)*nums[i]), 1)[0]);
         }
+        console.log("mines result",result);
         return result;
     };
     /**
@@ -472,7 +473,7 @@ class App extends React.Component {
 
   handleKeno = (server_seed, client_seed, nonce) => {
     this.setState({server_seed:server_seed, client_seed:client_seed, nonce:nonce});
-
+    console.log("all tiles",this.result('Keno', server_seed, client_seed, nonce));
     let res = this.result('Keno', server_seed, client_seed, nonce).slice(0,this.state.numMines);
     console.log("Keno : ", res);
   }
@@ -529,7 +530,6 @@ class App extends React.Component {
         'queen_of_clubs',
         'king_of_clubs',
         'ace_of_clubs',
-
         '2_of_diamonds',
         '3_of_diamonds',
         '4_of_diamonds',
@@ -543,7 +543,6 @@ class App extends React.Component {
         'queen_of_diamonds',
         'king_of_diamonds',
         'ace_of_diamonds',
-
         '2_of_hearts',
         '3_of_hearts',
         '4_of_hearts',
@@ -557,7 +556,6 @@ class App extends React.Component {
         'queen_of_hearts',
         'king_of_hearts',
         'ace_of_hearts',
-
         '2_of_spades',
         '3_of_spades',
         '4_of_spades',
@@ -577,7 +575,7 @@ class App extends React.Component {
       }
       let result = [];
       for(let i = 0; i < nums.length; i++) {
-          result.push(pokercards[cards.splice(Math.floor((52-i)*nums[i]), 1)[0]]);
+          result.push( pokercards[ (cards.splice(Math.floor((52-i)*nums[i]), 1)[0]) ] );
       }
       return result;
   };
@@ -586,9 +584,10 @@ class App extends React.Component {
     this.setState({server_seed:server_seed, client_seed:client_seed, nonce:nonce});
 
     let nums = [];
-    for(const [index, value] of this.bytes_to_num_array(this.bytes(224)).entries()){
+    for(const [index, value] of this.bytes_to_num_array(this.bytes(server_seed, client_seed, nonce, 416)).entries()){
       nums.push(value);
       }
+    console.log("result nums:", nums);
     nums = this.nums_to_pokercards_array(nums);
     console.log("nums : ", nums);
     return nums;
@@ -972,10 +971,7 @@ class App extends React.Component {
        console.log("previousClientSeedStake", previousClientSeedStake, "previousServerSeedStake", previousServerSeedStake ,"activeClientSeedStake", activeClientSeedStake);
 
       betDataById.map( (item) => {
-      if( !_.isEmpty(item.bet) ){
-        console.log("CRASH");
-      }
-      else if(((item.bet.bet.clientSeed.seed == activeClientSeedStake) && (item.bet.bet.serverSeed.seed == previousServerSeedStake)) || ((item.bet.bet.clientSeed.seed == previousClientSeedStake) && (item.bet.bet.serverSeed.seed == previousServerSeedStake)) )
+      if (((!_.isEmpty(item.bet.bet)) && (item.bet.bet.clientSeed.seed == activeClientSeedStake) && (item.bet.bet.serverSeed.seed == previousServerSeedStake)) || ((item.bet.bet.clientSeed.seed == previousClientSeedStake) && (item.bet.bet.serverSeed.seed == previousServerSeedStake)) )
         {
            console.log("verification eligible");
            var element = {};
@@ -1008,6 +1004,10 @@ class App extends React.Component {
                   console.log("isVerified", isVerified);}
                   break;
 
+                  case 'videoPoker' : { isVerified = this.handleVideoPoker(item.bet.bet.serverSeed.seed,item.bet.bet.clientSeed.seed,item.bet.bet.nonce);
+                    console.log("isVerified", isVerified);}
+                    break;
+
                   case 'hilo' : { isVerified = this.handleHilo(item.bet.bet.serverSeed.seed,item.bet.bet.clientSeed.seed,item.bet.bet.nonce);
                   console.log("isVerified", isVerified);}
                   break;
@@ -1016,11 +1016,11 @@ class App extends React.Component {
                   console.log("isVerified", isVerified);}
                   break;
 
-                  case 'Mines' : { isVerified = this.handleMines(item.bet.bet.serverSeed.seed,item.bet.bet.clientSeed.seed,item.bet.bet.nonce);
+                  case 'mines' : { isVerified = this.handleMines(item.bet.bet.serverSeed.seed,item.bet.bet.clientSeed.seed,item.bet.bet.nonce);
                   console.log("isVerified", isVerified);}
                   break;
 
-                  case 'Keno' : { isVerified = this.handleKeno(item.bet.bet.serverSeed.seed,item.bet.bet.clientSeed.seed,item.bet.bet.nonce);
+                  case 'keno' : { isVerified = this.handleKeno(item.bet.bet.serverSeed.seed,item.bet.bet.clientSeed.seed,item.bet.bet.nonce);
                   console.log("isVerified", isVerified);}
                   break;
 
