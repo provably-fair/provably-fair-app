@@ -971,90 +971,93 @@ class App extends React.Component {
        console.log("betDataById", betDataById);
        console.log("previousClientSeedStake", previousClientSeedStake, "previousServerSeedStake", previousServerSeedStake ,"activeClientSeedStake", activeClientSeedStake);
 
-      betDataById.map( (item) => {
-      if( !_.isEmpty(item.bet) ){
-        console.log("CRASH");
-      }
-      else if(((item.bet.bet.clientSeed.seed == activeClientSeedStake) && (item.bet.bet.serverSeed.seed == previousServerSeedStake)) || ((item.bet.bet.clientSeed.seed == previousClientSeedStake) && (item.bet.bet.serverSeed.seed == previousServerSeedStake)) )
-        {
-           console.log("verification eligible");
-           var element = {};
-           console.log('new bet has come',item.bet.iid);
-           betDataEnriched.map( (innerItem) => {
-             // console.log("Inner Item :", innerItem);
+       try{
+         betDataById.map( (item) => {
+           if(((item.bet.bet.clientSeed.seed == activeClientSeedStake) && (item.bet.bet.serverSeed.seed == previousServerSeedStake)) || ((item.bet.bet.clientSeed.seed == previousClientSeedStake) && (item.bet.bet.serverSeed.seed == previousServerSeedStake)) )
+             {
+                console.log("verification eligible");
+                var element = {};
+                console.log('new bet has come',item.bet.iid);
+                betDataEnriched.map( (innerItem) => {
+                  // console.log("Inner Item :", innerItem);
 
-              if(innerItem.iid == item.bet.iid)
-              {
-                let isVerified;
-                const game = innerItem.bet.game;
-                switch(game){
-                  case 'dice' : { isVerified = this.handleVerifyBetStake(item.bet.bet.serverSeed.seed,item.bet.bet.clientSeed.seed,item.bet.bet.nonce);
-                  console.log("isVerified", isVerified);}
-                  break;
+                   if(innerItem.iid == item.bet.iid)
+                   {
+                     let isVerified;
+                     const game = innerItem.bet.game;
+                     switch(game){
+                       case 'dice' : { isVerified = this.handleVerifyBetStake(item.bet.bet.serverSeed.seed,item.bet.bet.clientSeed.seed,item.bet.bet.nonce);
+                       console.log("isVerified", isVerified);}
+                       break;
 
-                  case 'limbo' : { isVerified = this.handleVerifyBetForLimbo(item.bet.bet.serverSeed.seed,item.bet.bet.clientSeed.seed,item.bet.bet.nonce);
-                  console.log("isVerified", isVerified);}
-                  break;
+                       case 'limbo' : { isVerified = this.handleVerifyBetForLimbo(item.bet.bet.serverSeed.seed,item.bet.bet.clientSeed.seed,item.bet.bet.nonce);
+                       console.log("isVerified", isVerified);}
+                       break;
 
-                  case 'roulette' : { isVerified = this.handleVerifyBetForRoulette(item.bet.bet.serverSeed.seed,item.bet.bet.clientSeed.seed,item.bet.bet.nonce);
-                  console.log("isVerified", isVerified);}
-                  break;
+                       case 'roulette' : { isVerified = this.handleVerifyBetForRoulette(item.bet.bet.serverSeed.seed,item.bet.bet.clientSeed.seed,item.bet.bet.nonce);
+                       console.log("isVerified", isVerified);}
+                       break;
 
-                  case 'plinko' : { isVerified = this.handlePlinko(item.bet.bet.serverSeed.seed,item.bet.bet.clientSeed.seed,item.bet.bet.nonce);
-                  console.log("isVerified", isVerified);}
-                  break;
+                       case 'plinko' : { isVerified = this.handlePlinko(item.bet.bet.serverSeed.seed,item.bet.bet.clientSeed.seed,item.bet.bet.nonce);
+                       console.log("isVerified", isVerified);}
+                       break;
 
-                  case 'baccarat' : { isVerified = this.handleBaccarat(item.bet.bet.serverSeed.seed,item.bet.bet.clientSeed.seed,item.bet.bet.nonce);
-                  console.log("isVerified", isVerified);}
-                  break;
+                       case 'baccarat' : { isVerified = this.handleBaccarat(item.bet.bet.serverSeed.seed,item.bet.bet.clientSeed.seed,item.bet.bet.nonce);
+                       console.log("isVerified", isVerified);}
+                       break;
 
-                  case 'hilo' : { isVerified = this.handleHilo(item.bet.bet.serverSeed.seed,item.bet.bet.clientSeed.seed,item.bet.bet.nonce);
-                  console.log("isVerified", isVerified);}
-                  break;
+                       case 'hilo' : { isVerified = this.handleHilo(item.bet.bet.serverSeed.seed,item.bet.bet.clientSeed.seed,item.bet.bet.nonce);
+                       console.log("isVerified", isVerified);}
+                       break;
 
-                  case 'blackjack' : { isVerified = this.handleBlackjack(item.bet.bet.serverSeed.seed,item.bet.bet.clientSeed.seed,item.bet.bet.nonce);
-                  console.log("isVerified", isVerified);}
-                  break;
+                       case 'blackjack' : { isVerified = this.handleBlackjack(item.bet.bet.serverSeed.seed,item.bet.bet.clientSeed.seed,item.bet.bet.nonce);
+                       console.log("isVerified", isVerified);}
+                       break;
 
-                  case 'Mines' : { isVerified = this.handleMines(item.bet.bet.serverSeed.seed,item.bet.bet.clientSeed.seed,item.bet.bet.nonce);
-                  console.log("isVerified", isVerified);}
-                  break;
+                       case 'Mines' : { isVerified = this.handleMines(item.bet.bet.serverSeed.seed,item.bet.bet.clientSeed.seed,item.bet.bet.nonce);
+                       console.log("isVerified", isVerified);}
+                       break;
 
-                  case 'Keno' : { isVerified = this.handleKeno(item.bet.bet.serverSeed.seed,item.bet.bet.clientSeed.seed,item.bet.bet.nonce);
-                  console.log("isVerified", isVerified);}
-                  break;
+                       case 'Keno' : { isVerified = this.handleKeno(item.bet.bet.serverSeed.seed,item.bet.bet.clientSeed.seed,item.bet.bet.nonce);
+                       console.log("isVerified", isVerified);}
+                       break;
 
-                  case 'diamondPoker' : { isVerified = this.handleDiamondPoker(item.bet.bet.serverSeed.seed,item.bet.bet.clientSeed.seed,item.bet.bet.nonce);
-                  console.log("isVerified", isVerified);}
-                  break;
+                       case 'diamondPoker' : { isVerified = this.handleDiamondPoker(item.bet.bet.serverSeed.seed,item.bet.bet.clientSeed.seed,item.bet.bet.nonce);
+                       console.log("isVerified", isVerified);}
+                       break;
 
-                  // case 'crash' : { isVerified = this.handleCrash(item.bet.bet.serverSeed.seed,item.bet.bet.clientSeed.seed,item.bet.bet.nonce);
-                  // console.log("isVerified", isVerified);}
-                  // break;
+                       // case 'crash' : { isVerified = this.handleCrash(item.bet.bet.serverSeed.seed,item.bet.bet.clientSeed.seed,item.bet.bet.nonce);
+                       // console.log("isVerified", isVerified);}
+                       // break;
 
-                  case 'wheel' : { isVerified = this.handleWheel(item.bet.bet.serverSeed.seed,item.bet.bet.clientSeed.seed,item.bet.bet.nonce, '10', 'medium');
-                  console.log("isVerified", isVerified);}
-                  break;
+                       case 'wheel' : { isVerified = this.handleWheel(item.bet.bet.serverSeed.seed,item.bet.bet.clientSeed.seed,item.bet.bet.nonce, '10', 'medium');
+                       console.log("isVerified", isVerified);}
+                       break;
 
-                  default : isVerified = 0;
-                     }
+                       default : isVerified = 0;
+                          }
 
-                     // console.log("item.bet.iid.split('house:')" , item.bet.iid.split('house:'));
-                element.id = item.bet.iid.split('house:'); element.game = innerItem.bet.game; element.payout = innerItem.bet.payout;
-                element.nonce = item.bet.bet.nonce; element.isVerified = isVerified;
-                console.log('element : ', element);
-                betData.push({element:element});
-                this.setState({betData:betData});
+                          // console.log("item.bet.iid.split('house:')" , item.bet.iid.split('house:'));
+                     element.id = item.bet.iid.split('house:'); element.game = innerItem.bet.game; element.payout = innerItem.bet.payout;
+                     element.nonce = item.bet.bet.nonce; element.isVerified = isVerified;
+                     console.log('element : ', element);
+                     betData.push({element:element});
+                     this.setState({betData:betData});
 
-              }
-           })
-          this.setState({viewRecentBetsStake:true})
-          betData.sort((a, b) => {
-            return a.element.nonce - b.element.nonce ;
-          });
-          console.log("betData : ",betData);
-        }
-      })
+                   }
+                })
+               this.setState({viewRecentBetsStake:true})
+               betData.sort((a, b) => {
+                 return a.element.nonce - b.element.nonce ;
+               });
+               console.log("betData : ",betData);
+             }
+         })
+
+           }catch(e){
+              console.log("YO Crash")
+          }
+
     }
 
 
