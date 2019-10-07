@@ -109,6 +109,7 @@ class App extends React.Component {
         ],
         numMines: 3,
         mines:[],
+        keno:[],
         numOfRows:[0,1,2,3,4],
         numOfColumnsKeno:[0,1,2,3,4,5,6,7],
         active_game: 'chartbet',
@@ -478,9 +479,9 @@ class App extends React.Component {
   }
 
   handleKeno = (server_seed, client_seed, nonce) => {
-    this.setState({server_seed:server_seed, client_seed:client_seed, nonce:nonce});
-
-    return this.result('Keno', server_seed, client_seed, nonce)
+    let keno = this.result('Keno', server_seed, client_seed, nonce);
+    this.setState({keno : keno});
+    return keno;
   }
 
   handleDiamondPoker = (server_seed, client_seed, nonce) => {
@@ -1458,7 +1459,7 @@ handleVerifyBetForLimbo = (serverSeedHash,clientSeed, nonce) => {
 
     render() {
       const { gettingStarted, settings, verification, operators, clientSeed, serverSeedHash, nonce, betData, cryptoGames, primeDice, stake, bitvest, diceResult, diceVerify, verify, apiKey, apiKeyStake, usernameStake, enterAPI, enterAPIStake,
-      Balance, BetId, Roll, nonceChecked, toggleState, betAmount, betPayout, betPlaced, isNonceManipulated, numberBetsVerFailed, betDataById, betDataEnriched, viewRecentBetsStake, faqs, showAlert, popupResult, active_game, mines, numOfRows, numOfColumnsKeno } = this.state;
+      Balance, BetId, Roll, nonceChecked, toggleState, betAmount, betPayout, betPlaced, isNonceManipulated, numberBetsVerFailed, betDataById, betDataEnriched, viewRecentBetsStake, faqs, showAlert, popupResult, active_game, mines, keno, numOfRows, numOfColumnsKeno } = this.state;
         return (
       <div className={'my-extension text-center'}>
 
@@ -1871,24 +1872,10 @@ handleVerifyBetForLimbo = (serverSeedHash,clientSeed, nonce) => {
                     {numOfRows.map((j) => {
                       return (<tr key={j}>
                         {numOfColumnsKeno.map((i)=>{
-                          return <td key={j*10+i}>
-                          <img src={require((popupResult[0]==((j+1)*5+(i))) || (popupResult[1]==((j+1)*5+(i))) || (popupResult[2]==((j+1)*5+(i)))|| (popupResult[4]==((j+1)*5+(i)))|| (popupResult[4]==((j+1)*5+(i))) || (popupResult[5]==((j+1)*5+(i))) || (popupResult[6]==((j+1)*5+(i)))|| (popupResult[7]==((j+1)*5+(i)))|| (popupResult[8]==((j+1)*5+(i)))|| (popupResult[9]==((j+1)*5+(i)))?'./images/keno.svg':'./images/gem.png')} style={{width:"90%"}}/>
+                          return <td key={(j+1)*5+i}>
+                          <button className={(keno[0]==((j+1)*5+(i))) || (keno[1]==((j+1)*5+(i))) || (keno[2]==((j+1)*5+(i)))|| (keno[4]==((j+1)*5+(i)))|| (keno[4]==((j+1)*5+(i))) || (keno[5]==((j+1)*5+(i))) || (keno[6]==((j+1)*5+(i))) || (keno[7]==((j+1)*5+(i))) || (keno[8]==((j+1)*5+(i))) || (keno[9]==((j+1)*5+(i)))?'btn btn-success':'btn btn-info'}>{(j+1)*5+i} </button>
                           </td>
-                        })
-                          }
-
-
-
-
-                                <td key={(j+1)*10+1}>
-                                {popupResult.map(item => {
-                                  item==(5*(j+1)+8+1)?
-                                  <img src={require('./images/keno.svg')} style={{width:"100%"}}/>
-                                  :
-                                  <img src={require('./images/mine.png')} style={{width:"100%"}}/>
-                                })}
-                                </td>
-
+                        })}
                       </tr>)
                     })}
                   </table>
