@@ -478,9 +478,8 @@ class App extends React.Component {
 
   handleKeno = (server_seed, client_seed, nonce) => {
     this.setState({server_seed:server_seed, client_seed:client_seed, nonce:nonce});
-    console.log("all tiles",this.result('Keno', server_seed, client_seed, nonce));
-    let res = this.result('Keno', server_seed, client_seed, nonce).slice(0,this.state.numMines);
-    console.log("Keno : ", res);
+
+    return this.result('Keno', server_seed, client_seed, nonce)
   }
 
   handleDiamondPoker = (server_seed, client_seed, nonce) => {
@@ -1830,7 +1829,7 @@ handleVerifyBetForLimbo = (serverSeedHash,clientSeed, nonce) => {
              {item.element.nonce}
              </td>
              <td>
-             {(item.element.game==='baccarat' || item.element.game==='hilo' || item.element.game==='blackjack' || item.element.game==='diamondPoker' || item.element.game==='videoPoker' || item.element.game==='mines')
+             {(item.element.game==='baccarat' || item.element.game==='hilo' || item.element.game==='blackjack' || item.element.game==='diamondPoker' || item.element.game==='videoPoker' || item.element.game==='mines' || item.element.game==='keno')
              ?<button className="btn btn-info" onClick = {()=>{
                this.setState({showAlert:true, active_game:item.element.game, popupResult:item.element.isVerified});
              }} title="Results"> </button>
@@ -1873,6 +1872,38 @@ handleVerifyBetForLimbo = (serverSeedHash,clientSeed, nonce) => {
                       </tr>)
                     })}
                   </table>
+                  :active_game==='keno'?
+                  <table>
+                    {numOfCards.map((j) => {
+                      return (<tr key={j}>
+                                <td key={j*10+1}>
+                                  <img src={require(popupResult.indexOf(((j-1)*5+(0-1)))>=0?'./images/keno.svg':'./images/keno.svg')} style={{width:"100%"}}/>
+                                </td>
+                                <td key={j*10+2}>
+                                <img src={require(popupResult.indexOf(((j-1)*5+(1-1)))>=0?'./images/keno.svg':'./images/keno.svg')} style={{width:"100%"}}/>
+                                </td>
+                                <td key={j*10+3}>
+                                <img src={require(popupResult.indexOf(((j-1)*5+(2-1)))>=0?'./images/keno.svg':'./images/keno.svg')} style={{width:"100%"}}/>
+                                </td>
+                                <td key={j*10+4}>
+                                <img src={require(popupResult.indexOf(((j-1)*5+(3-1)))>=0?'./images/keno.svg':'./images/keno.svg')} style={{width:"100%"}}/>
+                                </td>
+                                <td key={j*10+5}>
+                                <img src={require(popupResult.indexOf(((j-1)*5+(5-1)))>=0?'./images/keno.svg':'./images/keno.svg')} style={{width:"100%"}}/>
+                                </td>
+                                <td key={j*10+1}>
+                                  <img src={require(popupResult.indexOf(((j-1)*5+(0-1)))>=0?'./images/keno.svg':'./images/keno.svg')} style={{width:"100%"}}/>
+                                </td>
+                                <td key={j*10+2}>
+                                <img src={require(popupResult.indexOf(((j-1)*5+(1-1)))>=0?'./images/keno.svg':'./images/keno.svg')} style={{width:"100%"}}/>
+                                </td>
+                                <td key={j*10+3}>
+                                <img src={require(popupResult.indexOf(((j-1)*5+(2-1)))>=0?'./images/keno.svg':'./images/keno.svg')} style={{width:"100%"}}/>
+                                </td>
+                      </tr>)
+                    })}
+                  </table>
+
                   :
                   popupResult.map((item, i)=>{
                     return <img src={require('./images/cards-png/' + item +'.png')} style={{width:"10%"}}/>;
