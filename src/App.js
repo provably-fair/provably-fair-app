@@ -1855,8 +1855,20 @@ handleVerifyBetForLimbo = (serverSeedHash,clientSeed, nonce) => {
                   <table>
                     {numOfCards.map((j) => {
                       return (<tr key={j}>
-                                <td key={j*10+i}>
-                                  <img src={require('./images/cards-png/mine.png')} style={{width:"15%"}}/>
+                                <td key={j*10+1}>
+                                  <img src={require(mines.indexOf(((j-1)*5+(0-1)))>=0?'./images/mine.png':'./images/gem.png')} style={{width:"90%"}}/>
+                                </td>
+                                <td key={j*10+2}>
+                                <img src={require(mines.indexOf(((j-1)*5+(1-1)))>=0?'./images/mine.png':'./images/gem.png')} style={{width:"90%"}}/>
+                                </td>
+                                <td key={j*10+3}>
+                                <img src={require(mines.indexOf(((j-1)*5+(2-1)))>=0?'./images/mine.png':'./images/gem.png')} style={{width:"90%"}}/>
+                                </td>
+                                <td key={j*10+4}>
+                                <img src={require(mines.indexOf(((j-1)*5+(3-1)))>=0?'./images/mine.png':'./images/gem.png')} style={{width:"90%"}}/>
+                                </td>
+                                <td key={j*10+5}>
+                                <img src={require(mines.indexOf(((j-1)*5+(5-1)))>=0?'./images/mine.png':'./images/gem.png')} style={{width:"90%"}}/>
                                 </td>
                       </tr>)
                     })}
