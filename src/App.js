@@ -1872,8 +1872,8 @@ handleVerifyBetForLimbo = (serverSeedHash,clientSeed, nonce) => {
                     {numOfRows.map((j) => {
                       return (<tr key={j}>
                         {numOfColumnsKeno.map((i)=>{
-                          return <td key={(j+1)*8+i}>
-                          <button className={(keno[0]==((j+1)*5+(i))) || (keno[1]==((j+1)*5+(i))) || (keno[2]==((j+1)*5+(i)))|| (keno[4]==((j+1)*5+(i)))|| (keno[4]==((j+1)*5+(i))) || (keno[5]==((j+1)*5+(i))) || (keno[6]==((j+1)*5+(i))) || (keno[7]==((j+1)*5+(i))) || (keno[8]==((j+1)*5+(i))) || (keno[9]==((j+1)*5+(i)))?'btn btn-success':'btn btn-info'}>{(j)*8+i+1} </button>
+                          return <td key={(i)}>
+                          <button className={(keno[0]==((j)*5+(i))) || (keno[1]==((j)*5+(i))) || (keno[2]==((j)*5+(i)))|| (keno[4]==((j)*5+(i)))|| (keno[4]==((j)*5+(i))) || (keno[5]==((j)*5+(i))) || (keno[6]==((j)*5+(i))) || (keno[7]==((j)*5+(i))) || (keno[8]==((j)*5+(i))) || (keno[9]==((j)*5+(i)))?'btn btn-success':'btn btn-info'}>{(j)*5+i+1} </button>
                           </td>
                         })}
                       </tr>)
