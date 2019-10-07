@@ -296,7 +296,7 @@ class App extends React.Component {
           '2_of_spades',
           '2_of_clubs',
 
-          '2_of_diamonds',
+          '3_of_diamonds',
           '3_of_hearts',
           '3_of_spades',
           '3_of_clubs',
@@ -494,81 +494,73 @@ class App extends React.Component {
 
   }
 
-  // handleCrash = (server_seed, client_seed, nonce) => {
-  //
-  //   this.setState({server_seed:server_seed, client_seed:client_seed, nonce:nonce});
-  //
-  //   const hmac = createHmac('sha256', server_seed);
-  //
-  //   // blockHash is the hash of bitcoin block 584,500
-  //
-  //   hmac.update(client_seed);
-  //
-  //   const hex = hmac.digest('hex').substr(0, 8);
-  //   const int = parseInt(hex, 16);
-  //
-  //   // 0.01 will result in 1% house edge with a lowest crashpoint of 1
-  //
-  //   const crashpoint = Math.max(1, (2 ** 32 / (int + 1)) * (1 - 0.01))
-  //
-  //   return crashpoint;
-  // }
-
   nums_to_pokercards_array = (nums) => {
       let cards = [];
       const pokercards = [
-        '3_of_clubs',
-        '2_of_clubs',
-        '4_of_clubs',
-        '5_of_clubs',
-        '6_of_clubs',
-        '7_of_clubs',
-        '8_of_clubs',
-        '9_of_clubs',
-        '10_of_clubs',
-        'jack_of_clubs',
-        'queen_of_clubs',
-        'king_of_clubs',
-        'ace_of_clubs',
         '2_of_diamonds',
-        '3_of_diamonds',
-        '4_of_diamonds',
-        '5_of_diamonds',
-        '6_of_diamonds',
-        '7_of_diamonds',
-        '8_of_diamonds',
-        '9_of_diamonds',
-        '10_of_diamonds',
-        'jack_of_diamonds',
-        'queen_of_diamonds',
-        'king_of_diamonds',
-        'ace_of_diamonds',
         '2_of_hearts',
-        '3_of_hearts',
-        '4_of_hearts',
-        '5_of_hearts',
-        '6_of_hearts',
-        '7_of_hearts',
-        '8_of_hearts',
-        '9_of_hearts',
-        '10_of_hearts',
-        'jack_of_hearts',
-        'queen_of_hearts',
-        'king_of_hearts',
-        'ace_of_hearts',
         '2_of_spades',
+        '2_of_clubs',
+
+        '3_of_diamonds',
+        '3_of_hearts',
         '3_of_spades',
+        '3_of_clubs',
+
+        '4_of_diamonds',
+        '4_of_hearts',
         '4_of_spades',
+        '4_of_clubs',
+
+        '5_of_diamonds',
+        '5_of_hearts',
         '5_of_spades',
+        '5_of_clubs',
+
+        '6_of_diamonds',
+        '6_of_hearts',
         '6_of_spades',
+        '6_of_clubs',
+
+        '7_of_diamonds',
+        '7_of_hearts',
         '7_of_spades',
+        '7_of_clubs',
+
+        '8_of_diamonds',
+        '8_of_hearts',
         '8_of_spades',
+        '8_of_clubs',
+
+        '9_of_diamonds',
+        '9_of_hearts',
         '9_of_spades',
+        '9_of_clubs',
+
+        '10_of_diamonds',
+        '10_of_hearts',
         '10_of_spades',
+        '10_of_clubs',
+
+        'jack_of_diamonds',
+        'jack_of_hearts',
         'jack_of_spades',
+        'jack_of_clubs',
+
+        'queen_of_diamonds',
+        'queen_of_hearts',
         'queen_of_spades',
+        'queen_of_clubs',
+
+        'king_of_diamonds',
+        'king_of_hearts',
         'king_of_spades',
+        'king_of_clubs',
+
+        'ace_of_diamonds',
+        'ace_of_hearts',
         'ace_of_spades',
+        'ace_of_clubs'
    ];
       for(let i = 0; i < 52; i++) {
           cards.push(i);
