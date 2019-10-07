@@ -108,6 +108,8 @@ class App extends React.Component {
             {name: 'Dice'}
         ],
         numMines: 3,
+        mines:[],
+        numOfCards:[0,1,2,3,4,5],
         active_game: 'chartbet',
         MAX_ROLL: 10001,
         MAX_ROULETTE: 37,
@@ -257,7 +259,8 @@ class App extends React.Component {
      * @returns {number[]} The array of mine positions
      */
     nums_to_mine_array = (nums) => {
-        let mines = [];
+        let { mines } = this.state;
+        mines = [];
         for(let i = 0; i < 25; i++) {
             mines.push(i);
         }
@@ -266,6 +269,7 @@ class App extends React.Component {
             result.push(mines.splice(Math.floor((25-i)*nums[i]), 1)[0]);
         }
         console.log("mines result",result);
+        this.setState({mines:result})
         return result;
     };
     /**
@@ -469,6 +473,7 @@ class App extends React.Component {
 
     let res = this.result('Mines', server_seed, client_seed, nonce).slice(0,this.state.numMines);
     console.log("Mines : ", res);
+    return res;
   }
 
   handleKeno = (server_seed, client_seed, nonce) => {
@@ -1427,7 +1432,7 @@ handleVerifyBetForLimbo = (serverSeedHash,clientSeed, nonce) => {
   getBetData = async (BetIdArray) => {
     let { betData, user } = this.state;
 
-    BetIdArray.map(async (i)=>{
+    BetIdArray.map(async (i)=> {
      const bet =  await axios.get(`https://api.crypto-games.net/v1/bet/${i}`);
         if(bet.data.User==user){
             betData.push(bet.data)
@@ -1453,9 +1458,9 @@ handleVerifyBetForLimbo = (serverSeedHash,clientSeed, nonce) => {
 
     render() {
       const { gettingStarted, settings, verification, operators, clientSeed, serverSeedHash, nonce, betData, cryptoGames, primeDice, stake, bitvest, diceResult, diceVerify, verify, apiKey, apiKeyStake, usernameStake, enterAPI, enterAPIStake,
-      Balance, BetId, Roll, nonceChecked, toggleState, betAmount, betPayout, betPlaced, isNonceManipulated, numberBetsVerFailed, betDataById, betDataEnriched, viewRecentBetsStake, faqs, showAlert, popupResult, active_game } = this.state;
+      Balance, BetId, Roll, nonceChecked, toggleState, betAmount, betPayout, betPlaced, isNonceManipulated, numberBetsVerFailed, betDataById, betDataEnriched, viewRecentBetsStake, faqs, showAlert, popupResult, active_game, mines, numOfCards } = this.state;
         return (
-      <div className={'my-extension text-center'} style={{width: '30%'}}>
+      <div className={'my-extension text-center'}>
 
        <div className="nav-wrapper">
         <ul className="nav nav-pills nav-fill flex-md-row" id="tabs-icons-text" role="tablist">
@@ -1825,7 +1830,7 @@ handleVerifyBetForLimbo = (serverSeedHash,clientSeed, nonce) => {
              {item.element.nonce}
              </td>
              <td>
-             {(item.element.game==='baccarat' || item.element.game==='hilo' || item.element.game==='blackjack' || item.element.game==='diamondPoker' || item.element.game==='videoPoker')
+             {(item.element.game==='baccarat' || item.element.game==='hilo' || item.element.game==='blackjack' || item.element.game==='diamondPoker' || item.element.game==='videoPoker' || item.element.game==='mines')
              ?<button className="btn btn-info" onClick = {()=>{
                this.setState({showAlert:true, active_game:item.element.game, popupResult:item.element.isVerified});
              }} title="Results"> </button>
@@ -1846,6 +1851,16 @@ handleVerifyBetForLimbo = (serverSeedHash,clientSeed, nonce) => {
                         <img src={require('./images/diamonds/diamonds/1x/' + item +'.png')} style={{width:"10%"}}/>;
 
                     })
+                  :active_game==='mines'?
+                  <table>
+                    {numOfCards.map((j) => {
+                      return (<tr key={j}>
+                                <td key={j*10+i}>
+                                  <img src={require('./images/cards-png/mine.png')} style={{width:"15%"}}/>
+                                </td>
+                      </tr>)
+                    })}
+                  </table>
                   :
                   popupResult.map((item, i)=>{
                     return <img src={require('./images/cards-png/' + item +'.png')} style={{width:"10%"}}/>;

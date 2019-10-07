@@ -1,8 +1,11 @@
 /* src/content.css */
-
-.my-extension{
-    padding: 20px;
-    align:center;
+@media (min-width: 575.98px)
+{
+  .my-extension{
+      padding: 20px;
+      align:center;
+      width: 30%
+  }
 }
 
 .my-extension h1{
