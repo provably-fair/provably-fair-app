@@ -109,7 +109,8 @@ class App extends React.Component {
         ],
         numMines: 3,
         mines:[],
-        numOfCards:[0,1,2,3,4,5],
+        numOfRows:[0,1,2,3,4],
+        numOfColumnsKeno:[0,1,2,3,4,5,6,7],
         active_game: 'chartbet',
         MAX_ROLL: 10001,
         MAX_ROULETTE: 37,
@@ -1457,7 +1458,7 @@ handleVerifyBetForLimbo = (serverSeedHash,clientSeed, nonce) => {
 
     render() {
       const { gettingStarted, settings, verification, operators, clientSeed, serverSeedHash, nonce, betData, cryptoGames, primeDice, stake, bitvest, diceResult, diceVerify, verify, apiKey, apiKeyStake, usernameStake, enterAPI, enterAPIStake,
-      Balance, BetId, Roll, nonceChecked, toggleState, betAmount, betPayout, betPlaced, isNonceManipulated, numberBetsVerFailed, betDataById, betDataEnriched, viewRecentBetsStake, faqs, showAlert, popupResult, active_game, mines, numOfCards } = this.state;
+      Balance, BetId, Roll, nonceChecked, toggleState, betAmount, betPayout, betPlaced, isNonceManipulated, numberBetsVerFailed, betDataById, betDataEnriched, viewRecentBetsStake, faqs, showAlert, popupResult, active_game, mines, numOfRows, numOfColumnsKeno } = this.state;
         return (
       <div className={'my-extension text-center'}>
 
@@ -1852,54 +1853,42 @@ handleVerifyBetForLimbo = (serverSeedHash,clientSeed, nonce) => {
                     })
                   :active_game==='mines'?
                   <table>
-                    {numOfCards.map((j) => {
+                    {numOfRows.map((j) => {
                       return (<tr key={j}>
-                                <td key={j*10+1}>
-                                  <img src={require(mines.indexOf(((j-1)*5+(0-1)))>=0?'./images/mine.png':'./images/gem.png')} style={{width:"90%"}}/>
-                                </td>
-                                <td key={j*10+2}>
-                                <img src={require(mines.indexOf(((j-1)*5+(1-1)))>=0?'./images/mine.png':'./images/gem.png')} style={{width:"90%"}}/>
-                                </td>
-                                <td key={j*10+3}>
-                                <img src={require(mines.indexOf(((j-1)*5+(2-1)))>=0?'./images/mine.png':'./images/gem.png')} style={{width:"90%"}}/>
-                                </td>
-                                <td key={j*10+4}>
-                                <img src={require(mines.indexOf(((j-1)*5+(3-1)))>=0?'./images/mine.png':'./images/gem.png')} style={{width:"90%"}}/>
-                                </td>
-                                <td key={j*10+5}>
-                                <img src={require(mines.indexOf(((j-1)*5+(5-1)))>=0?'./images/mine.png':'./images/gem.png')} style={{width:"90%"}}/>
-                                </td>
+
+                                {numOfRows.map((i)=>{
+                                  return <td key={j*10+i}>
+                                  <img src={require((mines[0]==((j+1)*5+(i))) || (mines[1]==((j+1)*5+(i))) || (mines[2]==((j+1)*5+(i)))?'./images/mine.png':'./images/gem.png')} style={{width:"90%"}}/>
+                                  </td>
+                                })
+                                  }
+
                       </tr>)
                     })}
                   </table>
                   :active_game==='keno'?
                   <table>
-                    {numOfCards.map((j) => {
+                    {numOfRows.map((j) => {
                       return (<tr key={j}>
-                                <td key={j*10+1}>
-                                  <img src={require(popupResult.indexOf(((j-1)*5+(0-1)))>=0?'./images/keno.svg':'./images/keno.svg')} style={{width:"100%"}}/>
+                        {numOfColumnsKeno.map((i)=>{
+                          return <td key={j*10+i}>
+                          <img src={require((popupResult[0]==((j+1)*5+(i))) || (popupResult[1]==((j+1)*5+(i))) || (popupResult[2]==((j+1)*5+(i)))|| (popupResult[4]==((j+1)*5+(i)))|| (popupResult[4]==((j+1)*5+(i))) || (popupResult[5]==((j+1)*5+(i))) || (popupResult[6]==((j+1)*5+(i)))|| (popupResult[7]==((j+1)*5+(i)))|| (popupResult[8]==((j+1)*5+(i)))|| (popupResult[9]==((j+1)*5+(i)))?'./images/keno.svg':'./images/gem.png')} style={{width:"90%"}}/>
+                          </td>
+                        })
+                          }
+
+
+
+
+                                <td key={(j+1)*10+1}>
+                                {popupResult.map(item => {
+                                  item==(5*(j+1)+8+1)?
+                                  <img src={require('./images/keno.svg')} style={{width:"100%"}}/>
+                                  :
+                                  <img src={require('./images/mine.png')} style={{width:"100%"}}/>
+                                })}
                                 </td>
-                                <td key={j*10+2}>
-                                <img src={require(popupResult.indexOf(((j-1)*5+(1-1)))>=0?'./images/keno.svg':'./images/keno.svg')} style={{width:"100%"}}/>
-                                </td>
-                                <td key={j*10+3}>
-                                <img src={require(popupResult.indexOf(((j-1)*5+(2-1)))>=0?'./images/keno.svg':'./images/keno.svg')} style={{width:"100%"}}/>
-                                </td>
-                                <td key={j*10+4}>
-                                <img src={require(popupResult.indexOf(((j-1)*5+(3-1)))>=0?'./images/keno.svg':'./images/keno.svg')} style={{width:"100%"}}/>
-                                </td>
-                                <td key={j*10+5}>
-                                <img src={require(popupResult.indexOf(((j-1)*5+(5-1)))>=0?'./images/keno.svg':'./images/keno.svg')} style={{width:"100%"}}/>
-                                </td>
-                                <td key={j*10+1}>
-                                  <img src={require(popupResult.indexOf(((j-1)*5+(0-1)))>=0?'./images/keno.svg':'./images/keno.svg')} style={{width:"100%"}}/>
-                                </td>
-                                <td key={j*10+2}>
-                                <img src={require(popupResult.indexOf(((j-1)*5+(1-1)))>=0?'./images/keno.svg':'./images/keno.svg')} style={{width:"100%"}}/>
-                                </td>
-                                <td key={j*10+3}>
-                                <img src={require(popupResult.indexOf(((j-1)*5+(2-1)))>=0?'./images/keno.svg':'./images/keno.svg')} style={{width:"100%"}}/>
-                                </td>
+
                       </tr>)
                     })}
                   </table>
