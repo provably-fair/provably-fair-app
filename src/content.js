@@ -17,25 +17,6 @@ import './assets/css/argon.css';
 import qs from 'querystring';
 
 
-/* GraphQL query to get public chats of Stake Operator */
-
-// const query1 = `query {
-//   publicChats {
-//     id
-//     name
-//   }
-// }`
-
-
-// function sleeper(ms) {
-//   return function(x) {
-//     console.log('Sleep ',ms,'milisecs');
-//     return new Promise(resolve => setTimeout(() => resolve(x), ms));
-//   };
-// }
-
-
-
 /* GraphQl Client query to get new ServerSeed for Stake Operator */
 
 const query5 = `mutation ChangeClientSeedMutation($seed: String!) {

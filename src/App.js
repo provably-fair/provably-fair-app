@@ -1,42 +1,18 @@
 import React from 'react';
 import SweetAlert from 'react-bootstrap-sweetalert';
 import { GraphQLClient } from 'graphql-request';
+import { CookiesProvider } from 'react-cookie';
+import Cookies from 'js-cookie';
 import axios from 'axios';
 import createHmac from 'create-hmac';
 import uuidv4 from 'uuid/v4';
+import converter from 'hex2dec';
+import cryptoGamesIcon from './assets/img/cryptogames.png';
 import "./content.css";
 import './assets/css/argon.css';
 import qs from 'querystring';
 
 
-/* GraphQL query to get public chats of Stake Operator */
-
-// const query1 = `query {
-//   publicChats {
-//     id
-//     name
-//   }
-// }`
-
-
-// function sleeper(ms) {
-//   return function(x) {
-//     console.log('Sleep ',ms,'milisecs');
-//     return new Promise(resolve => setTimeout(() => resolve(x), ms));
-//   };
-// }
-
-
-
-/* GraphQl Client query to get new ServerSeed for Stake Operator */
-
-const query5 = `mutation ChangeClientSeedMutation($seed: String!) {
-  changeClientSeed(seed: $seed) {
-    id
-    seed
-    __typename
-  }
-}`
 
 
 
@@ -57,8 +33,8 @@ class App extends React.Component {
         session_token:'',
         betData:[],
         cryptoGames:false,
-        stake:true,
-        primeDice:false,
+        stake:false,
+        primeDice:true,
         bitvest:false,
         verify:false,
         diceResult:0,
@@ -176,7 +152,7 @@ class App extends React.Component {
      * @returns {string} The hex representation of the HMAC SHA256 hash
      */
     hmac_sha256 = (K, m) => {
-        let hmac = createHmac('sha256', K).update(m).digest('hex');
+        let hmac = createHmac('sha256', K) .update(m) .digest('hex');
         return hmac;
     };
     /**
@@ -403,7 +379,8 @@ class App extends React.Component {
     }
 
     handleRoullete = (server_seed, client_seed, nonce) => {
-      let { MAX_ROULETTE } = this.state;
+      let { active_game, MAX_ROULETTE } = this.state;
+      active_game = 'Roulette';
       let resolve = Math.floor(this.bytes_to_number(this.bytes(server_seed, client_seed, nonce, 8)) * MAX_ROULETTE);
       let res = this.result(resolve);
       console.log("result", res, "resolve", resolve);
@@ -421,10 +398,9 @@ class App extends React.Component {
       this.setState({server_seed:server_seed, client_seed:client_seed, nonce:nonce});
       let nums = [];
 
-      this.bytes_to_num_array(this.bytes(server_seed, client_seed, nonce, 160)).map((value) => {
+      this.bytes_to_num_array(this.bytes(server_seed, client_seed, nonce, 160)).map((value, index) => {
         let direction = Math.floor(value*2)?'right':'left';
         nums.push(direction);
-        return true;
       })
         console.log("Plinko -- ", nums);
         return nums;
@@ -434,7 +410,7 @@ class App extends React.Component {
     this.setState({server_seed:server_seed, client_seed:client_seed, nonce:nonce});
 
     let nums = [];
-    for(const [value] of this.bytes_to_num_array(this.bytes(server_seed, client_seed, nonce, 48)).entries()){
+    for(const [index, value] of this.bytes_to_num_array(this.bytes(server_seed, client_seed, nonce, 48)).entries()){
       nums.push(value);
       }
     nums = this.nums_to_card_array(nums);
@@ -446,7 +422,7 @@ class App extends React.Component {
     this.setState({server_seed:server_seed, client_seed:client_seed, nonce:nonce});
 
     let nums = [];
-    for(const [ value] of this.bytes_to_num_array(this.bytes(server_seed, client_seed, nonce, 448)).entries()){
+    for(const [index, value] of this.bytes_to_num_array(this.bytes(server_seed, client_seed, nonce, 448)).entries()){
       nums.push(value);
       }
     nums = this.nums_to_card_array(nums);
@@ -458,7 +434,7 @@ class App extends React.Component {
     this.setState({server_seed:server_seed, client_seed:client_seed, nonce:nonce});
 
     let nums = [];
-    for(const [value] of this.bytes_to_num_array(this.bytes(server_seed, client_seed, nonce, 448)).entries()){
+    for(const [index, value] of this.bytes_to_num_array(this.bytes(server_seed, client_seed, nonce, 448)).entries()){
       nums.push(value);
       }
     nums = this.nums_to_card_array(nums);
@@ -579,7 +555,7 @@ class App extends React.Component {
     this.setState({server_seed:server_seed, client_seed:client_seed, nonce:nonce});
 
     let nums = [];
-    for(const [ value] of this.bytes_to_num_array(this.bytes(server_seed, client_seed, nonce, 416)).entries()){
+    for(const [index, value] of this.bytes_to_num_array(this.bytes(server_seed, client_seed, nonce, 416)).entries()){
       nums.push(value);
       }
     console.log("result nums:", nums);
@@ -589,6 +565,8 @@ class App extends React.Component {
   }
 
   handleWheel = (server_seed, client_seed, nonce, segments, risk) => {
+        let { active_game } = this.state;
+        active_game = 'Wheel';
         let resolve = Math.floor(this.bytes_to_number(this.bytes(server_seed, client_seed, nonce, 8)) * segments);
         //let res = this.result(resolve);
         //console.log("result", res, "resolve", resolve);
@@ -687,9 +665,11 @@ class App extends React.Component {
 
     getAllData = () => {
 
+      const { stake, primeDice } = this.state;
+
       /* GraphQl Client object with x-access-token for Stake Operator */
 
-      const client = new GraphQLClient('https://api.stake.com/graphql', {
+      const client = new GraphQLClient(stake?'https://api.stake.com/graphql':primeDice?'https://api.primedice.com/graphql':'', {
         headers: {
           "x-access-token": this.state.apiKeyStake,
         },
@@ -736,9 +716,11 @@ class App extends React.Component {
 
     getAllBetsStake = () => {
 
+      const { stake, primeDice } = this.state;
+
       /* GraphQl Client object with x-access-token for Stake Operator */
 
-      const client = new GraphQLClient('https://api.stake.com/graphql', {
+      const client = new GraphQLClient(stake?'https://api.stake.com/graphql':primeDice?'https://api.primedice.com/graphql':'', {
         headers: {
           "x-access-token": this.state.apiKeyStake,
         },
@@ -747,7 +729,7 @@ class App extends React.Component {
       let { betDataById, betDataEnriched, usernameStake } = this.state;
         betDataEnriched = [];
         betDataById = [];
-       let name = `"${usernameStake}"`;
+       let name = `\"${usernameStake}\"`;
 
       /* GraphQL query houseBetList (i.e. game, payout, amountMultiplier, payoutMultiplier, amount, currency, createdAt) for a User of Stake Operator */
 
@@ -776,7 +758,7 @@ class App extends React.Component {
          this.setState({betDataEnriched:betDataEnriched});
          console.log('bet data enriched',betDataEnriched);
 
-         bet.user.houseBetList.map((houseBet) => {
+         bet.user.houseBetList.map((houseBet)=>{
         //  console.log("houseBet : ", houseBet);
 
 
@@ -814,7 +796,6 @@ class App extends React.Component {
              this.setState({betDataById:betDataById});
            })
           // console.log('betDataById', betDataById);
-          return true;
          })
        })
     }
@@ -823,15 +804,19 @@ class App extends React.Component {
 
     getAllUserSeedsStake = () => {
 
+      const { stake, primeDice } = this.state;
+
       /* GraphQl Client object with x-access-token for Stake Operator */
 
-      const client = new GraphQLClient('https://api.stake.com/graphql', {
+      const client = new GraphQLClient(stake?'https://api.stake.com/graphql':primeDice?'https://api.primedice.com/graphql':'', {
         headers: {
           "x-access-token": this.state.apiKeyStake,
         },
       })
       // should take user id as parameter
+      let {userSeedsData, previousServerSeedStake, previousClientSeedStake, activeClientSeedStake, usernameStake} = this.state;
 
+      const name = usernameStake;
 
       /**this is for looking up a user**/
 
@@ -860,11 +845,11 @@ class App extends React.Component {
          console.log('userSeeds : ', userSeeds);
         //  userSeedsData.push(userSeeds)
         //console.log("userSeeds.user.previousClientSeed.seed : ", userSeeds.user.previousClientSeed.seed);
-         if(userSeeds.user.previousClientSeed !== null)
+         if(userSeeds.user.previousClientSeed != null)
          {
            this.setState({previousClientSeedStake:userSeeds.user.previousClientSeed.seed});
          }
-         if(userSeeds.user.previousServerSeed !== null)
+         if(userSeeds.user.previousServerSeed != null)
          {
           this.setState({previousServerSeedStake:userSeeds.user.previousServerSeed.seed});
          }
@@ -880,9 +865,22 @@ class App extends React.Component {
 
     submitClientSeedStake = (clientSeed) => {
 
+      const { stake, primeDice } = this.state;
+
+      /* GraphQl Client query to get new ServerSeed for Stake Operator */
+
+      const query5 = `mutation ChangeClientSeedMutation($seed: String!) {
+        changeClientSeed(seed: $seed) {
+          id
+          seed
+          __typename
+        }
+      }`
+
+
       /* GraphQl Client object with x-access-token for Stake Operator */
 
-      const client = new GraphQLClient('https://api.stake.com/graphql', {
+      const client = new GraphQLClient(stake?'https://api.stake.com/graphql':primeDice?'https://api.primedice.com/graphql':'', {
         headers: {
           "x-access-token": this.state.apiKeyStake,
         },
@@ -919,9 +917,11 @@ class App extends React.Component {
 
     getServerSeedStake = () => {
 
+      const { stake, primeDice } = this.state;
+
       /* GraphQl Client object with x-access-token for Stake Operator */
 
-      const client = new GraphQLClient('https://api.stake.com/graphql', {
+      const client = new GraphQLClient(stake?'https://api.stake.com/graphql':primeDice?'https://api.primedice.com/graphql':'', {
         headers: {
           "x-access-token": this.state.apiKeyStake,
         },
@@ -957,12 +957,13 @@ class App extends React.Component {
       let{betDataById, betDataEnriched, betData, previousClientSeedStake, activeClientSeedStake, previousServerSeedStake} = this.state;
       betData = [];
 
+      let _ = require('lodash')
 
        console.log("betDataById", betDataById);
        console.log("previousClientSeedStake", previousClientSeedStake, "previousServerSeedStake", previousServerSeedStake ,"activeClientSeedStake", activeClientSeedStake);
      try{
       betDataById.map( (item) => {
-      if (((item.bet.bet.clientSeed.seed === activeClientSeedStake) && (item.bet.bet.serverSeed.seed === previousServerSeedStake)) || ((item.bet.bet.clientSeed.seed === previousClientSeedStake) && (item.bet.bet.serverSeed.seed === previousServerSeedStake)) )
+      if (((item.bet.bet.clientSeed.seed == activeClientSeedStake) && (item.bet.bet.serverSeed.seed == previousServerSeedStake)) || ((item.bet.bet.clientSeed.seed == previousClientSeedStake) && (item.bet.bet.serverSeed.seed == previousServerSeedStake)) )
         {
            console.log("verification eligible");
            var element = {};
@@ -970,76 +971,61 @@ class App extends React.Component {
            betDataEnriched.map( (innerItem) => {
              // console.log("Inner Item :", innerItem);
 
-              if(innerItem.iid === item.bet.iid)
+              if(innerItem.iid == item.bet.iid)
               {
                 let isVerified;
                 const game = innerItem.bet.game;
                 switch(game){
-                  case 'dice' :
-                    isVerified = this.handleVerifyBetStake(item.bet.bet.serverSeed.seed,item.bet.bet.clientSeed.seed,item.bet.bet.nonce);
-                    console.log("isVerified", isVerified);
+                  case 'dice' : { isVerified = this.handleVerifyBetStake(item.bet.bet.serverSeed.seed,item.bet.bet.clientSeed.seed,item.bet.bet.nonce);
+                  console.log("isVerified", isVerified);}
+                  break;
+
+                  case 'limbo' : { isVerified = this.handleVerifyBetForLimbo(item.bet.bet.serverSeed.seed,item.bet.bet.clientSeed.seed,item.bet.bet.nonce);
+                  console.log("isVerified", isVerified);}
+                  break;
+
+                  case 'roulette' : { isVerified = this.handleVerifyBetForRoulette(item.bet.bet.serverSeed.seed,item.bet.bet.clientSeed.seed,item.bet.bet.nonce);
+                  console.log("isVerified", isVerified);}
+                  break;
+
+                  case 'plinko' : { isVerified = this.handlePlinko(item.bet.bet.serverSeed.seed,item.bet.bet.clientSeed.seed,item.bet.bet.nonce);
+                  console.log("isVerified", isVerified);}
+                  break;
+
+                  case 'baccarat' : { isVerified = this.handleBaccarat(item.bet.bet.serverSeed.seed,item.bet.bet.clientSeed.seed,item.bet.bet.nonce);
+                  console.log("isVerified", isVerified);}
+                  break;
+
+                  case 'videoPoker' : { isVerified = this.handleVideoPoker(item.bet.bet.serverSeed.seed,item.bet.bet.clientSeed.seed,item.bet.bet.nonce);
+                    console.log("isVerified", isVerified);}
                     break;
 
-                  case 'limbo' :
-                    isVerified = this.handleVerifyBetForLimbo(item.bet.bet.serverSeed.seed,item.bet.bet.clientSeed.seed,item.bet.bet.nonce);
-                    console.log("isVerified", isVerified);
-                    break;
+                  case 'hilo' : { isVerified = this.handleHilo(item.bet.bet.serverSeed.seed,item.bet.bet.clientSeed.seed,item.bet.bet.nonce);
+                  console.log("isVerified", isVerified);}
+                  break;
 
-                  case 'roulette' :
-                    isVerified = this.handleVerifyBetForRoulette(item.bet.bet.serverSeed.seed,item.bet.bet.clientSeed.seed,item.bet.bet.nonce);
-                    console.log("isVerified", isVerified);
-                    break;
+                  case 'blackjack' : { isVerified = this.handleBlackjack(item.bet.bet.serverSeed.seed,item.bet.bet.clientSeed.seed,item.bet.bet.nonce);
+                  console.log("isVerified", isVerified);}
+                  break;
 
-                  case 'plinko' :
-                    isVerified = this.handlePlinko(item.bet.bet.serverSeed.seed,item.bet.bet.clientSeed.seed,item.bet.bet.nonce);
-                    console.log("isVerified", isVerified);
-                    break;
+                  case 'mines' : { isVerified = this.handleMines(item.bet.bet.serverSeed.seed,item.bet.bet.clientSeed.seed,item.bet.bet.nonce);
+                  console.log("isVerified", isVerified);}
+                  break;
 
-                  case 'baccarat' :
-                    isVerified = this.handleBaccarat(item.bet.bet.serverSeed.seed,item.bet.bet.clientSeed.seed,item.bet.bet.nonce);
-                    console.log("isVerified", isVerified);
-                    break;
+                  case 'keno' : { isVerified = this.handleKeno(item.bet.bet.serverSeed.seed,item.bet.bet.clientSeed.seed,item.bet.bet.nonce);
+                  console.log("isVerified", isVerified);}
+                  break;
 
-                  case 'videoPoker' :
-                    isVerified = this.handleVideoPoker(item.bet.bet.serverSeed.seed,item.bet.bet.clientSeed.seed,item.bet.bet.nonce);
-                    console.log("isVerified", isVerified);
-                    break;
+                  case 'diamondPoker' : { isVerified = this.handleDiamondPoker(item.bet.bet.serverSeed.seed,item.bet.bet.clientSeed.seed,item.bet.bet.nonce);
+                  console.log("isVerified", isVerified);}
+                  break;
 
-                  case 'hilo' :
-                    isVerified = this.handleHilo(item.bet.bet.serverSeed.seed,item.bet.bet.clientSeed.seed,item.bet.bet.nonce);
-                    console.log("isVerified", isVerified);
-                    break;
+                  case 'wheel' : { isVerified = this.handleWheel(item.bet.bet.serverSeed.seed,item.bet.bet.clientSeed.seed,item.bet.bet.nonce, '10', 'medium');
+                  console.log("isVerified", isVerified);}
+                  break;
 
-                  case 'blackjack' :
-                    isVerified = this.handleBlackjack(item.bet.bet.serverSeed.seed,item.bet.bet.clientSeed.seed,item.bet.bet.nonce);
-                    console.log("isVerified", isVerified);
-                    break;
-
-                  case 'mines' :
-                    isVerified = this.handleMines(item.bet.bet.serverSeed.seed,item.bet.bet.clientSeed.seed,item.bet.bet.nonce);
-                    console.log("isVerified", isVerified);
-                    break;
-
-                  case 'keno' :
-                    isVerified = this.handleKeno(item.bet.bet.serverSeed.seed,item.bet.bet.clientSeed.seed,item.bet.bet.nonce);
-                    console.log("isVerified", isVerified);
-                    break;
-
-                  case 'diamondPoker' :
-                    isVerified = this.handleDiamondPoker(item.bet.bet.serverSeed.seed,item.bet.bet.clientSeed.seed,item.bet.bet.nonce);
-                    console.log("isVerified", isVerified);
-                    break;
-
-                  case 'wheel' :
-                    isVerified = this.handleWheel(item.bet.bet.serverSeed.seed,item.bet.bet.clientSeed.seed,item.bet.bet.nonce, '10', 'medium');
-                    console.log("isVerified", isVerified);
-                    break;
-
-                  default :
-                    isVerified = 0;
-
-                }
-
+                  default : isVerified = 0;
+                     }
 
                      // console.log("item.bet.iid.split('house:')" , item.bet.iid.split('house:'));
                 element.id = item.bet.iid.split('house:'); element.game = innerItem.bet.game; element.payout = innerItem.bet.payout;
@@ -1048,7 +1034,6 @@ class App extends React.Component {
                 betData.push({element:element});
                 this.setState({betData:betData});
               }
-              return true;
            })
           this.setState({viewRecentBetsStake:true})
           betData.sort((a, b) => {
@@ -1056,8 +1041,6 @@ class App extends React.Component {
           });
           console.log("betData : ",betData);
         }
-        return true;
-
     })
   }catch(e){
    console.log("YO Crash")
@@ -1077,7 +1060,7 @@ class App extends React.Component {
 
         const roll = function(key, text) {
         // create HMAC using server seed as key and client seed as message
-        const hash = crypto.createHmac('sha256', key).update(text).digest('hex');
+        const hash = crypto .createHmac('sha256', key) .update(text) .digest('hex');
         console.log('result hash',hash);
 
 
@@ -1116,7 +1099,7 @@ handleVerifyBetForRoulette = (serverSeedHash,clientSeed, nonce) => {
   const crypto = require('crypto');
   const roll = function(key, text) {
   // create HMAC using server seed as key and client seed as message
-  const hash = crypto.createHmac('sha256',key).update(text).digest('hex');
+  const hash = crypto .createHmac('sha256', key) .update(text) .digest('hex');
   console.log('result hash',hash);
 
 
@@ -1155,7 +1138,7 @@ handleVerifyBetForLimbo = (serverSeedHash,clientSeed, nonce) => {
   const crypto = require('crypto');
   const roll = function(key, text) {
   // create HMAC using server seed as key and client seed as message
-  const hash = crypto.createHmac('sha256',key).update(text).digest('hex');
+  const hash = crypto .createHmac('sha256', key) .update(text) .digest('hex');
   console.log('result hash',hash);
 
 
@@ -1200,7 +1183,7 @@ handleVerifyBetForLimbo = (serverSeedHash,clientSeed, nonce) => {
     const crypto = require('crypto');
     const roll = function(key, text) {
     // create HMAC using server seed as key and client seed as message
-    const hash = crypto.createHmac('sha512',key).update(text).digest('hex');
+    const hash = crypto .createHmac('sha512', key) .update(text) .digest('hex');
     let index = 0;
     let lucky = parseInt(hash.substring(index * 5, index * 5 + 5), 16);
     // keep grabbing characters from the hash while greater than
@@ -1238,7 +1221,7 @@ handleVerifyBetForLimbo = (serverSeedHash,clientSeed, nonce) => {
   /* Method for getting Server Seed Hash for the Bitvest Operator */
 
   getNewServerseedHashBitvest = async () => {
-   let { session_token } = this.state;
+   let {previousSeed, serverSeedHash, session_token } = this.state;
    console.log('session_token', session_token);
    const bitvest = await axios.post('https://bitvest.io/action.php',
     qs.stringify({
@@ -1260,6 +1243,7 @@ handleVerifyBetForLimbo = (serverSeedHash,clientSeed, nonce) => {
     betData = [];
     numberBetsVerFailed = 0;
     isNonceManipulated = false;
+    const crypto = require('crypto');
     let bitvest = await axios.get('https://bitvest.io/update?games_only=1');
     console.log("bitvest value is : ", bitvest);
 
@@ -1281,9 +1265,7 @@ handleVerifyBetForLimbo = (serverSeedHash,clientSeed, nonce) => {
         if(!isVerified) numberBetsVerFailed++;
         var element = {};
         element.id = item.id; element.game = item.game; element.roll = item.roll; element.side = item.side; element.target = item.target;
-        element.nonce = item.user_seed_nonce;
-        element.isVerified = isVerified;
-        element.timestamp = item.timestamp;
+        element.nonce = item.user_seed_nonce;  element.isVerified = isVerified, element.timestamp = item.timestamp;
         console.log('element : ', element);
         betData.push({element:element});
         console.log('betData',betData);
@@ -1294,8 +1276,8 @@ handleVerifyBetForLimbo = (serverSeedHash,clientSeed, nonce) => {
         this.setState({betData:betData});
 
         let testNonce = 0;
-        betData.map((item)=> {
-          if(item.element.nonce === testNonce)
+        betData.map((item)=>{
+          if(item.element.nonce == testNonce)
           {
             console.log('current nonce',item.element.nonce);
             console.log('test nonce',testNonce);
@@ -1306,7 +1288,6 @@ handleVerifyBetForLimbo = (serverSeedHash,clientSeed, nonce) => {
           {
             isNonceManipulated = true;
           }
-          return true;
         })
 
         this.setState({numberBetsVerFailed:numberBetsVerFailed});
@@ -1353,7 +1334,7 @@ handleVerifyBetForLimbo = (serverSeedHash,clientSeed, nonce) => {
     const crypto = require('crypto');
     const roll = function(key, text) {
     // create HMAC using server seed as key and client seed as message
-    const hash = crypto.createHmac('sha512',text).update(key).digest('hex');
+    const hash = crypto .createHmac('sha512', text) .update(key) .digest('hex');
     console.log('=============key',key);
     console.log('=======>text',text);
     console.log('=========hash',hash);
@@ -1371,7 +1352,7 @@ handleVerifyBetForLimbo = (serverSeedHash,clientSeed, nonce) => {
      }
     }
     lucky /= Math.pow(10, 4);
-    if(lucky===result) {
+    if(lucky==result) {
       return true;
     }
     else{
@@ -1407,6 +1388,7 @@ handleVerifyBetForLimbo = (serverSeedHash,clientSeed, nonce) => {
   /* Method for getting Server Seed Hash for Crypto Games Operator */
 
   getServerSeed = async (apiKey) => {
+    let {serverSeedHash} = this.state;
     window.localStorage.setItem('apiKey', apiKey);
     const seed = await axios.get(`https://api.crypto-games.net/v1/nextseed/btc/${apiKey}`);
 
@@ -1435,8 +1417,6 @@ handleVerifyBetForLimbo = (serverSeedHash,clientSeed, nonce) => {
     BetIdArray.push(BetId)
     this.setState({BetIdArray:BetIdArray});
     //this.getBetData(BetIdArray);
-    // TODO: Find the radix parameter
-    console.error(nonce);
     var newNonce = parseInt(nonce);
     this.setState({BetId:BetId, Balance:Balance, Roll:Roll, nonce:newNonce+1});
     this.getServerSeed(apiKey);
@@ -1449,7 +1429,7 @@ handleVerifyBetForLimbo = (serverSeedHash,clientSeed, nonce) => {
 
     BetIdArray.map(async (i)=> {
      const bet =  await axios.get(`https://api.crypto-games.net/v1/bet/${i}`);
-        if(bet.data.User===user){
+        if(bet.data.User==user){
             betData.push(bet.data)
             this.setState({betData:betData});
           }
@@ -1463,7 +1443,7 @@ handleVerifyBetForLimbo = (serverSeedHash,clientSeed, nonce) => {
     let { betData, user } = this.state;
 
      const bet =  await axios.get(`https://api.crypto-games.net/v1/bet/${BetId}`);
-        if(bet.data.User===user){
+        if(bet.data.User==user){
             betData.push(bet.data)
             this.setState({betData:betData});
           }
@@ -1473,7 +1453,8 @@ handleVerifyBetForLimbo = (serverSeedHash,clientSeed, nonce) => {
 
     render() {
       const { gettingStarted, settings, verification, operators, clientSeed, serverSeedHash, nonce, betData, cryptoGames, primeDice, stake, bitvest, diceResult, diceVerify, verify, apiKey, apiKeyStake, usernameStake, enterAPI, enterAPIStake,
-      Balance, BetId, Roll, nonceChecked, toggleState, betAmount, betPayout, betPlaced, isNonceManipulated, numberBetsVerFailed, betDataById, betDataEnriched, viewRecentBetsStake, faqs, showAlert, popupResult, active_game, mines, keno, numOfRows, numOfColumns } = this.state;
+      Balance, BetId, Roll, nonceChecked, toggleState, betAmount, betPayout, betPlaced, isNonceManipulated, numberBetsVerFailed, betDataById, betDataEnriched, viewRecentBetsStake, faqs, showAlert, popupResult, active_game, mines, keno, numOfRows,
+       numOfColumns, numOfColumnsKeno } = this.state;
         return (
       <div className={'my-extension text-center'}>
 
@@ -1591,27 +1572,21 @@ handleVerifyBetForLimbo = (serverSeedHash,clientSeed, nonce) => {
 
 
       <div style={{display:enterAPIStake?'block':'none'}}>
-
-     <div className="form-group">
-       <label className="form-control-label">Enter Your Bet Token</label>
-       <img src="https://camo.githubusercontent.com/184f5fe3162ac51bdc0c89207d568c691d053aea/68747470733a2f2f662e636c6f75642e6769746875622e636f6d2f6173736574732f353331393931362f323437373339332f36303565656639362d623037302d313165332d383134612d3637613132383166303665312e706e67"
-       alt=""
-       style={{ width: '10%'}} data-toggle="popover" data-placement="left" title='Instructions for using extension on Stake and PrimeDice:
-           1. Open website then click "settings" from the dropdown menu at the top of the screen.
-           2. Click "Tokens"
-           3. Click "Reveal" then copy the token.
-           4. Enter the token and your username into the extension, then click submit.'/>
-       <input className="form-control form-control-sm" type="text" value={apiKeyStake || ''} placeholder="Token" onChange={(e)=>{this.setState({apiKeyStake:e.target.value})}}/>
-       <label className="form-control-label">Enter Your Username</label>
-       <input className="form-control form-control-sm" type="text" value={usernameStake} placeholder="Username" onChange={(e)=>{this.setState({usernameStake:e.target.value})}}/>
-       <button type="button" className="btn btn-secondary m-2" onClick={()=>{
-         this.handleRequest();
-         this.setState({gettingStarted:false, settings:true, enterAPIStake:false});
-       }}> Submit</button>
-     </div>
-
-
-
+       <div className="form-group">
+         <label className="form-control-label">Enter Your Bet Token</label>
+         <img src="https://camo.githubusercontent.com/184f5fe3162ac51bdc0c89207d568c691d053aea/68747470733a2f2f662e636c6f75642e6769746875622e636f6d2f6173736574732f353331393931362f323437373339332f36303565656639362d623037302d313165332d383134612d3637613132383166303665312e706e67" style={{ width: '10%'}} data-toggle="popover" data-placement="left" title='Instructions for using extension on Stake and PrimeDice:
+             1. Open website then click "settings" from the dropdown menu at the top of the screen.
+             2. Click "Tokens"
+             3. Click "Reveal" then copy the token.
+             4. Enter the token and your username into the extension, then click submit.'/>
+         <input className="form-control form-control-sm" type="text" value={apiKeyStake} placeholder="Token" onChange={(e)=>{this.setState({apiKeyStake:e.target.value})}}/>
+         <label className="form-control-label">Enter Your Username</label>
+         <input className="form-control form-control-sm" type="text" value={usernameStake} placeholder="Username" onChange={(e)=>{this.setState({usernameStake:e.target.value})}}/>
+         <button type="button" className="btn btn-secondary m-2" onClick={()=>{
+           this.handleRequest();
+           this.setState({gettingStarted:false, settings:true, enterAPIStake:false});
+         }}> Submit</button>
+       </div>
      </div>
 
      <div style={{display:enterAPI?'block':'none'}}>
@@ -1635,7 +1610,6 @@ handleVerifyBetForLimbo = (serverSeedHash,clientSeed, nonce) => {
      <div className="form-group">
        <label className="form-control-label">Next Server Seed Hash </label>
        <img src="https://camo.githubusercontent.com/184f5fe3162ac51bdc0c89207d568c691d053aea/68747470733a2f2f662e636c6f75642e6769746875622e636f6d2f6173736574732f353331393931362f323437373339332f36303565656639362d623037302d313165332d383134612d3637613132383166303665312e706e67" style={{ width: '10%'}}
-       alt=""
        data-toggle="popover" data-placement="left" title="This is the server seed that has been created by the casino. It is sent to you in advance of any bets being made to ensure the casino did not change or manipulate the outcome of any game results. It is hashed(encrypted) to prevent players from calculating the upcoming game results. Once you request a new server seed, the one that is currently in use will be unhashed(decrypted) and sent to the verification tab. All bets made using that server seed will be automatically verified. You will be notified if any bets did not pass verification."/>
        <input className="form-control form-control-sm" type="text" value={serverSeedHash} placeholder="" onChange={(e)=>{this.setState({serverSeedHash:e.target.value })}}/>
        <button type="button" className="btn btn-secondary m-2"   onClick={this.handleRequest}> Request</button>
@@ -1643,9 +1617,7 @@ handleVerifyBetForLimbo = (serverSeedHash,clientSeed, nonce) => {
 
      <div className="form-group">
        <label className="form-control-label">Client Seed</label>
-       <img src="https://camo.githubusercontent.com/184f5fe3162ac51bdc0c89207d568c691d053aea/68747470733a2f2f662e636c6f75642e6769746875622e636f6d2f6173736574732f353331393931362f323437373339332f36303565656639362d623037302d313165332d383134612d3637613132383166303665312e706e67" style={{ width: '10%'}}
-       alt=""
-       data-toggle="popover" data-placement="left" title="This is the client seed. Sometimes called the player seed. It is very important that you customize this after you request a new server seed. The server seed and client seed pre-filled by default. To ensure provable fairness, you must customize your own client seed. It will be used in combination with the server seed to generate thr game results."/>
+       <img src="https://camo.githubusercontent.com/184f5fe3162ac51bdc0c89207d568c691d053aea/68747470733a2f2f662e636c6f75642e6769746875622e636f6d2f6173736574732f353331393931362f323437373339332f36303565656639362d623037302d313165332d383134612d3637613132383166303665312e706e67" style={{ width: '10%'}} data-toggle="popover" data-placement="left" title="This is the client seed. Sometimes called the player seed. It is very important that you customize this after you request a new server seed. The server seed and client seed pre-filled by default. To ensure provable fairness, you must customize your own client seed. It will be used in combination with the server seed to generate thr game results."/>
 
        <input className="form-control form-control-sm" type="text" value={clientSeed} placeholder="CURRENT CLIENT SEED" onChange={(e)=>{this.setState({clientSeed:e.target.value})}}/>
        <button type="button" className="btn btn-secondary m-2"   onClick={this.getClientSeed}> Generate</button>
@@ -1813,8 +1785,8 @@ handleVerifyBetForLimbo = (serverSeedHash,clientSeed, nonce) => {
              </td>
              <td>
              {item.element.isVerified
-               ? <a href="/#"  className="badge badge-pill badge-success">Success</a>
-               : <a href="/#"  className="badge badge-pill badge-danger">Failed</a>
+               ? <a href="#"  className="badge badge-pill badge-success">Success</a>
+               : <a href="#"  className="badge badge-pill badge-danger">Failed</a>
              }
              </td>
              </tr>
@@ -1854,7 +1826,7 @@ handleVerifyBetForLimbo = (serverSeedHash,clientSeed, nonce) => {
              ?<button className="btn btn-info" onClick = {()=>{
                this.setState({showAlert:true, active_game:item.element.game, popupResult:item.element.isVerified});
              }} title="Results"> </button>
-            :item.element.game==='plinko'?<img src={require("./images/info-icon-5.png")} style={{ width: '50%'}} alt="" data-toggle="popover" data-placement="left" title={item.element.isVerified} />
+            :item.element.game==='plinko'?<img src={require("./images/info-icon-5.png")} style={{ width: '50%'}} data-toggle="popover" data-placement="left" title={item.element.isVerified} />
             :item.element.isVerified
             }
 
@@ -1864,11 +1836,7 @@ handleVerifyBetForLimbo = (serverSeedHash,clientSeed, nonce) => {
                    confirmBtnBsStyle="info"
                    title="Bet Results"
                    onConfirm={this.hideAlertConfirm}
-                   style={{
-                     width: '90%',
-                     left: '5%',
-                     marginLeft: '0'
-                   }}
+                   style={{left: '90%', width:'50%'}}
                >
                     {active_game==='diamondPoker'?
                       popupResult.map((item, i)=>{
@@ -1894,10 +1862,10 @@ handleVerifyBetForLimbo = (serverSeedHash,clientSeed, nonce) => {
                   <tbody>
                     {numOfRows.map((j) => {
                       return (<tr key={j}>
-                        {numOfColumns.map((i)=>{
-                          return <td key={(i)}>
-                          <button className={(keno[0]===((j)*8+(i))) || (keno[1]===((j)*8+(i))) || (keno[2]===((j)*8+(i)))|| (keno[4]===((j)*8+(i)))|| (keno[4]===((j)*8+(i))) || (keno[5]===((j)*8+(i))) || (keno[6]===((j)*8+(i))) || (keno[7]===((j)*8+(i))) || (keno[8]===((j)*8+(i))) || (keno[9]===((j)*8+(i)))?'btn btn-success':'btn btn-info'}>{(j)*8+i+1} </button>
-                          </td>
+                        {numOfColumnsKeno.map((i)=>{
+                          return (<td key={(j*5+i)}>
+                          <button className={(keno[0]==((j)*5+(i))) || (keno[1]==((j)*5+(i))) || (keno[2]==((j)*5+(i)))|| (keno[4]==((j)*5+(i)))|| (keno[4]==((j)*5+(i))) || (keno[5]==((j)*5+(i))) || (keno[6]==((j)*5+(i))) || (keno[7]==((j)*5+(i))) || (keno[8]==((j)*5+(i))) || (keno[9]==((j)*5+(i)))?'btn btn-success':'btn btn-info'}>{(j)*5+i+1} </button>
+                          </td>);
                         })}
                       </tr>)
                     })}
@@ -1906,7 +1874,7 @@ handleVerifyBetForLimbo = (serverSeedHash,clientSeed, nonce) => {
 
                   :
                   popupResult.map((item, i)=>{
-                    return <img alt="" src={require('./images/cards-png/' + item +'.png')} style={{width:"10%"}}/>;
+                    return <img src={require('./images/cards-png/' + item +'.png')} style={{width:"10%"}}/>;
                 })}
                </SweetAlert>}
              </td>
@@ -1985,7 +1953,7 @@ handleVerifyBetForLimbo = (serverSeedHash,clientSeed, nonce) => {
        <div className="m-3" style={{cursor:'pointer'}} onClick={()=>{
          this.setState({operators:false, primeDice:false, stake:false, bitvest:true})
        }}>
-         <img alt="" src="https://cdn.worldvectorlogo.com/logos/bitvest.svg"  style={{ width: '35%'}} title="Bitvest"/>
+         <img src="https://cdn.worldvectorlogo.com/logos/bitvest.svg"  style={{width:"144.95", width: '35%'}} title="Bitvest"/>
        </div>
      </div>
 
