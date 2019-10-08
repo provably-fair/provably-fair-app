@@ -17,24 +17,22 @@ import './assets/css/argon.css';
 import qs from 'querystring';
 
 
-
-
 /* GraphQL query to get public chats of Stake Operator */
 
-const query1 = `query {
-  publicChats {
-    id
-    name
-  }
-}`
+// const query1 = `query {
+//   publicChats {
+//     id
+//     name
+//   }
+// }`
 
 
-function sleeper(ms) {
-  return function(x) {
-    console.log('Sleep ',ms,'milisecs');
-    return new Promise(resolve => setTimeout(() => resolve(x), ms));
-  };
-}
+// function sleeper(ms) {
+//   return function(x) {
+//     console.log('Sleep ',ms,'milisecs');
+//     return new Promise(resolve => setTimeout(() => resolve(x), ms));
+//   };
+// }
 
 
 
@@ -1887,7 +1885,7 @@ class Main extends React.Component {
                                       return (<tr key={j}>
                                         {numOfColumns.map((i)=>{
                                           return <td key={(i)}>
-                                          <button className={(keno[0]==((j)*5+(i))) || (keno[1]==((j)*5+(i))) || (keno[2]==((j)*5+(i)))|| (keno[4]==((j)*5+(i)))|| (keno[4]==((j)*5+(i))) || (keno[5]==((j)*5+(i))) || (keno[6]==((j)*5+(i))) || (keno[7]==((j)*5+(i))) || (keno[8]==((j)*5+(i))) || (keno[9]==((j)*5+(i)))?'btn btn-success':'btn btn-info'}>{(j)*5+i+1} </button>
+                                          <button className={(keno[0]===((j)*8+(i))) || (keno[1]===((j)*8+(i))) || (keno[2]===((j)*8+(i)))|| (keno[4]===((j)*8+(i)))|| (keno[4]===((j)*8+(i))) || (keno[5]===((j)*8+(i))) || (keno[6]===((j)*8+(i))) || (keno[7]===((j)*8+(i))) || (keno[8]===((j)*8+(i))) || (keno[9]===((j)*8+(i)))?'btn btn-success':'btn btn-info'}>{(j)*8+i+1} </button>
                                           </td>
                                         })}
                                       </tr>)
