@@ -112,6 +112,7 @@ class App extends React.Component {
         keno:[],
         numOfRows:[0,1,2,3,4],
         numOfColumnsKeno:[0,1,2,3,4,5,6,7],
+        numOfColumns:[0,1,2,3,4,5,6,7],
         active_game: 'chartbet',
         MAX_ROLL: 10001,
         MAX_ROULETTE: 37,
@@ -1459,7 +1460,7 @@ handleVerifyBetForLimbo = (serverSeedHash,clientSeed, nonce) => {
 
     render() {
       const { gettingStarted, settings, verification, operators, clientSeed, serverSeedHash, nonce, betData, cryptoGames, primeDice, stake, bitvest, diceResult, diceVerify, verify, apiKey, apiKeyStake, usernameStake, enterAPI, enterAPIStake,
-      Balance, BetId, Roll, nonceChecked, toggleState, betAmount, betPayout, betPlaced, isNonceManipulated, numberBetsVerFailed, betDataById, betDataEnriched, viewRecentBetsStake, faqs, showAlert, popupResult, active_game, mines, keno, numOfRows, numOfColumnsKeno } = this.state;
+      Balance, BetId, Roll, nonceChecked, toggleState, betAmount, betPayout, betPlaced, isNonceManipulated, numberBetsVerFailed, betDataById, betDataEnriched, viewRecentBetsStake, faqs, showAlert, popupResult, active_game, mines, keno, numOfRows, numOfColumns } = this.state;
         return (
       <div className={'my-extension text-center'}>
 
@@ -1854,30 +1855,50 @@ handleVerifyBetForLimbo = (serverSeedHash,clientSeed, nonce) => {
                     })
                   :active_game==='mines'?
                   <table>
+                  <tbody>
                     {numOfRows.map((j) => {
                       return (<tr key={j}>
-
                                 {numOfRows.map((i)=>{
-                                  return <td key={j*10+i}>
-                                  <img src={require((mines[0]==((j+1)*5+(i))) || (mines[1]==((j+1)*5+(i))) || (mines[2]==((j+1)*5+(i)))?'./images/mine.png':'./images/gem.png')} style={{width:"90%"}}/>
+                                  return <td key={j*5+i}>
+                                  <img src={require((mines[0]==((j)*5+(i))) || (mines[1]==((j)*5+(i))) || (mines[2]==((j)*5+(i)))?'./images/mine.png':'./images/gem.png')} style={{width:"90%"}}/>
                                   </td>
-                                })
-                                  }
-
+                                })}
                       </tr>)
                     })}
+                  </tbody>
                   </table>
                   :active_game==='keno'?
                   <table>
+                  <tbody>
                     {numOfRows.map((j) => {
                       return (<tr key={j}>
-                        {numOfColumnsKeno.map((i)=>{
-                          return <td key={(i)}>
-                          <button className={(keno[0]==((j)*5+(i))) || (keno[1]==((j)*5+(i))) || (keno[2]==((j)*5+(i)))|| (keno[4]==((j)*5+(i)))|| (keno[4]==((j)*5+(i))) || (keno[5]==((j)*5+(i))) || (keno[6]==((j)*5+(i))) || (keno[7]==((j)*5+(i))) || (keno[8]==((j)*5+(i))) || (keno[9]==((j)*5+(i)))?'btn btn-success':'btn btn-info'}>{(j)*5+i+1} </button>
+                          <td key={(j*5+0)}>
+                          <button className={(keno[0]==((j)*5+(0))) || (keno[1]==((j)*5+(0))) || (keno[2]==((j)*5+(0)))|| (keno[4]==((j)*5+(0)))|| (keno[4]==((j)*5+(0))) || (keno[5]==((j)*5+(0))) || (keno[6]==((j)*5+(0))) || (keno[7]==((j)*5+(0))) || (keno[8]==((j)*5+(0))) || (keno[9]==((j)*5+(0)))?'btn btn-success':'btn btn-info'}>{(j)*5+1} </button>
                           </td>
-                        })}
+                          <td key={(j*5+1)}>
+                          <button className={(keno[0]==((j)*5+(1))) || (keno[1]==((j)*5+(1))) || (keno[2]==((j)*5+(1)))|| (keno[4]==((j)*5+(1)))|| (keno[4]==((j)*5+(1))) || (keno[5]==((j)*5+(1))) || (keno[6]==((j)*5+(1))) || (keno[7]==((j)*5+(1))) || (keno[8]==((j)*5+(1))) || (keno[9]==((j)*5+(1)))?'btn btn-success':'btn btn-info'}>{(j)*5+2} </button>
+                          </td>
+                          <td key={(j*5+1)}>
+                          <button className={(keno[0]==((j)*5+(2))) || (keno[1]==((j)*5+(2))) || (keno[2]==((j)*5+(2)))|| (keno[4]==((j)*5+(2)))|| (keno[4]==((j)*5+(2))) || (keno[5]==((j)*5+(2))) || (keno[6]==((j)*5+(2))) || (keno[7]==((j)*5+(2))) || (keno[8]==((j)*5+(2))) || (keno[9]==((j)*5+(2)))?'btn btn-success':'btn btn-info'}>{(j)*5+3} </button>
+                          </td>
+                          <td key={(j*5+1)}>
+                          <button className={(keno[0]==((j)*5+(3))) || (keno[1]==((j)*5+(3))) || (keno[2]==((j)*5+(3)))|| (keno[4]==((j)*5+(3)))|| (keno[4]==((j)*5+(3))) || (keno[5]==((j)*5+(3))) || (keno[6]==((j)*5+(3))) || (keno[7]==((j)*5+(3))) || (keno[8]==((j)*5+(3))) || (keno[9]==((j)*5+(3)))?'btn btn-success':'btn btn-info'}>{(j)*5+4} </button>
+                          </td>
+                          <td key={(j*5+1)}>
+                          <button className={(keno[0]==((j)*5+(4))) || (keno[1]==((j)*5+(4))) || (keno[2]==((j)*5+(4)))|| (keno[4]==((j)*5+(4)))|| (keno[4]==((j)*5+(4))) || (keno[5]==((j)*5+(4))) || (keno[6]==((j)*5+(4))) || (keno[7]==((j)*5+(4))) || (keno[8]==((j)*5+(4))) || (keno[9]==((j)*5+(4)))?'btn btn-success':'btn btn-info'}>{(j)*5+5} </button>
+                          </td>
+                          <td key={(j*5+1)}>
+                          <button className={(keno[0]==((j)*5+(5))) || (keno[1]==((j)*5+(5))) || (keno[2]==((j)*5+(5)))|| (keno[4]==((j)*5+(5)))|| (keno[4]==((j)*5+(5))) || (keno[5]==((j)*5+(5))) || (keno[6]==((j)*5+(5))) || (keno[7]==((j)*5+(5))) || (keno[8]==((j)*5+(5))) || (keno[9]==((j)*5+(5)))?'btn btn-success':'btn btn-info'}>{(j)*5+6} </button>
+                          </td>
+                          <td key={(j*5+1)}>
+                          <button className={(keno[0]==((j)*5+(6))) || (keno[1]==((j)*5+(6))) || (keno[2]==((j)*5+(6)))|| (keno[4]==((j)*5+(6)))|| (keno[4]==((j)*5+(6))) || (keno[5]==((j)*5+(6))) || (keno[6]==((j)*5+(6))) || (keno[7]==((j)*5+(6))) || (keno[8]==((j)*5+(6))) || (keno[9]==((j)*5+(6)))?'btn btn-success':'btn btn-info'}>{(j)*5+7} </button>
+                          </td>
+                          <td key={(j*5+1)}>
+                          <button className={(keno[0]==((j)*5+(7))) || (keno[1]==((j)*5+(7))) || (keno[2]==((j)*5+(7)))|| (keno[4]==((j)*5+(7)))|| (keno[4]==((j)*5+(7))) || (keno[5]==((j)*5+(7))) || (keno[6]==((j)*5+(7))) || (keno[7]==((j)*5+(7))) || (keno[8]==((j)*5+(7))) || (keno[9]==((j)*5+(7)))?'btn btn-success':'btn btn-info'}>{(j)*5+8} </button>
+                          </td>
                       </tr>)
                     })}
+                    </tbody>
                   </table>
 
                   :
