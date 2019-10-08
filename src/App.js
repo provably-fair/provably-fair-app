@@ -1872,30 +1872,11 @@ handleVerifyBetForLimbo = (serverSeedHash,clientSeed, nonce) => {
                   <tbody>
                     {numOfRows.map((j) => {
                       return (<tr key={j}>
-                          <td key={(j*5+0)}>
-                          <button className={(keno[0]==((j)*5+(0))) || (keno[1]==((j)*5+(0))) || (keno[2]==((j)*5+(0)))|| (keno[4]==((j)*5+(0)))|| (keno[4]==((j)*5+(0))) || (keno[5]==((j)*5+(0))) || (keno[6]==((j)*5+(0))) || (keno[7]==((j)*5+(0))) || (keno[8]==((j)*5+(0))) || (keno[9]==((j)*5+(0)))?'btn btn-success':'btn btn-info'}>{(j)*5+1} </button>
+                        {numOfColumns.map((i)=>{
+                          return <td key={(i)}>
+                          <button className={(keno[0]==((j)*5+(i))) || (keno[1]==((j)*5+(i))) || (keno[2]==((j)*5+(i)))|| (keno[4]==((j)*5+(i)))|| (keno[4]==((j)*5+(i))) || (keno[5]==((j)*5+(i))) || (keno[6]==((j)*5+(i))) || (keno[7]==((j)*5+(i))) || (keno[8]==((j)*5+(i))) || (keno[9]==((j)*5+(i)))?'btn btn-success':'btn btn-info'}>{(j)*5+i+1} </button>
                           </td>
-                          <td key={(j*5+1)}>
-                          <button className={(keno[0]==((j)*5+(1))) || (keno[1]==((j)*5+(1))) || (keno[2]==((j)*5+(1)))|| (keno[4]==((j)*5+(1)))|| (keno[4]==((j)*5+(1))) || (keno[5]==((j)*5+(1))) || (keno[6]==((j)*5+(1))) || (keno[7]==((j)*5+(1))) || (keno[8]==((j)*5+(1))) || (keno[9]==((j)*5+(1)))?'btn btn-success':'btn btn-info'}>{(j)*5+2} </button>
-                          </td>
-                          <td key={(j*5+1)}>
-                          <button className={(keno[0]==((j)*5+(2))) || (keno[1]==((j)*5+(2))) || (keno[2]==((j)*5+(2)))|| (keno[4]==((j)*5+(2)))|| (keno[4]==((j)*5+(2))) || (keno[5]==((j)*5+(2))) || (keno[6]==((j)*5+(2))) || (keno[7]==((j)*5+(2))) || (keno[8]==((j)*5+(2))) || (keno[9]==((j)*5+(2)))?'btn btn-success':'btn btn-info'}>{(j)*5+3} </button>
-                          </td>
-                          <td key={(j*5+1)}>
-                          <button className={(keno[0]==((j)*5+(3))) || (keno[1]==((j)*5+(3))) || (keno[2]==((j)*5+(3)))|| (keno[4]==((j)*5+(3)))|| (keno[4]==((j)*5+(3))) || (keno[5]==((j)*5+(3))) || (keno[6]==((j)*5+(3))) || (keno[7]==((j)*5+(3))) || (keno[8]==((j)*5+(3))) || (keno[9]==((j)*5+(3)))?'btn btn-success':'btn btn-info'}>{(j)*5+4} </button>
-                          </td>
-                          <td key={(j*5+1)}>
-                          <button className={(keno[0]==((j)*5+(4))) || (keno[1]==((j)*5+(4))) || (keno[2]==((j)*5+(4)))|| (keno[4]==((j)*5+(4)))|| (keno[4]==((j)*5+(4))) || (keno[5]==((j)*5+(4))) || (keno[6]==((j)*5+(4))) || (keno[7]==((j)*5+(4))) || (keno[8]==((j)*5+(4))) || (keno[9]==((j)*5+(4)))?'btn btn-success':'btn btn-info'}>{(j)*5+5} </button>
-                          </td>
-                          <td key={(j*5+1)}>
-                          <button className={(keno[0]==((j)*5+(5))) || (keno[1]==((j)*5+(5))) || (keno[2]==((j)*5+(5)))|| (keno[4]==((j)*5+(5)))|| (keno[4]==((j)*5+(5))) || (keno[5]==((j)*5+(5))) || (keno[6]==((j)*5+(5))) || (keno[7]==((j)*5+(5))) || (keno[8]==((j)*5+(5))) || (keno[9]==((j)*5+(5)))?'btn btn-success':'btn btn-info'}>{(j)*5+6} </button>
-                          </td>
-                          <td key={(j*5+1)}>
-                          <button className={(keno[0]==((j)*5+(6))) || (keno[1]==((j)*5+(6))) || (keno[2]==((j)*5+(6)))|| (keno[4]==((j)*5+(6)))|| (keno[4]==((j)*5+(6))) || (keno[5]==((j)*5+(6))) || (keno[6]==((j)*5+(6))) || (keno[7]==((j)*5+(6))) || (keno[8]==((j)*5+(6))) || (keno[9]==((j)*5+(6)))?'btn btn-success':'btn btn-info'}>{(j)*5+7} </button>
-                          </td>
-                          <td key={(j*5+1)}>
-                          <button className={(keno[0]==((j)*5+(7))) || (keno[1]==((j)*5+(7))) || (keno[2]==((j)*5+(7)))|| (keno[4]==((j)*5+(7)))|| (keno[4]==((j)*5+(7))) || (keno[5]==((j)*5+(7))) || (keno[6]==((j)*5+(7))) || (keno[7]==((j)*5+(7))) || (keno[8]==((j)*5+(7))) || (keno[9]==((j)*5+(7)))?'btn btn-success':'btn btn-info'}>{(j)*5+8} </button>
-                          </td>
+                        })}
                       </tr>)
                     })}
                     </tbody>
