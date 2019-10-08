@@ -1,4 +1,4 @@
-body{margin:0;padding:0;font-family:sans-serif}#my-extension-root{width:400px;height:65%;position:fixed;top:0;right:0;z-index:2147483647;background-color:#fff;-webkit-box-shadow:0 0 5px #0000009e;box-shadow:0 0 5px #0000009e}#my-extension-root iframe{width:100%;height:100%;border:none}@media (min-width:575.98px){.my-extension{padding:20px;align:center;width:30%}}.my-extension h1{color:#000}/*!
+body{margin:0;padding:0;font-family:sans-serif}#my-extension-root{width:400px;height:65%;position:fixed;top:0;right:0;z-index:2147483647;background-color:#fff;-webkit-box-shadow:0 0 5px #0000009e;box-shadow:0 0 5px #0000009e}#my-extension-root iframe{width:100%;height:100%;border:none}@media (min-width:1200px){.my-extension{padding:20px;align:center;width:30%}}.my-extension h1{color:#000}/*!
 
 =========================================================
 * Argon Design System - v1.0.0
