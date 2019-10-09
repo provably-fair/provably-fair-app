@@ -1024,6 +1024,10 @@ class App extends React.Component {
                   console.log("isVerified", isVerified);}
                   break;
 
+                  case 'primedice' : { isVerified = this.handleVerifyBetPrimeDice(item.bet.bet.serverSeed.seed,item.bet.bet.clientSeed.seed,item.bet.bet.nonce);
+                  console.log("isVerified", isVerified);}
+                  break;
+
                   default : isVerified = 0;
                      }
 
