@@ -1820,12 +1820,8 @@ handleVerifyBetForLimbo = (serverSeedHash,clientSeed, nonce) => {
            {item.element.game}
            </td>
            <td>
-           {item.element.payout}
+           {item.element.payout}{item.element.side}
            </td>
-           {!item.element.payout &&
-           <td>
-           {item.element.side}
-           </td>}
            <td>
            {item.element.nonce}
            </td>
@@ -1843,7 +1839,7 @@ handleVerifyBetForLimbo = (serverSeedHash,clientSeed, nonce) => {
                  confirmBtnBsStyle="info"
                  title="Bet Results"
                  onConfirm={this.hideAlertConfirm}
-                 style={{marginLeft: '0', left:'0%', width: '400px', marginTop:'-255px', overflowY: 'scroll', height: '406px'}}
+                 style={{marginLeft: '0', left:'0%', width: '400px', marginTop:'-255px', overflowX: 'scroll', overflowY: 'scroll', height: '406px'}}
              >
                 {(active_game==='diamondPoker' || active_game==='plinko') ?
                   popupResult.map((item, i)=>{
