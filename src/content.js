@@ -1859,7 +1859,7 @@ getBetDataById = async (BetId) => {
                                    confirmBtnBsStyle="info"
                                    title="Bet Results"
                                    onConfirm={this.hideAlertConfirm}
-                                   style={{marginLeft: '0', left:'0%', width: '400px', marginTop:'-255px'}}
+                                   style={{marginLeft: '0', left:'0%', width: '400px', marginTop:'-255px', overflowY: 'scroll', height: '406px'}}
                                >
                                   {(active_game==='diamondPoker' || active_game==='plinko')?
                                     popupResult.map((item, i)=>{
