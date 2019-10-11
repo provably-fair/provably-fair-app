@@ -1840,7 +1840,7 @@ handleVerifyBetForLimbo = (serverSeedHash,clientSeed, nonce) => {
                    confirmBtnBsStyle="info"
                    title="Bet Results"
                    onConfirm={this.hideAlertConfirm}
-                   style={{left: '90%', width:'50%'}}
+                   style={{left: '20%', width:'50%'}}
                >
                     {active_game==='diamondPoker'?
                       popupResult.map((item, i)=>{

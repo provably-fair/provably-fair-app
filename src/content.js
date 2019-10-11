@@ -17,18 +17,6 @@ import './assets/css/argon.css';
 import qs from 'querystring';
 
 
-/* GraphQl Client query to get new ServerSeed for Stake Operator */
-
-const query5 = `mutation ChangeClientSeedMutation($seed: String!) {
-  changeClientSeed(seed: $seed) {
-    id
-    seed
-    __typename
-  }
-}`
-
-
-
 class Main extends React.Component {
 
   constructor(){
@@ -1522,7 +1510,7 @@ getBetDataById = async (BetId) => {
                        <p><span style={{fontStyle:'bold'}}>Operator</span> is a CGF verified operator.</p>
                        <button className="btn btn-info mb-3" type="button" onClick={()=>{
                          // this.getSessionTokenBitvest()
-                         this.setState({gettingStarted:!gettingStarted, enterAPIStake:true})
+                         this.setState({gettingStarted:!gettingStarted, operators:true})
                        }}>
                        Get Started Now
                        </button>
