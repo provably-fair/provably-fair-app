@@ -1846,11 +1846,10 @@ getBetDataById = async (BetId) => {
                              {item.element.nonce}
                              </td>
                              <td>
-                             {(item.element.game==='baccarat' || item.element.game==='hilo' || item.element.game==='blackjack' || item.element.game==='diamondPoker' || item.element.game==='videoPoker' || item.element.game==='mines' || item.element.game==='keno')
-                             ?<button className="btn btn-info" onClick = {()=>{
+                             {(item.element.game==='baccarat' || item.element.game==='hilo' || item.element.game==='blackjack' || item.element.game==='diamondPoker' || item.element.game==='videoPoker' || item.element.game==='mines' || item.element.game==='keno' || item.element.game==='plinko')
+                             ?<button className="btn btn-info" onClick = {() => {
                                this.setState({showAlert:true, active_game:item.element.game, popupResult:item.element.isVerified});
                              }} title="Results"> </button>
-                            :item.element.game==='plinko'?<img src={require("./images/info-icon-5.png")} style={{ width: '50%'}} data-toggle="popover" data-placement="left" title={item.element.isVerified} />
                             :item.element.isVerified
                             }
 
@@ -1862,11 +1861,11 @@ getBetDataById = async (BetId) => {
                                    onConfirm={this.hideAlertConfirm}
                                    style={{left: '90%', width:'50%'}}
                                >
-                                    {active_game==='diamondPoker'?
-                                      popupResult.map((item, i)=>{
-                                        return <p style={{ fontSize: 'small'}}>{item+" "}</p>;
-                                        <img src={require('./images/diamonds/diamonds/1x/' + item +'.png')} style={{width:"10%"}}/>;
-                                    })
+                                  {(active_game==='diamondPoker' || active_game==='plinko') ?
+                                    popupResult.map((item, i)=>{
+                                      return <p style={{ fontSize: 'x-small'}}>{item+" "}</p>;
+                                      <img src={require('./images/diamonds/diamonds/1x/' + item +'.png')} style={{width:"10%"}}/>;
+                                  })
                                   :active_game==='mines'?
                                   <table>
                                   <tbody>
