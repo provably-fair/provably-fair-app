@@ -797,9 +797,11 @@ handleWheel = (server_seed, client_seed, nonce, segments, risk) => {
         }`
 
          client.request(query7, variables).then((betData) => {
-          //  console.log('betIdData', betIdData);
-           betDataById.push(betData);
-           this.setState({betDataById:betDataById});
+           console.log('betData --', betData);
+           if(betData.bet.bet.clientSeed!='undefined'){
+             betDataById.push(betData);
+             this.setState({betDataById:betDataById});
+           }
          })
         // console.log('betDataById', betDataById);
        })
