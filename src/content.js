@@ -1883,7 +1883,7 @@ getBetDataById = async (BetId) => {
                                       return (<tr key={j}>
                                         {numOfColumnsKeno.map((i)=>{
                                           return (<td key={(j*8+i)}>
-                                          <button className={(keno[0]==((j)*8+(i))) || (keno[1]==((j)*8+(i))) || (keno[2]==((j)*8+(i))) || (keno[4]==((j)*8+(i)))|| (keno[4]==((j)*8+(i))) || (keno[5]==((j)*8+(i))) || (keno[6]==((j)*8+(i))) || (keno[7]==((j)*8+(i))) || (keno[8]==((j)*8+(i))) || (keno[9]==((j)*8+(i)))?'btn btn-success':'btn btn-info'}>{(j)*8+i+1} </button>
+                                          <button className={(popupResult[0]==((j)*8+(i))) || (popupResult[1]==((j)*8+(i))) || (popupResult[2]==((j)*8+(i))) || (popupResult[4]==((j)*8+(i)))|| (popupResult[4]==((j)*8+(i))) || (popupResult[5]==((j)*8+(i))) || (popupResult[6]==((j)*8+(i))) || (popupResult[7]==((j)*8+(i))) || (popupResult[8]==((j)*8+(i))) || (popupResult[9]==((j)*8+(i)))?'btn btn-success':'btn btn-info'}>{(j)*8+i+1} </button>
                                           </td>);
                                         })}
                                       </tr>)
