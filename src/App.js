@@ -1877,7 +1877,7 @@ handleVerifyBetForLimbo = (serverSeedHash,clientSeed, nonce) => {
 
                 :
                 popupResult.map((item, i)=>{
-                  return <img src={require('./images/cards-png/' + item +'.png')} style={{width:"10%"}}/>;
+                  return <img src={'/images/cards-png/' + item +'.png'} alt="Card" style={{width:"10%"}}/>;
               })}
              </SweetAlert>}
            </td>
