@@ -1852,10 +1852,10 @@ handleVerifyBetForLimbo = (serverSeedHash,clientSeed, nonce) => {
                 <table>
                 <tbody>
                   {numOfRows.map((j) => {
-                    return (<tr key={j}>
+                    return (<tr key={nonce+''+j}>
                               {numOfRows.map((i)=>{
-                                return <td key={j*5+i}>
-                                <img src={require((mines[0]==((j)*5+(i))) || (mines[1]==((j)*5+(i))) || (mines[2]==((j)*5+(i)))?'./images/mine.png':'./images/gem.png')} style={{width:"90%"}}/>
+                                return <td key={nonce+''+j*5+i}>
+                                <img src={require((popupResult[0]==((j)*5+(i))) || (popupResult[1]==((j)*5+(i))) || (popupResult[2]==((j)*5+(i)))?'./images/mine.png':'./images/gem.png')} style={{width:"90%"}}/>
                                 </td>
                               })}
                     </tr>)
@@ -1866,9 +1866,9 @@ handleVerifyBetForLimbo = (serverSeedHash,clientSeed, nonce) => {
                 <table>
                 <tbody>
                   {numOfRows.map((j) => {
-                    return (<tr key={j}>
+                    return (<tr key={nonce+''+j}>
                       {numOfColumnsKeno.map((i)=>{
-                        return (<td key={(j*8+i)}>
+                        return (<td key={(nonce+''+j*8+i)}>
                         <button className={(keno[0]==((j)*8+(i))) || (keno[1]==((j)*8+(i))) || (keno[2]==((j)*8+(i))) || (keno[4]==((j)*8+(i)))|| (keno[4]==((j)*8+(i))) || (keno[5]==((j)*8+(i))) || (keno[6]==((j)*8+(i))) || (keno[7]==((j)*8+(i))) || (keno[8]==((j)*8+(i))) || (keno[9]==((j)*8+(i)))?'btn btn-success':'btn btn-info'}>{(j)*8+i+1} </button>
                         </td>);
                       })}

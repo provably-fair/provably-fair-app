@@ -1869,7 +1869,7 @@ getBetDataById = async (BetId) => {
                                       return (<tr key={j}>
                                                 {numOfRows.map((i)=>{
                                                   return <td key={j*5+i}>
-                                                  <img src={require((mines[0]==((j)*5+(i))) || (mines[1]==((j)*5+(i))) || (mines[2]==((j)*5+(i)))?'./images/mine.png':'./images/gem.png')} style={{width:"90%"}}/>
+                                                  <img src={require((popupResult[0]==((j)*5+(i))) || (popupResult[1]==((j)*5+(i))) || (popupResult[2]==((j)*5+(i)))?'./images/mine.png':'./images/gem.png')} style={{width:"90%"}}/>
                                                   </td>
                                                 })}
                                       </tr>)
