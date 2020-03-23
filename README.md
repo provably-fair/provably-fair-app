@@ -28,7 +28,8 @@ Your browser will generate a random clientseed. However, you could and should ad
 Now if you make a bet the nonce starts with 0 or 1 depending on the website. After each bet you make, the nonce number will go up by 1.
 
 Calculating the roll result
-```A dice site uses 3 variables (server- & clientseed and nonce) to calculate the roll result. I will illustrate this with an example, let's say we have these values:
+```
+A dice site uses 3 variables (server- & clientseed and nonce) to calculate the roll result. I will illustrate this with an example, let's say we have these values:
 ```
 
 So this is:
