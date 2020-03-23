@@ -17,19 +17,19 @@ However I personally think it is better to fully understand how it works, so I w
 
 # How does provably fair work?
 Although there are several implementations of the provably fair method, we will describe the most common one. With this method each roll-result is calculated by the following variables:
-
+```
 Serverseed - provided by the gambling site
 Clientseed - provided by your browser and adjusted by you
 Nonce - A number that increases with each bet you make
 You will get an encrypted hash of the serverseed before you start gambling. Since you get it in advance, the site cannot change it later. However it is encrypted, so you cannot calculate your own roll results in advance (only afterwards if you get the unhashed serverseed.)
-
+```
 Your browser will generate a random clientseed. However, you could and should adjust this clientseed before you start. This way you can make sure the site does not know your clientseed in advance.
 
 Now if you make a bet the nonce starts with 0 or 1 depending on the website. After each bet you make, the nonce number will go up by 1.
 
 Calculating the roll result
-A dice site uses 3 variables (server- & clientseed and nonce) to calculate the roll result. I will illustrate this with an example, let's say we have these values:
-
+```A dice site uses 3 variables (server- & clientseed and nonce) to calculate the roll result. I will illustrate this with an example, let's say we have these values:
+```
 
 So this is:
 ```
