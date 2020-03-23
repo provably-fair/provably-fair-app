@@ -74,11 +74,11 @@ You do not get the unhashed serverseed in advance, because that would allow you 
 
 ## Step 1
 First make sure the hashed serverseed you got, is really the hash of the unhashed serverseed. Otherwise they could just give you a random hash and still create fake outcomes. Let's look at our previous serverseed:
-
+```
 Serverseed unhashed: 293d5d2ddd365f54759283a8097ab2640cbe6f8864adc2b1b31e65c14c999f04
 Serverseed hashed: 5ac59780d512265230d5efb3cc238886dc1b457a80b54fbf1f920b99c6505801
 Again you can use an online tool (xorbin.com/tools/sha256-hash-calculator) to generate a SHA256 hash of the unhashed serverseed:
-
+```
 
 As you can see, the hash we got before we started to gamble, is really the serverseed that was used for the roll outcomes.
 
@@ -88,14 +88,9 @@ Step 2 is to generate each roll result yourself and compare them to the rolls yo
 Verify both steps - the easy way
 Because you probably made tens, hundreds or even thousands of bets, it is not very simple to do verify it all manually again. Therefore you should use a provably fair verifier. We made verifiers for the most popular dice websites that should allow you to very easily verify the rolls you made. You only have to provide the several seeds and number of bets you made, and the verifier will check the serverseed hash and give you a list of all rolls.
 
-For example, if we fill in all the variables in our PrimeDice verifier, we get the following result:
-
-
-I will then compare these results with the bets I actually made to see if I was cheated or not:
-
 
 Luckily, the results are exactly the same and I know I have not been cheated while gambling :-)
-
+```
 Provably Fair verifiers
 BetterBets verifier
 BitDice.me verifier
@@ -105,3 +100,4 @@ Just-Dice.com verifier
 Nitrogen Dice verifier
 Primedice verifier
 SafeDice verifier
+```
