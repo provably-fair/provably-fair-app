@@ -2,6 +2,9 @@
   "name": "provably-fair-project",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": "10.3.0"
+  },
   "dependencies": {
     "autoprefixer": "7.1.6",
     "axios": "^0.19.0",
@@ -34,6 +37,7 @@
     "jest": "20.0.4",
     "js-cookie": "^2.2.1",
     "js-sha512": "^0.8.0",
+    "lodash": "^4.17.15",
     "mnemonic": "^1.0.1",
     "object-assign": "4.1.1",
     "postcss-flexbugs-fixes": "3.2.0",
@@ -43,6 +47,7 @@
     "raf": "3.4.0",
     "random-int": "^2.0.0",
     "react": "^16.4.1",
+    "react-bootstrap-sweetalert": "^4.4.1",
     "react-cookie": "^4.0.1",
     "react-dev-utils": "^5.0.1",
     "react-dom": "^16.4.1",

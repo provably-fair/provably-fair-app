@@ -1,6 +1,6 @@
 {
-  "short_name": "My Extension",
-  "name": "My Extension",
+  "short_name": "CGF Verifier",
+  "name": "CGF Verifier",
   "version": "1.0",
   "manifest_version": 2,
   "background": {
@@ -15,7 +15,8 @@
     }
   ],
   "web_accessible_resources":[
-    "/static/css/content.css"
+    "/static/css/content.css",
+    "/images/**/*"
   ],
   "content_security_policy": "script-src 'self' 'sha256-GgRxrVOKNdB4LrRsVPDSbzvfdV4UqglmviH9GoBJ5jk='; object-src 'self'"
 }
