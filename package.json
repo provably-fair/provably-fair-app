@@ -37,7 +37,7 @@
     "jest": "20.0.4",
     "js-cookie": "^2.2.1",
     "js-sha512": "^0.8.0",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.19",
     "mnemonic": "^1.0.1",
     "object-assign": "4.1.1",
     "postcss-flexbugs-fixes": "3.2.0",
