@@ -7,18 +7,18 @@ import uuidv4 from 'uuid/v4';
 import "./content.css";
 import './assets/css/argon.css';
 import qs from 'querystring';
+import Navbar from './components/Navbar.js';
+import Settings from './components/Settings.js';
+import GettingStarted from './components/GettingStarted.js'
+import Operators from './components/Operators';
 
 class App extends React.Component {
-
   constructor() {
     super();
     this.state = {
       gettingStarted: true,
       enterAPI: false,
       enterAPIStake: false,
-      settings: false,
-      verification: false,
-      operators: false,
       clientSeed: '',
       serverSeedHash: null,
       previousSeed: '',
@@ -84,13 +84,20 @@ class App extends React.Component {
     }
   }
 
+  gettingStartedCallback = (data) => {
+    this.setState({ operators: data });
+  }
+
   render() {
     const { gettingStarted, settings, verification, operators, clientSeed, serverSeedHash, nonce, betData, cryptoGames, primeDice, stake, bitvest, diceResult, diceVerify, verify, apiKey, apiKeyStake, usernameStake, enterAPI, enterAPIStake,
-      Balance, BetId, Roll, nonceChecked, toggleState, betAmount, betPayout, betPlaced, isNonceManipulated, numberBetsVerFailed, betDataById, betDataEnriched, viewRecentBetsStake, faqs, showAlert, popupResult, active_game, mines, keno, numOfRows,
+      Balance, BetId, Roll, nonceChecked, toggleState, betAmount, betPayout, betPlaced, isNonceManipulated, numberBetsVerFailed, betDataById, betDataEnriched, viewRecentBetsStake, showAlert, popupResult, active_game, mines, keno, numOfRows,
       numOfColumns, numOfColumnsKeno } = this.state;
     return (
       <div className={'my-extension text-center'}>
-       
+        <Navbar />
+        <GettingStarted gettingStarted="true" callback={this.gettingStartedCallback} />
+        <Operators operators={operators}/>
+        <Settings />
       </div>
     );
   }
