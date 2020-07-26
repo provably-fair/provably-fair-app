@@ -4,7 +4,8 @@ export default class GettingStarted extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            gettingStarted: false
+            gettingStarted: false,
+            operators : true
         }
     }
 
@@ -14,7 +15,7 @@ export default class GettingStarted extends React.Component {
 
     handleGettingStarted = () => {
         // this.getSessionTokenBitvest()
-        this.setState({ gettingStarted: false, operators: true })
+        this.setState({ gettingStarted: false})
         this.props.callback(this.state.operators);
     };
 

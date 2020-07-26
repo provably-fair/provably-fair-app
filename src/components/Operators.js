@@ -8,10 +8,6 @@ export default class Operators extends Component {
       operators: true
     }
   }
-  componentDidMount() {
-    this.setState({ operators: this.props.operators })
-    console.log(this.props.operators);
-  }
   render() {
     const { operators, verification } = this.state;
     return (
@@ -30,7 +26,7 @@ export default class Operators extends Component {
           <div className="m-3" style={{ cursor: 'pointer' }} onClick={() => {
             this.setState({ operators: false, primeDice: false, stake: false, bitvest: true })
           }}>
-            <img src="https://cdn.worldvectorlogo.com/logos/bitvest.svg" style={{ width: '35%' }} title="Bitvest" />
+            <img src="https://cdn.worldvectorlogo.com/logos/bitvest.svg" style={{ width: '35%' }} alt="Bitvest" title="Bitvest" />
           </div>
         </div>
       </div>

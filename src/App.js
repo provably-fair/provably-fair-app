@@ -1,12 +1,12 @@
 import React from 'react';
-import SweetAlert from 'react-bootstrap-sweetalert';
-import { GraphQLClient } from 'graphql-request';
-import axios from 'axios';
-import createHmac from 'create-hmac';
-import uuidv4 from 'uuid/v4';
+// import SweetAlert from 'react-bootstrap-sweetalert';
+// import { GraphQLClient } from 'graphql-request';
+// import axios from 'axios';
+// import createHmac from 'create-hmac';
+// import uuidv4 from 'uuid/v4';
 import "./content.css";
 import './assets/css/argon.css';
-import qs from 'querystring';
+// import qs from 'querystring';
 import Navbar from './components/Navbar.js';
 import Settings from './components/Settings.js';
 import GettingStarted from './components/GettingStarted.js'
@@ -89,14 +89,12 @@ class App extends React.Component {
   }
 
   render() {
-    const { gettingStarted, settings, verification, operators, clientSeed, serverSeedHash, nonce, betData, cryptoGames, primeDice, stake, bitvest, diceResult, diceVerify, verify, apiKey, apiKeyStake, usernameStake, enterAPI, enterAPIStake,
-      Balance, BetId, Roll, nonceChecked, toggleState, betAmount, betPayout, betPlaced, isNonceManipulated, numberBetsVerFailed, betDataById, betDataEnriched, viewRecentBetsStake, showAlert, popupResult, active_game, mines, keno, numOfRows,
-      numOfColumns, numOfColumnsKeno } = this.state;
+    const { gettingStarted, operators } = this.state;
     return (
       <div className={'my-extension text-center'}>
         <Navbar />
-        <GettingStarted gettingStarted="true" callback={this.gettingStartedCallback} />
-        <Operators operators={operators}/>
+        <GettingStarted gettingStarted={true} callback={this.gettingStartedCallback} />
+        {operators && <Operators />}
         <Settings />
       </div>
     );
