@@ -5,18 +5,27 @@ export default class Register extends Component {
     super(props);
     this.state = {
       enterAPIStake: false,
-      enterAPI: false
+      enterAPI: false,
+      user: '',
+      apiKey: null,
+      apiKeyStake: null,
+      usernameStake: '',
+
     }
   }
 
+  componentDidMount() {
+    this.setState({ enterAPI: this.props.enterAPI, enterAPIStake: this.props.enterAPIStake });
+  }
+
   render() {
-    const {enterAPI, enterAPIStake} = this.props;
+    const { enterAPI, enterAPIStake, apiKey, apiKeyStake, usernameStake } = this.state;
     return (
       <div>
         <div style={{ display: enterAPIStake ? 'block' : 'none' }}>
           <div className="form-group">
             <label className="form-control-label">Enter Your Bet Token</label>
-            <img src="https://camo.githubusercontent.com/184f5fe3162ac51bdc0c89207d568c691d053aea/68747470733a2f2f662e636c6f75642e6769746875622e636f6d2f6173736574732f353331393931362f323437373339332f36303565656639362d623037302d313165332d383134612d3637613132383166303665312e706e67" style={{ width: '10%' }} data-toggle="popover" data-placement="left" title='Instructions for using extension on Stake and PrimeDice:
+            <img alt='' src="https://camo.githubusercontent.com/184f5fe3162ac51bdc0c89207d568c691d053aea/68747470733a2f2f662e636c6f75642e6769746875622e636f6d2f6173736574732f353331393931362f323437373339332f36303565656639362d623037302d313165332d383134612d3637613132383166303665312e706e67" style={{ width: '10%' }} data-toggle="popover" data-placement="left" title='Instructions for using extension on Stake and PrimeDice:
    1. Open website then click "settings" from the dropdown menu at the top of the screen.
    2. Click "Tokens"
    3. Click "Reveal" then copy the token.

@@ -11,12 +11,14 @@ import Navbar from './components/Navbar.js';
 import Settings from './components/Settings.js';
 import GettingStarted from './components/GettingStarted.js'
 import Operators from './components/Operators';
+import Register from './components/Register';
 
 class App extends React.Component {
   constructor() {
     super();
     this.state = {
       gettingStarted: true,
+      register: false,
       enterAPI: false,
       enterAPIStake: false,
       clientSeed: '',
@@ -31,10 +33,7 @@ class App extends React.Component {
       verify: false,
       diceResult: 0,
       diceVerify: 0,
-      user: '',
-      apiKey: null,
-      apiKeyStake: null,
-      usernameStake: '',
+
       BetIdArray: [],
       betDataById: [],
       betDataEnriched: [],
@@ -87,14 +86,23 @@ class App extends React.Component {
   gettingStartedCallback = (data) => {
     this.setState({ operators: data });
   }
+  operatorsCallback = (data) => {
+    this.setState({
+      enterAPI: data.enterAPI,
+      enterAPIStake: data.enterAPIStake,
+      register: true
+    });
+    console.log(data);
+  }
 
   render() {
-    const { gettingStarted, operators } = this.state;
+    const { gettingStarted, operators, enterAPI, enterAPIStake, register } = this.state;
     return (
       <div className={'my-extension text-center'}>
         <Navbar />
-        <GettingStarted gettingStarted={true} callback={this.gettingStartedCallback} />
-        {operators && <Operators />}
+        <GettingStarted gettingStarted={gettingStarted} callback={this.gettingStartedCallback} />
+        {operators && <Operators callback={this.operatorsCallback} />}
+        {register && <Register enterAPI={enterAPI} enterAPIStake={enterAPIStake} />}
         <Settings />
       </div>
     );
