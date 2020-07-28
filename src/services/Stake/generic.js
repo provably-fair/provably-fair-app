@@ -1,10 +1,12 @@
-
+import createHmac from 'create-hmac';
+import uuidv4 from 'uuid/v4';
+import { getServerSeedStake, getAllUserSeedsStake } from './query.js';
 
 /** Generic Methods **/
 
 /* Method for generating Randomised Client Seed */
 
-getClientSeed = () => {
+export const getClientSeed = () => {
   let key = uuidv4();
   let hash = createHmac('sha256', key)
     .update('provably')
@@ -13,17 +15,16 @@ getClientSeed = () => {
   this.setState({ clientSeed: hash, nonce: 0 });
 }
 
-handleRequest = () => {
-  let self = this;
+export const handleRequest = (apiKeyStake, usernameStake) => {
   let promise1 = new Promise((resolve, reject) => {
     setTimeout(() => {
-      self.getServerSeedStake();
+      return getServerSeedStake(apiKeyStake, usernameStake);
     }, 300);
   });
 
   let promise2 = new Promise((resolve, reject) => {
     setTimeout(() => {
-      self.getAllUserSeedsStake();
+      return getAllUserSeedsStake(apiKeyStake);
     }, 1000);
   });
 
@@ -32,7 +33,7 @@ handleRequest = () => {
 
 
 
-handleRoullete = (server_seed, client_seed, nonce) => {
+export const handleRoullete = (server_seed, client_seed, nonce) => {
   let { MAX_ROULETTE } = this.state;
   let resolve = Math.floor(this.bytes_to_number(this.bytes(server_seed, client_seed, nonce, 8)) * MAX_ROULETTE);
   let res = this.result(resolve);
@@ -40,14 +41,14 @@ handleRoullete = (server_seed, client_seed, nonce) => {
   return res;
 }
 
-handleChartbet = (server_seed, client_seed, nonce) => {
+export const handleChartbet = (server_seed, client_seed, nonce) => {
   const { active_game, MAX_CHARTBET } = this.state;
   let res = this.result(active_game);
   let resolve = MAX_CHARTBET / (Math.floor(this.bytes_to_number(this.bytes(server_seed, client_seed, nonce, 8)) * MAX_CHARTBET) + 1) * 0.98;
   console.log("result", res, "resolve", resolve);
 }
 
-handlePlinko = (server_seed, client_seed, nonce) => {
+export const handlePlinko = (server_seed, client_seed, nonce) => {
   this.setState({ server_seed: server_seed, client_seed: client_seed, nonce: nonce });
   let nums = [];
 
@@ -59,7 +60,7 @@ handlePlinko = (server_seed, client_seed, nonce) => {
   return nums;
 }
 
-handleBaccarat = (server_seed, client_seed, nonce) => {
+export const handleBaccarat = (server_seed, client_seed, nonce) => {
   this.setState({ server_seed: server_seed, client_seed: client_seed, nonce: nonce });
 
   let nums = [];
@@ -71,7 +72,7 @@ handleBaccarat = (server_seed, client_seed, nonce) => {
   return nums;
 }
 
-handleHilo = (server_seed, client_seed, nonce) => {
+export const handleHilo = (server_seed, client_seed, nonce) => {
   this.setState({ server_seed: server_seed, client_seed: client_seed, nonce: nonce });
 
   let nums = [];
@@ -83,7 +84,7 @@ handleHilo = (server_seed, client_seed, nonce) => {
   return nums;
 }
 
-handleBlackjack = (server_seed, client_seed, nonce) => {
+export const handleBlackjack = (server_seed, client_seed, nonce) => {
   this.setState({ server_seed: server_seed, client_seed: client_seed, nonce: nonce });
 
   let nums = [];
@@ -96,7 +97,7 @@ handleBlackjack = (server_seed, client_seed, nonce) => {
 
 }
 
-handleMines = (server_seed, client_seed, nonce) => {
+export const handleMines = (server_seed, client_seed, nonce) => {
   this.setState({ server_seed: server_seed, client_seed: client_seed, nonce: nonce });
 
   let res = this.result('Mines', server_seed, client_seed, nonce).slice(0, this.state.numMines);
@@ -104,13 +105,13 @@ handleMines = (server_seed, client_seed, nonce) => {
   return res;
 }
 
-handleKeno = (server_seed, client_seed, nonce) => {
+export const handleKeno = (server_seed, client_seed, nonce) => {
   let keno = this.result('Keno', server_seed, client_seed, nonce);
   this.setState({ keno: keno });
   return keno;
 }
 
-handleDiamondPoker = (server_seed, client_seed, nonce) => {
+export const handleDiamondPoker = (server_seed, client_seed, nonce) => {
   this.setState({ server_seed: server_seed, client_seed: client_seed, nonce: nonce });
 
   // Index of 0 to 6 : green to blue
@@ -128,7 +129,7 @@ handleDiamondPoker = (server_seed, client_seed, nonce) => {
 
 
 
-handleVideoPoker = (server_seed, client_seed, nonce) => {
+export const handleVideoPoker = (server_seed, client_seed, nonce) => {
   this.setState({ server_seed: server_seed, client_seed: client_seed, nonce: nonce });
 
   let nums = [];
@@ -141,7 +142,7 @@ handleVideoPoker = (server_seed, client_seed, nonce) => {
   return nums;
 }
 
-handleWheel = (server_seed, client_seed, nonce, segments, risk) => {
+export const handleWheel = (server_seed, client_seed, nonce, segments, risk) => {
   let resolve = Math.floor(this.bytes_to_number(this.bytes(server_seed, client_seed, nonce, 8)) * segments);
   //let res = this.result(resolve);
   //console.log("result", res, "resolve", resolve);
@@ -239,7 +240,7 @@ handleWheel = (server_seed, client_seed, nonce, segments, risk) => {
 
 /* Method for Provably Fair Verification of bets for the Stake Operator */
 
-handleVerifyBetStake = (serverSeedHash, clientSeed, nonce) => {
+export const handleVerifyBetStake = (serverSeedHash, clientSeed, nonce) => {
   // bet made with seed pair (excluding current bet)
   // crypto lib for hmac function
   const crypto = require('crypto');
@@ -279,7 +280,7 @@ handleVerifyBetStake = (serverSeedHash, clientSeed, nonce) => {
 
 /*****************************************************************************************************************************************************************************************************/
 
-handleVerifyBetForRoulette = (serverSeedHash, clientSeed, nonce) => {
+export const handleVerifyBetForRoulette = (serverSeedHash, clientSeed, nonce) => {
   // bet made with seed pair (excluding current bet)
   // crypto lib for hmac function
   const crypto = require('crypto');
@@ -318,7 +319,7 @@ handleVerifyBetForRoulette = (serverSeedHash, clientSeed, nonce) => {
 
 /*****************************************************************************************************************************************************************************************************/
 
-handleVerifyBetForLimbo = (serverSeedHash, clientSeed, nonce) => {
+export const handleVerifyBetForLimbo = (serverSeedHash, clientSeed, nonce) => {
   // bet made with seed pair (excluding current bet)
   // crypto lib for hmac function
   const crypto = require('crypto');
@@ -357,11 +358,9 @@ handleVerifyBetForLimbo = (serverSeedHash, clientSeed, nonce) => {
 }
 
 
-processBetsStake = () => {
+export const processBetsStake = () => {
   let { betDataById, betDataEnriched, betData, previousClientSeedStake, activeClientSeedStake, previousServerSeedStake } = this.state;
   betData = [];
-
-  let _ = require('lodash')
 
   console.log("betDataById", betDataById);
   console.log("previousClientSeedStake", previousClientSeedStake, "previousServerSeedStake", previousServerSeedStake, "activeClientSeedStake", activeClientSeedStake);
@@ -378,85 +377,46 @@ processBetsStake = () => {
             let isVerified;
             const game = innerItem.bet.game;
             switch (game) {
-              case 'dice': {
-                isVerified = this.handleVerifyBetStake(item.bet.bet.serverSeed.seed, item.bet.bet.clientSeed.seed, item.bet.bet.nonce);
-                console.log("isVerified", isVerified);
-              }
-                break;
+              case 'dice':
+                return isVerified = this.handleVerifyBetStake(item.bet.bet.serverSeed.seed, item.bet.bet.clientSeed.seed, item.bet.bet.nonce);
 
-              case 'limbo': {
-                isVerified = this.handleVerifyBetForLimbo(item.bet.bet.serverSeed.seed, item.bet.bet.clientSeed.seed, item.bet.bet.nonce);
-                console.log("isVerified", isVerified);
-              }
-                break;
+              case 'limbo':
+                return isVerified = this.handleVerifyBetForLimbo(item.bet.bet.serverSeed.seed, item.bet.bet.clientSeed.seed, item.bet.bet.nonce);
 
-              case 'roulette': {
-                isVerified = this.handleVerifyBetForRoulette(item.bet.bet.serverSeed.seed, item.bet.bet.clientSeed.seed, item.bet.bet.nonce);
-                console.log("isVerified", isVerified);
-              }
-                break;
+              case 'roulette':
+                return isVerified = this.handleVerifyBetForRoulette(item.bet.bet.serverSeed.seed, item.bet.bet.clientSeed.seed, item.bet.bet.nonce);
 
-              case 'plinko': {
-                isVerified = this.handlePlinko(item.bet.bet.serverSeed.seed, item.bet.bet.clientSeed.seed, item.bet.bet.nonce);
-                console.log("isVerified", isVerified);
-              }
-                break;
+              case 'plinko':
+                return isVerified = this.handlePlinko(item.bet.bet.serverSeed.seed, item.bet.bet.clientSeed.seed, item.bet.bet.nonce);
 
-              case 'baccarat': {
-                isVerified = this.handleBaccarat(item.bet.bet.serverSeed.seed, item.bet.bet.clientSeed.seed, item.bet.bet.nonce);
-                console.log("isVerified", isVerified);
-              }
-                break;
+              case 'baccarat':
+                return isVerified = this.handleBaccarat(item.bet.bet.serverSeed.seed, item.bet.bet.clientSeed.seed, item.bet.bet.nonce);
 
-              case 'videoPoker': {
-                isVerified = this.handleVideoPoker(item.bet.bet.serverSeed.seed, item.bet.bet.clientSeed.seed, item.bet.bet.nonce);
-                console.log("isVerified", isVerified);
-              }
-                break;
+              case 'videoPoker':
+                return isVerified = this.handleVideoPoker(item.bet.bet.serverSeed.seed, item.bet.bet.clientSeed.seed, item.bet.bet.nonce);
 
-              case 'hilo': {
-                isVerified = this.handleHilo(item.bet.bet.serverSeed.seed, item.bet.bet.clientSeed.seed, item.bet.bet.nonce);
-                console.log("isVerified", isVerified);
-              }
-                break;
+              case 'hilo':
+                return isVerified = this.handleHilo(item.bet.bet.serverSeed.seed, item.bet.bet.clientSeed.seed, item.bet.bet.nonce);
 
-              case 'blackjack': {
-                isVerified = this.handleBlackjack(item.bet.bet.serverSeed.seed, item.bet.bet.clientSeed.seed, item.bet.bet.nonce);
-                console.log("isVerified", isVerified);
-              }
-                break;
+              case 'blackjack':
+                return isVerified = this.handleBlackjack(item.bet.bet.serverSeed.seed, item.bet.bet.clientSeed.seed, item.bet.bet.nonce);
 
-              case 'mines': {
-                isVerified = this.handleMines(item.bet.bet.serverSeed.seed, item.bet.bet.clientSeed.seed, item.bet.bet.nonce);
-                console.log("isVerified", isVerified);
-              }
-                break;
+              case 'mines':
+                return isVerified = this.handleMines(item.bet.bet.serverSeed.seed, item.bet.bet.clientSeed.seed, item.bet.bet.nonce);
 
-              case 'keno': {
-                isVerified = this.handleKeno(item.bet.bet.serverSeed.seed, item.bet.bet.clientSeed.seed, item.bet.bet.nonce);
-                console.log("isVerified", isVerified);
-              }
-                break;
+              case 'keno':
+                return isVerified = this.handleKeno(item.bet.bet.serverSeed.seed, item.bet.bet.clientSeed.seed, item.bet.bet.nonce);
 
-              case 'diamondPoker': {
-                isVerified = this.handleDiamondPoker(item.bet.bet.serverSeed.seed, item.bet.bet.clientSeed.seed, item.bet.bet.nonce);
-                console.log("isVerified", isVerified);
-              }
-                break;
+              case 'diamondPoker':
+                return isVerified = this.handleDiamondPoker(item.bet.bet.serverSeed.seed, item.bet.bet.clientSeed.seed, item.bet.bet.nonce);
 
-              case 'wheel': {
-                isVerified = this.handleWheel(item.bet.bet.serverSeed.seed, item.bet.bet.clientSeed.seed, item.bet.bet.nonce, '10', 'medium');
-                console.log("isVerified", isVerified);
-              }
-                break;
+              case 'wheel':
+                return isVerified = this.handleWheel(item.bet.bet.serverSeed.seed, item.bet.bet.clientSeed.seed, item.bet.bet.nonce, '10', 'medium');
 
-              case 'primedice': {
-                isVerified = this.handleVerifyBetPrimeDice(item.bet.bet.serverSeed.seed, item.bet.bet.clientSeed.seed, item.bet.bet.nonce);
-                console.log("isVerified", isVerified);
-              }
-                break;
+              case 'primedice':
+                return isVerified = this.handleVerifyBetPrimeDice(item.bet.bet.serverSeed.seed, item.bet.bet.clientSeed.seed, item.bet.bet.nonce);
 
-              default: isVerified = 0;
+              default: return isVerified = 0;
             }
 
             // console.log("item.bet.iid.split('house:')" , item.bet.iid.split('house:'));
@@ -466,6 +426,7 @@ processBetsStake = () => {
             betData.push({ element: element });
             this.setState({ betData: betData });
           }
+          return betData;
         })
         this.setState({ viewRecentBetsStake: true })
         betData.sort((a, b) => {
@@ -473,6 +434,7 @@ processBetsStake = () => {
         });
         console.log("betData : ", betData);
       }
+      return betData;
     })
   } catch (e) {
     console.log("YO Crash")

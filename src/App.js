@@ -1,9 +1,6 @@
 import React from 'react';
 // import SweetAlert from 'react-bootstrap-sweetalert';
-// import { GraphQLClient } from 'graphql-request';
 // import axios from 'axios';
-// import createHmac from 'create-hmac';
-// import uuidv4 from 'uuid/v4';
 import "./content.css";
 import './assets/css/argon.css';
 // import qs from 'querystring';

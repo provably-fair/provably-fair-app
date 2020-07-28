@@ -4,15 +4,17 @@ export default class Settings extends React.Component {
     constructor() {
         super();
         this.state = {
-            settings:false,
+            settings: false,
             clientSeed: '',
-            serverSeedHash: null,
+            serverSeedHash: '',
             previousSeed: '',
-            }
+            apiKey: '',
+            apiKeyStake: ''
+        }
     }
     render() {
-        const { settings, clientSeed, serverSeedHash, nonce, cryptoGames, stake, apiKey, 
-      Balance, BetId, Roll, nonceChecked, toggleState, betAmount, betPayout, betPlaced} = this.state;
+        const { settings, clientSeed, serverSeedHash, nonce, cryptoGames, stake, apiKey, apiKeyStake,
+            Balance, BetId, Roll, nonceChecked, toggleState, betAmount, betPayout, betPlaced } = this.state;
         return (
             <div>
                 <div className="SettingsUI Bitvest Stake" style={{ display: settings ? 'block' : 'none' }}>
@@ -27,10 +29,11 @@ export default class Settings extends React.Component {
                     <div className="form-group">
                         <label className="form-control-label">Client Seed</label>
                         <img alt="client-seed" src="https://camo.githubusercontent.com/184f5fe3162ac51bdc0c89207d568c691d053aea/68747470733a2f2f662e636c6f75642e6769746875622e636f6d2f6173736574732f353331393931362f323437373339332f36303565656639362d623037302d313165332d383134612d3637613132383166303665312e706e67" style={{ width: '10%' }} data-toggle="popover" data-placement="left" title="This is the client seed. Sometimes called the player seed. It is very important that you customize this after you request a new server seed. The server seed and client seed pre-filled by default. To ensure provable fairness, you must customize your own client seed. It will be used in combination with the server seed to generate thr game results." />
-
                         <input className="form-control form-control-sm" type="text" value={clientSeed} placeholder="CURRENT CLIENT SEED" onChange={(e) => { this.setState({ clientSeed: e.target.value }) }} />
-                        <button type="button" className="btn btn-secondary m-2" onClick={this.getClientSeed}> Generate</button>
-                        <button type="button" className="btn btn-secondary m-2" onClick={() => { stake && this.submitClientSeedStake(clientSeed) }}> Submit</button>
+                        <button type="button" className="btn btn-secondary m-2"
+                            onClick={this.getClientSeed}> Generate</button>
+                        <button type="button" className="btn btn-secondary m-2"
+                            onClick={() => { stake && this.submitClientSeedStake(clientSeed, apiKeyStake) }}> Submit</button>
                     </div>
 
                     <div className="form-group" style={{ display: toggleState ? 'block' : 'none' }}>

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-
+import { handleRequest } from '../services/Stake/generic.js';
 export default class Register extends Component {
   constructor(props) {
     super(props);
@@ -34,14 +34,13 @@ export default class Register extends Component {
             <label className="form-control-label">Enter Your Username</label>
             <input className="form-control form-control-sm" type="text" value={usernameStake} placeholder="Username" onChange={(e) => { this.setState({ usernameStake: e.target.value }) }} />
             <button type="button" className="btn btn-secondary m-2" onClick={() => {
-              this.handleRequest();
+              handleRequest(apiKeyStake, usernameStake);
               this.setState({ gettingStarted: false, settings: true, enterAPIStake: false });
             }}> Submit</button>
           </div>
         </div>
 
         <div style={{ display: enterAPI ? 'block' : 'none' }}>
-
           <div className="form-group">
             <label className="form-control-label">Enter Your API Key</label>
             <input className="form-control form-control-sm" type="text" value={apiKey} placeholder="API Key" onChange={(e) => { this.setState({ apiKey: e.target.value }) }} />
@@ -53,7 +52,6 @@ export default class Register extends Component {
           </div>
         </div>
       </div>
-
     )
   }
 }
