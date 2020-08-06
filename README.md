@@ -91,14 +91,24 @@ Because you probably made tens, hundreds or even thousands of bets, it is not ve
 
 
 Luckily, the results are exactly the same and I know I have not been cheated while gambling :-)
+
+## Features
+
+- Used ReactJs to write chrome extension
+- Injecting extension to host page as content script
+- Utilized the Chrome messaging API
+- Isolated extension CSS using Iframe
+
+## Installation
+
 ```
-Provably Fair verifiers
-BetterBets verifier
-BitDice.me verifier
-Bitsler verifier
-Crypto-Games.net verifier
-Just-Dice.com verifier
-Nitrogen Dice verifier
-Primedice verifier
-SafeDice verifier
+npm install
 ```
+Now build the extension using
+```
+npm build
+```
+
+## Run
+
+After build load unpacked extention from ``` chrome manage extention``` selecting to the build directory.
