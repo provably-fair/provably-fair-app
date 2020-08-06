@@ -1,20 +1,6 @@
 # What is "provably fair"?
 Players always fear to be cheated on an online casino. This is understandable because it is technically very easy for an online casino to just make you lose. In the Bitcoin gambling community we have a solution for this called "provably fair". Provably fair is a tool that enables you (the player) to verify each roll result and make sure you are not being cheated!
 
-The easy way is to just use our provably fair verifiers, fill in the information the website is providing you and check the roll results. 
-Provably fair verifiers:
-```
-BetterBets verifier
-BitDice.me verifier
-Bitsler verifier
-Crypto-Games.net verifier
-Just-Dice.com verifier
-Nitrogen Dice verifier
-Primedice verifier
-SafeDice verifier 
-```
-However I personally think it is better to fully understand how it works, so I will try to explain the provably fair method on this page.
-
 # How does provably fair work?
 Although there are several implementations of the provably fair method, we will describe the most common one. With this method each roll-result is calculated by the following variables:
 ```
@@ -111,4 +97,4 @@ npm run build
 
 ## Run
 
-After build load unpacked extention from ``` chrome manage extention``` selecting to the build directory.
+After build load unpacked extention from ``` chrome manage extention``` selecting to the ``/build`` directory.
