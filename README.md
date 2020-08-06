@@ -106,7 +106,7 @@ npm install
 ```
 Now build the extension using
 ```
-npm build
+npm run build
 ```
 
 ## Run
