@@ -109,6 +109,6 @@
     "extends": "react-app"
   },
   "devDependencies": {
-    "webpack-dev-server": "^3.0.0"
+    "webpack-dev-server": "3.1.11"
   }
 }
