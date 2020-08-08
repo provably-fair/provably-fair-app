@@ -97,4 +97,4 @@ npm run build
 
 ## Run
 
-After build load unpacked extention from ``` chrome manage extention``` selecting to the ``/build`` directory.
+After build load unpacked extention from ``` chrome manage extention``` and select the ``/build`` directory of project.
