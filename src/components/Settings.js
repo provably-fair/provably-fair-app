@@ -14,7 +14,7 @@ export default class Settings extends React.Component {
     }
     render() {
         const { settings, clientSeed, serverSeedHash, nonce, cryptoGames, stake, apiKey, apiKeyStake,
-            Balance, BetId, Roll, nonceChecked, toggleState, betAmount, betPayout, betPlaced } = this.state;
+            Balance, BetId, Roll, nonceChecked, toggleState, betAmount, betPayout, betPlaced } = this.props;
         return (
             <div>
                 <div className="SettingsUI Bitvest Stake" style={{ display: settings ? 'block' : 'none' }}>

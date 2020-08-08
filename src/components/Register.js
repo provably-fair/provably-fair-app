@@ -7,8 +7,8 @@ export default class Register extends Component {
       enterAPIStake: false,
       enterAPI: false,
       user: '',
-      apiKey: null,
-      apiKeyStake: null,
+      apiKey: '',
+      apiKeyStake: '',
       usernameStake: '',
 
     }
