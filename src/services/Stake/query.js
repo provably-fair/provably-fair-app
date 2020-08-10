@@ -180,7 +180,7 @@ export const getAllUserSeedsStake = (apiKeyStake, usernameStake) => {
     if (userSeeds.user.previousServerSeed != null) {
       previousServerSeedStake = userSeeds.user.previousServerSeed.seed;
     }
-    activeClientSeedStake = userSeeds.user.activeClientSeed.seed;
+      activeClientSeedStake = userSeeds.user.activeClientSeed.seed;
     // this.unhashServerSeedHashStake(userSeeds.user.previousServerSeed.seedHash);
     //  this.setState({userSeedsData:userSeedsData});
   })

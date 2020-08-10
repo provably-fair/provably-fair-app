@@ -18,13 +18,13 @@ export const getClientSeed = () => {
 export const handleRequest = (apiKeyStake, usernameStake) => {
   let promise1 = new Promise((resolve, reject) => {
     setTimeout(() => {
-      return getServerSeedStake(apiKeyStake, usernameStake);
+      return getServerSeedStake(apiKeyStake);
     }, 300);
   });
 
   let promise2 = new Promise((resolve, reject) => {
     setTimeout(() => {
-      return getAllUserSeedsStake(apiKeyStake);
+      return getAllUserSeedsStake(apiKeyStake, usernameStake);
     }, 1000);
   });
 

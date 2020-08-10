@@ -15,13 +15,10 @@ import cryptoGamesIcon from './assets/img/cryptogames.png';
 import "./content.css";
 import './assets/css/argon.css';
 import qs from 'querystring';
-import Web3 from 'web3';
-
 
 class Main extends React.Component {
 
   constructor() {
-    console.log('=====>', Web3);
     super();
     this.state = {
       gettingStarted: true,
