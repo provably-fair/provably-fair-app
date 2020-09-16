@@ -1,36 +1,3 @@
-import createHmac from 'create-hmac';
-import uuidv4 from 'uuid/v4';
-import { getServerSeedStake, getAllUserSeedsStake } from './query.js';
-
-/** Generic Methods **/
-
-/* Method for generating Randomised Client Seed */
-
-export const getClientSeed = () => {
-  let key = uuidv4();
-  let hash = createHmac('sha256', key)
-    .update('provably')
-    .digest('hex');
-  hash = hash.substring(0, 32);
-  this.setState({ clientSeed: hash, nonce: 0 });
-}
-
-export const handleRequest = (apiKeyStake, usernameStake) => {
-  let promise1 = new Promise((resolve, reject) => {
-    setTimeout(() => {
-      return getServerSeedStake(apiKeyStake, usernameStake);
-    }, 300);
-  });
-
-  let promise2 = new Promise((resolve, reject) => {
-    setTimeout(() => {
-      return getAllUserSeedsStake(apiKeyStake);
-    }, 1000);
-  });
-
-  console.log(promise1, promise2);
-}
-
 
 
 export const handleRoullete = (server_seed, client_seed, nonce) => {

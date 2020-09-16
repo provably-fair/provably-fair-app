@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
-import { handleRequest } from '../services/Stake/generic.js';
+import { GraphQLClient } from 'graphql-request';
+import { connect } from 'react-redux';
+
 export default class Register extends Component {
   constructor(props) {
     super(props);
@@ -7,19 +9,119 @@ export default class Register extends Component {
       enterAPIStake: false,
       enterAPI: false,
       user: '',
-      apiKey: null,
-      apiKeyStake: null,
+      apiKey: '',
+      apiKeyStake: '',
       usernameStake: '',
-
+      serverSeedHash: '',
+      clientSeed:''
     }
   }
+
+  /* Method for getting a Server Seed Hash for the Stake Operator */
+
+  getServerSeedStake = (apiKeyStake) => {
+
+   /* GraphQl Client object with x-access-token for Stake Operator */
+
+   const client = new GraphQLClient('https://api.stake.com/graphql', {
+     headers: {
+       "x-access-token": apiKeyStake,
+     },
+   })
+
+   /* GraphQl Client query to get new ServerSeed for Stake Operator */
+
+   const query4 = `mutation RotateServerSeedMutation {
+           rotateServerSeed {
+             id
+             seedHash
+             nonce
+             user {
+               id
+               activeServerSeed {
+                 id
+                 seedHash
+                 nonce
+                 __typename
+               }
+               __typename
+             }
+             __typename
+           }
+         }`
+   client.request(query4).then((data) => {
+     console.log('seedHash ',data.rotateServerSeed.seedHash);
+     this.setState({serverSeedHash :  data.rotateServerSeed.seedHash })
+   })
+ }
+
+ /* Method to get all types of User Seeds for Stake Operator */
+
+ getAllUserSeedsStake = (apiKeyStake, usernameStake) => {
+
+   /* GraphQl Client object with x-access-token for Stake Operator */
+
+   const client = new GraphQLClient('https://api.stake.com/graphql', {
+     headers: {
+       "x-access-token": apiKeyStake,
+     },
+   })
+   // should take user id as parameter userSeedsData,
+
+   const name = usernameStake;
+
+   /**this is for looking up a user**/
+
+   const query6 = `query userSeeds($name: String) {
+
+         user(name: $name) {
+           id
+           activeServerSeed {
+             seedHash
+           }
+           previousServerSeed {
+             seed
+             seedHash
+           }
+           activeClientSeed {
+             seed
+           }
+           previousClientSeed {
+             seed
+           }
+         }
+       }`
+
+   client.request(query6).then((userSeeds) => {
+     console.log('userSeeds ', userSeeds);
+     this.setState({clientSeed:userSeeds.user.activeClientSeed.seed});
+   })
+ }
+
+ handleRequest = (apiKeyStake, usernameStake) => {
+   try {
+          this.getServerSeedStake(apiKeyStake);
+          this.getAllUserSeedsStake(apiKeyStake, usernameStake);
+   } catch (e) {
+
+   } finally {
+       setTimeout(() => {
+         let { serverSeedHash, clientSeed, apiKeyStake, usernameStake } = this.state;
+
+         let data = {serverSeedHash:serverSeedHash, clientSeed: clientSeed, apiKeyStake: apiKeyStake, usernameStake : usernameStake}
+
+         this.setState({ gettingStarted: false, settings: true, enterAPIStake: false });
+         this.props.callback(data);
+       }, 2000);
+   }
+ }
 
   componentDidMount() {
     this.setState({ enterAPI: this.props.enterAPI, enterAPIStake: this.props.enterAPIStake });
   }
 
   render() {
-    const { enterAPI, enterAPIStake, apiKey, apiKeyStake, usernameStake } = this.state;
+    const { enterAPI, enterAPIStake, apiKey, apiKeyStake, usernameStake, serverSeedHash } = this.state;
     return (
       <div>
         <div style={{ display: enterAPIStake ? 'block' : 'none' }}>
@@ -34,8 +136,7 @@ export default class Register extends Component {
             <label className="form-control-label">Enter Your Username</label>
             <input className="form-control form-control-sm" type="text" value={usernameStake} placeholder="Username" onChange={(e) => { this.setState({ usernameStake: e.target.value }) }} />
             <button type="button" className="btn btn-secondary m-2" onClick={() => {
-              handleRequest(apiKeyStake, usernameStake);
-              this.setState({ gettingStarted: false, settings: true, enterAPIStake: false });
+               this.handleRequest(apiKeyStake, usernameStake);
             }}> Submit</button>
           </div>
         </div>
@@ -55,4 +156,3 @@ export default class Register extends Component {
     )
   }
 }
-

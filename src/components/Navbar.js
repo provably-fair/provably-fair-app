@@ -1,4 +1,5 @@
 import React from 'react';
+import { GraphQLClient } from 'graphql-request';
 
 export default class Navbar extends React.Component {
     constructor() {
@@ -10,6 +11,7 @@ export default class Navbar extends React.Component {
             faqs: false
         }
     }
+
     render() {
         const { settings, verification, operators, faqs } = this.state;
         return (
@@ -42,4 +44,3 @@ export default class Navbar extends React.Component {
         );
     }
 }
-

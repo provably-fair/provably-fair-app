@@ -1,4 +1,7 @@
 import React from 'react';
+import { GraphQLClient } from 'graphql-request';
+import createHmac from 'create-hmac';
+import uuidv4 from 'uuid/v4';
 
 export default class Settings extends React.Component {
     constructor() {
@@ -9,32 +12,134 @@ export default class Settings extends React.Component {
             serverSeedHash: '',
             previousSeed: '',
             apiKey: '',
-            apiKeyStake: ''
+            apiKeyStake: '',
+            nonce:0
         }
     }
+
+    /* Method for getting a Server Seed Hash for the Stake Operator */
+
+    getServerSeedStake = (apiKeyStake) => {
+
+     /* GraphQl Client object with x-access-token for Stake Operator */
+
+     const client = new GraphQLClient('https://api.stake.com/graphql', {
+       headers: {
+         "x-access-token": apiKeyStake,
+       },
+     })
+
+     /* GraphQl Client query to get new ServerSeed for Stake Operator */
+
+     const query4 = `mutation RotateServerSeedMutation {
+             rotateServerSeed {
+               id
+               seedHash
+               nonce
+               user {
+                 id
+                 activeServerSeed {
+                   id
+                   seedHash
+                   nonce
+                   __typename
+                 }
+                 __typename
+               }
+               __typename
+             }
+           }`
+     client.request(query4).then((data) => {
+       console.log('seedHash ',data.rotateServerSeed.seedHash);
+       this.setState({serverSeedHash :  data.rotateServerSeed.seedHash })
+     })
+   }
+
+    /** Generic Methods **/
+
+    /* Method for generating Randomised Client Seed */
+
+    getClientSeed = () => {
+      const key = uuidv4();
+      const text = uuidv4();
+      let hash = createHmac('sha256', key)
+        .update(text)
+        .digest('hex');
+      hash = hash.substring(0, 32);
+      this.setState({ clientSeed: hash, nonce: 0 });
+    }
+
+
+    /* Method for submitting a client seed for the Stake Operator */
+
+    submitClientSeedStake = (clientSeed, apiKeyStake) => {
+
+      console.log('clientSeed ',clientSeed, 'apiKeyStake ', apiKeyStake);
+
+      /* GraphQl Client query to get new ServerSeed for Stake Operator */
+
+      const query5 = `mutation ChangeClientSeedMutation($seed: String!) {
+            changeClientSeed(seed: $seed) {
+              id
+              seed
+              __typename
+            }
+          }`
+
+
+      /* GraphQl Client object with x-access-token for Stake Operator */
+
+      const client = new GraphQLClient('https://api.stake.com/graphql', {
+        headers: {
+          "x-access-token": apiKeyStake,
+        },
+      })
+      const variables = {
+        seed: clientSeed
+      }
+      client.request(query5, variables).then(data => console.log(data))
+    }
+
+    verifyRecentBets = () =>{
+      let { serverSeedHash, clientSeed } = this.state;
+
+      let data = {serverSeedHash:serverSeedHash, clientSeed: clientSeed, settings: false, verification:true}
+
+      this.setState({ settings: false, verification:true });
+      this.props.callback(data);
+    }
+
+    componentDidMount() {
+      const { settings, serverSeedHash, clientSeed, apiKeyStake} = this.props;
+      this.setState({ settings: settings, serverSeedHash: serverSeedHash, clientSeed: clientSeed, apiKeyStake: apiKeyStake });
+      console.log('props ', this.props );
+    }
+
     render() {
         const { settings, clientSeed, serverSeedHash, nonce, cryptoGames, stake, apiKey, apiKeyStake,
             Balance, BetId, Roll, nonceChecked, toggleState, betAmount, betPayout, betPlaced } = this.state;
         return (
             <div>
-                <div className="SettingsUI Bitvest Stake" style={{ display: settings ? 'block' : 'none' }}>
+                <div className="SettingsUI Bitvest Stake">
                     <div className="form-group">
                         <label className="form-control-label">Next Server Seed Hash </label>
                         <img alt="next-server-seed-hash" src="https://camo.githubusercontent.com/184f5fe3162ac51bdc0c89207d568c691d053aea/68747470733a2f2f662e636c6f75642e6769746875622e636f6d2f6173736574732f353331393931362f323437373339332f36303565656639362d623037302d313165332d383134612d3637613132383166303665312e706e67" style={{ width: '10%' }}
                             data-toggle="popover" data-placement="left" title="This is the server seed that has been created by the casino. It is sent to you in advance of any bets being made to ensure the casino did not change or manipulate the outcome of any game results. It is hashed(encrypted) to prevent players from calculating the upcoming game results. Once you request a new server seed, the one that is currently in use will be unhashed(decrypted) and sent to the verification tab. All bets made using that server seed will be automatically verified. You will be notified if any bets did not pass verification." />
                         <input className="form-control form-control-sm" type="text" value={serverSeedHash} placeholder="" onChange={(e) => { this.setState({ serverSeedHash: e.target.value }) }} />
-                        <button type="button" className="btn btn-secondary m-2" onClick={this.handleRequest}> Request</button>
+                        <button type="button" className="btn btn-info m-2" onClick={()=>this.getServerSeedStake(apiKeyStake)}> Request</button>
                     </div>
 
                     <div className="form-group">
                         <label className="form-control-label">Client Seed</label>
                         <img alt="client-seed" src="https://camo.githubusercontent.com/184f5fe3162ac51bdc0c89207d568c691d053aea/68747470733a2f2f662e636c6f75642e6769746875622e636f6d2f6173736574732f353331393931362f323437373339332f36303565656639362d623037302d313165332d383134612d3637613132383166303665312e706e67" style={{ width: '10%' }} data-toggle="popover" data-placement="left" title="This is the client seed. Sometimes called the player seed. It is very important that you customize this after you request a new server seed. The server seed and client seed pre-filled by default. To ensure provable fairness, you must customize your own client seed. It will be used in combination with the server seed to generate thr game results." />
                         <input className="form-control form-control-sm" type="text" value={clientSeed} placeholder="CURRENT CLIENT SEED" onChange={(e) => { this.setState({ clientSeed: e.target.value }) }} />
-                        <button type="button" className="btn btn-secondary m-2"
+                        <button type="button" className="btn btn-info m-2"
                             onClick={this.getClientSeed}> Generate</button>
-                        <button type="button" className="btn btn-secondary m-2"
-                            onClick={() => { stake && this.submitClientSeedStake(clientSeed, apiKeyStake) }}> Submit</button>
+                        <button type="button" className="btn btn-info m-2"
+                            onClick={() => { this.submitClientSeedStake(clientSeed, apiKeyStake) }}> Submit</button>
                     </div>
+                    <button type="button" className="btn btn-info m-2"
+                        onClick={this.verifyRecentBets}> Verify</button>
 
                     <div className="form-group" style={{ display: toggleState ? 'block' : 'none' }}>
                         <h3> Place Bet</h3>
@@ -143,5 +248,3 @@ export default class Settings extends React.Component {
         )
     }
 }
-
-

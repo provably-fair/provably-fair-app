@@ -1,5 +1,4 @@
 import React from 'react';
-// import SweetAlert from 'react-bootstrap-sweetalert';
 // import axios from 'axios';
 import "./content.css";
 import './assets/css/argon.css';
@@ -9,8 +8,10 @@ import Settings from './components/Settings.js';
 import GettingStarted from './components/GettingStarted.js'
 import Operators from './components/Operators';
 import Register from './components/Register';
+import Verification from './components/Verification';
 
-class App extends React.Component {
+
+export default class App extends React.Component {
   constructor() {
     super();
     this.state = {
@@ -18,8 +19,11 @@ class App extends React.Component {
       register: false,
       enterAPI: false,
       enterAPIStake: false,
+      settings:false,
+      verification:false,
       clientSeed: '',
       serverSeedHash: null,
+      apiKeyStake:'',
       previousSeed: '',
       session_token: '',
       betData: [],
@@ -38,6 +42,7 @@ class App extends React.Component {
       BetId: null,
       Balance: null,
       Roll: null,
+
       previousClientSeedStake: '',
       activeClientSeedStake: '',
       previousServerSeedStake: '',
@@ -89,21 +94,40 @@ class App extends React.Component {
       enterAPIStake: data.enterAPIStake,
       register: true
     });
-    console.log(data);
+  }
+
+  settingsCallback = (data) => {
+    this.setState({
+      settings: true,
+      serverSeedHash: data.serverSeedHash,
+      clientSeed: data.clientSeed,
+      apiKeyStake: data.apiKeyStake,
+      usernameStake : data.usernameStake,
+    });
+    console.log('data ',data);
+  }
+
+  verificationCallback = (data) => {
+    this.setState({
+      settings:data.settings,
+      verification: data.verification,
+      serverSeedHash: data.serverSeedHash,
+      clientSeed: data.clientSeed,
+    });
+    console.log('data ',data);
   }
 
   render() {
-    const { gettingStarted, operators, enterAPI, enterAPIStake, register } = this.state;
+    const { gettingStarted, operators, enterAPI, enterAPIStake, register, settings, serverSeedHash, clientSeed, apiKeyStake, verification } = this.state;
     return (
       <div className={'my-extension text-center'}>
         <Navbar />
         <GettingStarted gettingStarted={gettingStarted} callback={this.gettingStartedCallback} />
         {operators && <Operators callback={this.operatorsCallback} />}
-        {register && <Register enterAPI={enterAPI} enterAPIStake={enterAPIStake} />}
-        <Settings />
+        {register && <Register enterAPI={enterAPI} enterAPIStake={enterAPIStake} callback={this.settingsCallback}/>}
+        {settings && <Settings serverSeedHash={serverSeedHash} clientSeed={clientSeed} apiKeyStake={apiKeyStake} callback={this.verificationCallback}/>}
+        {verification && <Verification/>}
       </div>
     );
   }
 }
-
-export default App;
