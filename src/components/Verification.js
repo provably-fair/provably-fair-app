@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { GraphQLClient } from 'graphql-request';
 import { connect } from 'react-redux';
 import SweetAlert from 'react-bootstrap-sweetalert';
+import { processBetsStake } from '../services/Stake/generic.js'
 
 export default class Verification extends Component {
   constructor(props) {
@@ -62,7 +63,6 @@ export default class Verification extends Component {
         { name: 'Baccarat' },
         { name: 'Dice' }
       ],
-      numMines: 3,
       mines: [],
       keno: [],
       numOfRows: [0, 1, 2, 3, 4],
@@ -78,6 +78,8 @@ export default class Verification extends Component {
   /* Method for get all Bet Data for Stake Operator */
 
   getAllBetsStake = (apiKeyStake, usernameStake) => {
+
+    console.log('apiKeyStake ', apiKeyStake, usernameStake);
 
     /* GraphQl Client object with x-access-token for Stake Operator */
 
@@ -115,7 +117,7 @@ export default class Verification extends Component {
 
     client.request(query3).then((bet) => {
       betDataEnriched = bet.user.houseBetList;
-      // this.setState({ betDataEnriched: betDataEnriched });
+      this.setState({ betDataEnriched: betDataEnriched });
       console.log('bet data enriched', betDataEnriched);
 
       bet.user.houseBetList.map((houseBet) => {
@@ -154,10 +156,10 @@ export default class Verification extends Component {
           console.log('betData --', betData);
           if (betData.bet.bet.clientSeed !== 'undefined') {
             betDataById.push(betData);
-            // this.setState({ betDataById: betDataById });
+            this.setState({ betDataById: betDataById });
           }
         })
-        // console.log('betDataById', betDataById);
+        console.log('betDataById', betDataById);
       })
     })
   }
@@ -170,7 +172,7 @@ export default class Verification extends Component {
   }
 
   render() {
-    const { enterAPI, enterAPIStake, apiKey, apiKeyStake, usernameStake, serverSeedHash, isNonceManipulated, numberBetsVerFailed, popupResult, clientSeed, diceVerify,
+    const { enterAPI, enterAPIStake, apiKey, apiKeyStake, usernameStake, serverSeedHash,previousClientSeedStake, betDataById, betDataEnriched, isNonceManipulated, numberBetsVerFailed, popupResult, clientSeed, diceVerify,
       verify, nonce, primeDice, cryptoGames, verification, active_game, betData, numOfRows, numOfColumnsKeno, showAlert} = this.state;
     return (
       <div>
@@ -185,7 +187,7 @@ export default class Verification extends Component {
             <span className="badge badge-md badge-circle badge-floating badge-danger border-white">{numberBetsVerFailed}</span>
         </span>
         <div className="form-group">
-            <button type="button" className="btn btn-secondary m-2" onClick={this.processBetsStake}> Verify Recent Bets</button>
+            <button type="button" className="btn btn-secondary m-2" onClick={processBetsStake(betDataById, betDataEnriched, previousClientSeedStake, clientSeed, serverSeedHash)}> Verify Recent Bets</button>
         </div>
         <div className="Bitvest" style={{ display: 'none' }}>
             <table className="table align-items-center table-flush table-hover">

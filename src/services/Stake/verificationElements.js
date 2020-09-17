@@ -1,11 +1,15 @@
+import createHmac from 'create-hmac';
+
 /*Generic Stake Methods for various games */
+
+const MAX_ROLL = 10001, MAX_ROULETTE = 37, MAX_CHARTBET = 1000000;
 
 /**
  * Returns the SHA256 hash of the input
  * @param {string} data - The data to hash
  * @returns {string} The hex representation of the SHA256 hash
  */
-sha256 = (data) => {
+export const sha256 = (data) => {
     let md = crypto.createHash('sha256').update(data).digest('hex');
     return md;
   };
@@ -15,7 +19,7 @@ sha256 = (data) => {
    * @param {string} m - The message part of the HMAC digest
    * @returns {string} The hex representation of the HMAC SHA256 hash
    */
-  hmac_sha256 = (K, m) => {
+  export const hmac_sha256 = (K, m) => {
     let hmac = createHmac('sha256', K).update(m).digest('hex');
     return hmac;
   };
@@ -23,18 +27,18 @@ sha256 = (data) => {
    * Returns a true if the server seed and provided hash match
    * @returns {boolean} True if the server seed hash matches the provided hash
    */
-  seed_hash_match = () => {
-    if (this.server_seed && this.server_hash) {
-      return this.sha256(this.server_seed) === this.server_hash;
-    }
+  export const seed_hash_match = () => {
+    // if (this.server_seed && this.server_hash) {
+      // return this.sha256(this.server_seed) === this.server_hash;
+    // }
     return false;
   };
   /**
    * Returns true if the server seed, client seed and nonce are all present
    * @returns {boolean}
    */
-  all_info = () => {
-    return this.server_seed && this.client_seed && this.nonce;
+  export const all_info = () => {
+    // return this.server_seed && this.client_seed && this.nonce;
   };
   /**
    * Returns the hex string calculated by hashint the server seed, client seed, nonce and round
@@ -42,11 +46,11 @@ sha256 = (data) => {
    * @param {number} num - If defined, the string is truncated to the last n=num characters
    * @returns {string} A hex string
    */
-  bytes = (server_seed, client_seed, nonce, length, num) => {
+  export const bytes = (server_seed, client_seed, nonce, length, num) => {
     let result = '';
     let round = 0;
     while (result.length < length) {
-      result += this.hmac_sha256(server_seed, `${client_seed}:${nonce || 0}:${round++}`);
+      result += hmac_sha256(server_seed, `${client_seed}:${nonce || 0}:${round++}`);
     }
     if (result.length > length) {
       result = result.substring(0, length);
@@ -61,7 +65,7 @@ sha256 = (data) => {
    * @param {string} bytes - The 8 character (4 byte) hex string to convert to a number
    * @returns {number} A number in the range [0, 1)
    */
-  bytes_to_number = (bytes) => {
+  export const bytes_to_number = (bytes) => {
     let total = 0;
     for (let i = 0; i < 4; i++) {
       total += parseInt(bytes.substr(i * 2, 2), 16) / Math.pow(256, i + 1);
@@ -73,7 +77,7 @@ sha256 = (data) => {
    * @param {string} bytes - The string of hex digits
    * @returns {string[]} The array of 2 character chunks
    */
-  bytes_to_hex_array = (bytes) => {
+  export const bytes_to_hex_array = (bytes) => {
     let hex = [];
     for (let i = 0; i < bytes.length; i += 2) {
       hex.push(bytes.substr(i, 2));
@@ -85,10 +89,10 @@ sha256 = (data) => {
    * @param {string} bytes - A string of hex digits with length evenly divisible by 8
    * @returns {number[]} An array of numbers in the range [0, 1)
    */
-  bytes_to_num_array = (bytes) => {
+  export const bytes_to_num_array = (bytes) => {
     let totals = [];
     for (let i = 0; i * 8 < bytes.length; i++) {
-      totals.push(this.bytes_to_number(bytes.substr(i * 8), 8));
+      totals.push(bytes_to_number(bytes.substr(i * 8), 8));
     }
     return totals;
   };
@@ -97,9 +101,9 @@ sha256 = (data) => {
    * @param {number[]} nums - The array of numbers
    * @returns {number[]} The array of mine positions
    */
-  nums_to_mine_array = (nums) => {
-    let { mines } = this.state;
-    mines = [];
+  export const nums_to_mine_array = (nums) => {
+    // let { mines } = state;
+    let mines = [];
     for (let i = 0; i < 25; i++) {
       mines.push(i);
     }
@@ -108,7 +112,7 @@ sha256 = (data) => {
       result.push(mines.splice(Math.floor((25 - i) * nums[i]), 1)[0]);
     }
     console.log("mines result", result);
-    this.setState({ mines: result })
+    // this.setState({ mines: result })
     return result;
   };
   /**
@@ -116,7 +120,7 @@ sha256 = (data) => {
    * @param {number[]} nums - The array of numbers
    * @returns {number[]} The array of tile positions
    */
-  nums_to_tile_array = (nums) => {
+  export const nums_to_tile_array = (nums) => {
     let tiles = [];
     let result = [];
     for (let i = 0; i < 40; i++) {
@@ -132,7 +136,7 @@ sha256 = (data) => {
    * @param {number[]} nums - The array of numbers
    * @returns {string[]} - The array of cards
    */
-  nums_to_card_array = (nums) => {
+  export const nums_to_card_array = (nums) => {
     const cards = ['2_of_diamonds', '2_of_hearts', '2_of_spades', '2_of_clubs',
       '3_of_diamonds', '3_of_hearts', '3_of_spades', '3_of_clubs',
       '4_of_diamonds', '4_of_hearts', '4_of_spades', '4_of_clubs',
@@ -152,8 +156,8 @@ sha256 = (data) => {
     });
     return nums;
   };
-  
-  nums_to_pokercards_array = (nums) => {
+
+  export const nums_to_pokercards_array = (nums) => {
     let cards = [];
     const pokercards = ['2_of_diamonds', '2_of_hearts', '2_of_spades', '2_of_clubs',
       '3_of_diamonds', '3_of_hearts', '3_of_spades', '3_of_clubs',
@@ -183,7 +187,7 @@ sha256 = (data) => {
    * @param {string} item - A hex string
    * @returns {string} A base 10 string of length 3
    */
-  leading_zeroes = (item) => {
+  export const leading_zeroes = (item) => {
     item = parseInt(item, 16);
     if (item < 10) {
       return '00' + item;
@@ -198,19 +202,19 @@ sha256 = (data) => {
    * @param {string} game - The game to return the result for
    * @returns The result for the game
    */
-  result = (game, server_seed, client_seed, nonce) => {
+  export const result = (game, server_seed, client_seed, nonce) => {
     // let {server_seed, client_seed, nonce} = this.state;
     switch (game) {
       case 'Dice':
-        return (Math.floor(this.bytes_to_number(this.bytes(server_seed, client_seed, nonce, 8)) * this.state.MAX_ROLL) / 100).toFixed(2);
+        return (Math.floor(bytes_to_number(bytes(server_seed, client_seed, nonce, 8)) * MAX_ROLL) / 100).toFixed(2);
       case 'Roulette':
-        return Math.floor(this.bytes_to_number(this.bytes(server_seed, client_seed, nonce, 8)) * this.state.MAX_ROULETTE);
+        return Math.floor(bytes_to_number(bytes(server_seed, client_seed, nonce, 8)) * MAX_ROULETTE);
       case 'Chartbet':
-        return (this.state.MAX_CHARTBET / (Math.floor(this.bytes_to_number(this.bytes(server_seed, client_seed, nonce, 8)) * this.state.MAX_CHARTBET) + 1) * 0.98);
+        return (MAX_CHARTBET / (Math.floor(bytes_to_number(bytes(server_seed, client_seed, nonce, 8)) * MAX_CHARTBET) + 1) * 0.98);
       case 'Mines':
-        return this.nums_to_mine_array(this.bytes_to_num_array(this.bytes(server_seed, client_seed, nonce, 196)));
+        return nums_to_mine_array(bytes_to_num_array(bytes(server_seed, client_seed, nonce, 196)));
       case 'Keno':
-        return this.nums_to_tile_array(this.bytes_to_num_array(this.bytes(server_seed, client_seed, nonce, 80)));
+        return nums_to_tile_array(bytes_to_num_array(bytes(server_seed, client_seed, nonce, 80)));
       default:
         return 'Unknown game';
     }

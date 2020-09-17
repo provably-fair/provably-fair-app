@@ -79,9 +79,6 @@ export default class App extends React.Component {
       numOfColumnsKeno: [0, 1, 2, 3, 4, 5, 6, 7],
       numOfColumns: [0, 1, 2, 3, 4, 5, 6, 7],
       active_game: 'chartbet',
-      MAX_ROLL: 10001,
-      MAX_ROULETTE: 37,
-      MAX_CHARTBET: 1000000
     }
   }
 
@@ -118,7 +115,7 @@ export default class App extends React.Component {
   }
 
   render() {
-    const { gettingStarted, operators, enterAPI, enterAPIStake, register, settings, serverSeedHash, clientSeed, apiKeyStake, verification } = this.state;
+    const { gettingStarted, operators, enterAPI, enterAPIStake, register, settings, serverSeedHash, clientSeed, apiKeyStake, usernameStake, verification } = this.state;
     return (
       <div className={'my-extension text-center'}>
         <Navbar />
@@ -126,7 +123,7 @@ export default class App extends React.Component {
         {operators && <Operators callback={this.operatorsCallback} />}
         {register && <Register enterAPI={enterAPI} enterAPIStake={enterAPIStake} callback={this.settingsCallback}/>}
         {settings && <Settings serverSeedHash={serverSeedHash} clientSeed={clientSeed} apiKeyStake={apiKeyStake} callback={this.verificationCallback}/>}
-        {verification && <Verification/>}
+        {verification && <Verification serverSeedHash={serverSeedHash} clientSeed={clientSeed} apiKeyStake={apiKeyStake} usernameStake={usernameStake}/>}
       </div>
     );
   }
