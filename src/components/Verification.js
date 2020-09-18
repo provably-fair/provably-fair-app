@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { GraphQLClient } from 'graphql-request';
 import { connect } from 'react-redux';
 import SweetAlert from 'react-bootstrap-sweetalert';
-import { processBetsStake } from '../services/Stake/generic.js'
+import * as _ from '../services/Stake/generic.js';
 
 export default class Verification extends Component {
   constructor(props) {
@@ -25,7 +25,6 @@ export default class Verification extends Component {
       verify: false,
       diceResult: 0,
       diceVerify: 0,
-
       BetIdArray: [],
       betDataById: [],
       betDataEnriched: [],
@@ -33,7 +32,6 @@ export default class Verification extends Component {
       BetId: null,
       Balance: null,
       Roll: null,
-
       previousClientSeedStake: '',
       activeClientSeedStake: '',
       previousServerSeedStake: '',
@@ -164,6 +162,114 @@ export default class Verification extends Component {
     })
   }
 
+  processBetsStake = (betDataById, betDataEnriched, previousClientSeedStake, activeClientSeedStake, previousServerSeedStake) => {
+    let {betData} = this.state;
+
+    console.log("betDataById", betDataById);
+    console.log("previousClientSeedStake", previousClientSeedStake, "previousServerSeedStake", previousServerSeedStake, "activeClientSeedStake", activeClientSeedStake);
+    try {
+      betDataById.map((item) => {
+        // if (((item.bet.bet.clientSeed.seed === activeClientSeedStake) && (item.bet.bet.serverSeed.seed === previousServerSeedStake)) || ((item.bet.bet.clientSeed.seed === previousClientSeedStake) && (item.bet.bet.serverSeed.seed === previousServerSeedStake))) {
+          var element = {};
+          console.log('new bet has come', item.bet.iid);
+          betDataEnriched.map((innerItem) => {
+            // console.log("Inner Item :", innerItem);
+
+            if (innerItem.iid === item.bet.iid) {
+              let isVerified;
+              const game = innerItem.bet.game;
+              console.log("====> Game : ", game);
+              switch (game) {
+                case 'dice':
+                  /*return*/ isVerified = _.handleVerifyBetStake(item.bet.bet.serverSeed.seed, item.bet.bet.clientSeed.seed, item.bet.bet.nonce);
+                  break;
+
+                case 'limbo':
+                  /*return*/ isVerified = _.handleVerifyBetForLimbo(item.bet.bet.serverSeed.seed, item.bet.bet.clientSeed.seed, item.bet.bet.nonce);
+                  break;
+
+                case 'roulette':
+                  /*return*/ isVerified = _.handleVerifyBetForRoulette(item.bet.bet.serverSeed.seed, item.bet.bet.clientSeed.seed, item.bet.bet.nonce);
+                  break;
+
+                case 'plinko':
+                  /*return*/ isVerified = _.handlePlinko(item.bet.bet.serverSeed.seed, item.bet.bet.clientSeed.seed, item.bet.bet.nonce);
+                  break;
+
+                case 'baccarat':
+                  /*return*/ isVerified = _.handleBaccarat(item.bet.bet.serverSeed.seed, item.bet.bet.clientSeed.seed, item.bet.bet.nonce);
+                  break;
+
+                case 'videoPoker':
+                  /*return*/ isVerified = _.handleVideoPoker(item.bet.bet.serverSeed.seed, item.bet.bet.clientSeed.seed, item.bet.bet.nonce);
+                  break;
+
+                case 'hilo':
+                  /*return*/ isVerified = _.handleHilo(item.bet.bet.serverSeed.seed, item.bet.bet.clientSeed.seed, item.bet.bet.nonce);
+                  break;
+
+                case 'blackjack':
+                  /*return*/ isVerified = _.handleBlackjack(item.bet.bet.serverSeed.seed, item.bet.bet.clientSeed.seed, item.bet.bet.nonce);
+                  break;
+
+                case 'mines':
+                  /*return*/ isVerified = _.handleMines(item.bet.bet.serverSeed.seed, item.bet.bet.clientSeed.seed, item.bet.bet.nonce);
+                  break;
+
+                case 'keno':
+                  /*return*/ isVerified = _.handleKeno(item.bet.bet.serverSeed.seed, item.bet.bet.clientSeed.seed, item.bet.bet.nonce);
+                  break;
+
+                case 'diamondPoker':
+                  /*return*/ isVerified = _.handleDiamondPoker(item.bet.bet.serverSeed.seed, item.bet.bet.clientSeed.seed, item.bet.bet.nonce);
+                  break;
+
+                case 'wheel':
+                  /*return*/ isVerified = _.handleWheel(item.bet.bet.serverSeed.seed, item.bet.bet.clientSeed.seed, item.bet.bet.nonce, '10', 'medium');
+                  break;
+
+                // case 'primedice':
+                //   /*return*/ isVerified = _.handleVerifyBetPrimeDice(item.bet.bet.serverSeed.seed, item.bet.bet.clientSeed.seed, item.bet.bet.nonce);
+                // break;
+
+                // default: /*return*/ isVerified = 0;
+                // break;
+
+              }
+
+              // console.log("item.bet.iid.split('house:')" , item.bet.iid.split('house:'));
+              element.id = item.bet.iid.split('house:');
+              element.game = innerItem.bet.game;
+              element.payout = innerItem.bet.payout;
+              element.nonce = item.bet.bet.nonce;
+              element.isVerified = isVerified;
+              console.log('element : ', element);
+              betData.push({ element: element });
+              this.setState({ betData: betData , verification: true});
+            }
+            // return betData;
+          })
+          // _.setState({ viewRecentBetsStake: true })
+          betData.sort((a, b) => {
+            return a.element.id - b.element.id;
+          });
+          console.log("betData : ", this.state.betData);
+        // }
+        return betData;
+      })
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
+  hideAlertConfirm = () => {
+    this.setState({showAlert:false})
+  }
+
+  hideAlertCancel = () => {
+    this.setState({showAlert:false})
+  }
+
   componentDidMount() {
     const { usernameStake, apiKeyStake, serverSeedHash, clientSeed} = this.props;
     this.setState({ usernameStake: usernameStake, apiKeyStake: apiKeyStake, serverSeedHash: serverSeedHash, clientSeed:clientSeed });
@@ -187,7 +293,9 @@ export default class Verification extends Component {
             <span className="badge badge-md badge-circle badge-floating badge-danger border-white">{numberBetsVerFailed}</span>
         </span>
         <div className="form-group">
-            <button type="button" className="btn btn-secondary m-2" onClick={processBetsStake(betDataById, betDataEnriched, previousClientSeedStake, clientSeed, serverSeedHash)}> Verify Recent Bets</button>
+            <button type="button" className="btn btn-secondary m-2" onClick={()=>{
+              this.processBetsStake(betDataById, betDataEnriched, previousClientSeedStake, clientSeed, serverSeedHash)
+            }}> Verify Recent Bets</button>
         </div>
         <div className="Bitvest" style={{ display: 'none' }}>
             <table className="table align-items-center table-flush table-hover">
@@ -202,7 +310,6 @@ export default class Verification extends Component {
                         <th>Status</th>
                     </tr>
                 </thead>
-
                 <tbody>
                     {betData.map((item, i) => {
                         return <tr key={i}>
@@ -352,8 +459,8 @@ export default class Verification extends Component {
           <div className="primeDice" style={{ display: primeDice ? 'block' : 'none' }}>
               <div className="form-group">
                   <button type="button" className="btn btn-secondary m-2" onClick={() => {
-                      this.handleVerifyBetPrimeDice(serverSeedHash, clientSeed, nonce);
-                      console.log(serverSeedHash, clientSeed, nonce);
+                      // _.handleVerifyBetPrimeDice(serverSeedHash, clientSeed, nonce);
+                      // console.log(serverSeedHash, clientSeed, nonce);
                   }}> Verify</button>
 
               </div>
